@@ -35,7 +35,6 @@
 #include <stdlib.h>
 
 using std::wcout;
-using std::wcerr;
 using std::endl;
 
 //#line 102 "rlparse.kh"
@@ -3858,7 +3857,7 @@ void Parser::init()
 	block->next = 0;
 	freshEl = block->data;
 	#ifdef KELBT_LOG_ACTIONS
-	wcerr << L"allocating 8128 LangEls" << endl;
+	err() << L"allocating 8128 LangEls" << endl;
 	#endif
 	stackTop = freshEl;
 	stackTop->type = 0;
@@ -3898,7 +3897,7 @@ int Parser::parseLangEl( int type, const Token *token )
 			block = newBlock;
 			freshEl = newBlock->data;
 			#ifdef KELBT_LOG_ACTIONS
-			wcerr << L"allocating 8128 LangEls" << endl;
+			err() << L"allocating 8128 LangEls" << endl;
 			#endif
 			freshPos = 0;
 		}
@@ -3943,7 +3942,7 @@ again:
 
 	if ( *action & 0x1 ) {
 		#ifdef KELBT_LOG_ACTIONS
-		wcerr << L"shifted: " << Parser_lelNames[lel->type];
+		err() << L"shifted: " << Parser_lelNames[lel->type];
 		#endif
 		input = input->next;
 		lel->state = curs;
@@ -3956,11 +3955,11 @@ again:
 			lel->retry += 1;
 			numRetry += 1;
 			#ifdef KELBT_LOG_ACTIONS
-			wcerr << L" retry: " << stackTop;
+			err() << L" retry: " << stackTop;
 			#endif
 		}
 		#ifdef KELBT_LOG_ACTIONS
-		wcerr << endl;
+		err() << endl;
 		#endif
 	}
 
@@ -3968,7 +3967,7 @@ again:
 		struct Parser_LangEl *commitHead = stackTop, *lel;
 		int sp = 0, doExec = 0;
 		#ifdef KELBT_LOG_ACTIONS
-		wcerr << L"commit encountered, executing final actions" << endl;
+		err() << L"commit encountered, executing final actions" << endl;
 		#endif
 		if ( Parser_commitLen[pos] < 0 )
 			commitHead = commitHead->next;
@@ -4184,7 +4183,7 @@ Parser_Lel_inline_list *__ref5 = (Parser_Lel_inline_list*)&rhs[3]->user.inline_l
 			error((__ref1)->loc) << L"action \"" << (__ref2)->data << "\" already defined" << endl;
 		}
 		else {
-			//wcerr << L"NEW ACTION " << $2->data << L" " << $4->inlineList << endl;
+			//err() << L"NEW ACTION " << $2->data << L" " << $4->inlineList << endl;
 			/* Add the action to the list of actions. */
 			Action *newAction = new Action( (__ref3)->loc, (__ref4)->data, 
 					(__ref5)->inlineList, pd->nextCondId++ );
@@ -5557,7 +5556,7 @@ Parser_Lel_priority_aug *__ref7 = (Parser_Lel_priority_aug*)&redLel->user.priori
 
 		// Convert the priority number to a long. Check for overflow.
 		errno = 0;
-		//wcerr << L"PRIOR AUG: " << $1->token.data << endl;
+		//err() << L"PRIOR AUG: " << $1->token.data << endl;
 		long aug = wcstol( (__ref0)->token.data, 0, 10 );
 		if ( errno == ERANGE && aug == LONG_MAX ) {
 			/* Priority number too large. Recover by setting the priority to 0. */
@@ -6603,7 +6602,7 @@ commit_base:
 			block = newBlock;
 			freshEl = newBlock->data;
 			#ifdef KELBT_LOG_ACTIONS
-			wcerr << L"allocating 8128 LangEls" << endl;
+			err() << L"allocating 8128 LangEls" << endl;
 			#endif
 			freshPos = 0;
 		}
@@ -6733,7 +6732,7 @@ Token *__ref1 = (Token*)&rhs[0]->user.token;
 } break;
 }
 		#ifdef KELBT_LOG_ACTIONS
-		wcerr << L"reduced: "
+		err() << L"reduced: "
 				<< Parser_prodNames[reduction]
 				<< L" rhsLen: " << rhsLen;
 		#endif
@@ -6743,12 +6742,12 @@ Token *__ref1 = (Token*)&rhs[0]->user.token;
 			redLel->retry += 0x10000;
 			numRetry += 1;
 			#ifdef KELBT_LOG_ACTIONS
-			wcerr << L" retry: " << redLel;
+			err() << L" retry: " << redLel;
 			#endif
 		}
 
 		#ifdef KELBT_LOG_ACTIONS
-		wcerr << endl;
+		err() << endl;
 		#endif
 
 		if ( rhsLen == 0 ) {
@@ -6765,7 +6764,7 @@ Token *__ref1 = (Token*)&rhs[0]->user.token;
 
 		if ( induceReject ) {
 			#ifdef KELBT_LOG_ACTIONS
-			wcerr << L"error induced during reduction of " <<
+			err() << L"error induced during reduction of " <<
 					Parser_lelNames[redLel->type] << endl;
 			#endif
 			redLel->state = curs;
@@ -6786,7 +6785,7 @@ Token *__ref1 = (Token*)&rhs[0]->user.token;
 
 parseError:
 	#ifdef KELBT_LOG_BACKTRACK
-	wcerr << L"hit error" << endl;
+	err() << L"hit error" << endl;
 	#endif
 	if ( numRetry > 0 ) {
 		struct Parser_LangEl *redLel;
@@ -6800,7 +6799,7 @@ parseError:
 			redLel = stackTop;
 			if ( stackTop->type < 226 ) {
 				#ifdef KELBT_LOG_BACKTRACK
-				wcerr << L"backing up over terminal: " <<
+				err() << L"backing up over terminal: " <<
 						Parser_lelNames[stackTop->type] << endl;
 				#endif
 				stackTop = stackTop->next;
@@ -6809,7 +6808,7 @@ parseError:
 			}
 			else {
 				#ifdef KELBT_LOG_BACKTRACK
-				wcerr << L"backing up over non-terminal: " <<
+				err() << L"backing up over non-terminal: " <<
 						Parser_lelNames[stackTop->type] << endl;
 				#endif
 				stackTop = stackTop->next;
@@ -6844,7 +6843,7 @@ have_undo_element:
 			if ( redLel->retry == 0 ) {
 				if ( input != 0 && input->causeReduce == 0 ) {
 					#ifdef KELBT_LOG_BACKTRACK
-					wcerr << L"pushing back: " << Parser_lelNames[input->type] << endl;
+					err() << L"pushing back: " << Parser_lelNames[input->type] << endl;
 					#endif
 					input->next = queue;
 					queue = input;
@@ -6853,11 +6852,11 @@ have_undo_element:
 			}
 			else {
 				#ifdef KELBT_LOG_BACKTRACK
-				wcerr << L"found retry targ: " << redLel << endl;
+				err() << L"found retry targ: " << redLel << endl;
 				#endif
 				numRetry -= 1;
 				#ifdef KELBT_LOG_BACKTRACK
-				wcerr << L"found retry: " << redLel << endl;
+				err() << L"found retry: " << redLel << endl;
 				#endif
 				if ( redLel->retry & 0x0000ffff )
 					curs = input->state;
@@ -6906,17 +6905,17 @@ wostream &Parser::parse_error( int tokId, Token &token )
 	/* Maintain the error count. */
 	gblErrorCount += 1;
 
-	wcerr << token.loc << L": ";
-	wcerr << L"at token ";
+	err() << token.loc << L": ";
+	err() << L"at token ";
 	if ( tokId < 128 )
-		wcerr << L"\"" << Parser_lelNames[tokId] << "\"";
+		err() << L"\"" << Parser_lelNames[tokId] << "\"";
 	else 
-		wcerr << Parser_lelNames[tokId];
+		err() << Parser_lelNames[tokId];
 	if ( token.data != 0 )
-		wcerr << L" with data \"" << token.data << "\"";
-	wcerr << L": ";
+		err() << L" with data \"" << token.data << "\"";
+	err() << L": ";
 	
-	return wcerr;
+	return err();
 }
 
 int Parser::token( InputLoc &loc, int tokId, wchar_t *tokstart, int toklen )

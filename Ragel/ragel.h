@@ -85,12 +85,14 @@ enum ErrorFormat {
 
 extern ErrorFormat errorFormat;
 extern int gblErrorCount;
+extern std::wostream *pErrorStream;
 extern wchar_t mainMachine[];
 
 InputLoc makeInputLoc( const wchar_t *fileName, int line = 0, int col = 0 );
 std::wostream &operator<<( std::wostream &out, const InputLoc &loc );
 
 /* Error reporting. */
+std::wostream &err();
 std::wostream &error();
 std::wostream &error( const InputLoc &loc ); 
 std::wostream &warning( const InputLoc &loc ); 

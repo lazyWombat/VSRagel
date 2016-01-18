@@ -29,7 +29,6 @@ using std::wostream;
 using std::ios;
 using std::cin;
 using std::wcout;
-using std::wcerr;
 using std::endl;
 
 /* Override this so that write statement processing is ignored */

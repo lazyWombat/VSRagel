@@ -30,7 +30,6 @@
 using std::wostream;
 using std::wostringstream;
 using std::wstring;
-using std::wcerr;
 using std::endl;
 
 

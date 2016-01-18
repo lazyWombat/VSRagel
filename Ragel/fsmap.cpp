@@ -21,7 +21,6 @@
 
 #include "fsmgraph.h"
 #include <iostream>
-using std::wcerr;
 using std::endl;
 
 CondData *condData = 0;
@@ -849,11 +848,11 @@ CondSpace *FsmAp::addCondSpace( const CondSet &condSet )
 		condData->condSpaceMap.insert( condSpace );
 
 		#ifdef LOG_CONDS
-		wcerr << L"adding new condition space" << endl;
-		wcerr << L"  condition set: ";
+		err() << L"adding new condition space" << endl;
+		err() << L"  condition set: ";
 		logCondSpace( condSpace );
-		wcerr << endl;
-		wcerr << L"  baseKey: " << baseKey.getVal() << endl;
+		err() << endl;
+		err() << L"  baseKey: " << baseKey.getVal() << endl;
 		#endif
 	}
 	return condSpace;

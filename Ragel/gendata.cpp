@@ -79,7 +79,6 @@ wstring itoa( int i )
 }
 
 using std::wcout;
-using std::wcerr;
 using std::endl;
 
 /* Invoked by the parser when a ragel definition is opened. */
@@ -238,7 +237,7 @@ CodeGenData *goMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmNam
 		codeGen = new GoIpGotoCodeGen(out);
 		break;
 	default:
-		wcerr << L"Invalid output style, only -T0, -T1, -F0, -F1, -G0, -G1 and -G2 are supported for Go.\n";
+		err() << L"Invalid output style, only -T0, -T1, -F0, -F1, -G0, -G1 and -G2 are supported for Go.\n";
 		exit(1);
 	}
 
@@ -269,7 +268,7 @@ CodeGenData *rubyMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmN
 			if ( rubyImpl == Rubinius ) {
 				codeGen = new RbxGotoCodeGen(out);
 			} else {
-				wcerr << L"Goto style is still _very_ experimental " 
+				err() << L"Goto style is still _very_ experimental " 
 					L"and only supported using Rubinius.\n"
 					L"You may want to enable the --rbx flag "
 					L" to give it a try.\n";
@@ -350,7 +349,7 @@ CodeGenData *ocamlMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsm
 		codeGen = new OCamlFGotoCodeGen(out);
 		break;
 	default:
-		wcerr << L"I only support the -T0 -T1 -F0 -F1 -G0 and -G1 output styles for OCaml.\n";
+		err() << L"I only support the -T0 -T1 -F0 -F1 -G0 and -G1 output styles for OCaml.\n";
 		exit(1);
 	}
 
@@ -1144,16 +1143,16 @@ bool CodeGenData::writeStatement( InputLoc &loc, int nargs, wchar_t **args )
 
 wostream &CodeGenData::source_warning( const InputLoc &loc )
 {
-	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
-	return wcerr;
+	err() << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return err();
 }
 
 wostream &CodeGenData::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
-	return wcerr;
+	err() << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return err();
 }
 
 

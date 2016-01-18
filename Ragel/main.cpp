@@ -62,7 +62,6 @@ using std::wifstream;
 using std::ofstream;
 using std::wcin;
 using std::wcout;
-using std::wcerr;
 using std::endl;
 using std::ios;
 using std::streamsize;
@@ -188,27 +187,35 @@ wostream &operator<<( wostream &out, const InputLoc &loc )
 
 /* Total error count. */
 int gblErrorCount = 0;
+wostream *pErrorStream = NULL;
+
+wostream &err()
+{
+	if (pErrorStream != NULL)
+		return *pErrorStream;
+	return std::wcerr;
+}
 
 /* Print the opening to a warning in the input, then return the error wostream. */
 wostream &warning( const InputLoc &loc )
 {
-	wcerr << loc << L": warning: ";
-	return wcerr;
+	err() << loc << L": warning: ";
+	return err();
 }
 
 /* Print the opening to a program error, then return the error stream. */
 wostream &error()
 {
 	gblErrorCount += 1;
-	wcerr << PROGNAME L": ";
-	return wcerr;
+	err() << PROGNAME L": ";
+	return err();
 }
 
 wostream &error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
-	wcerr << loc << L": ";
-	return wcerr;
+	err() << loc << L": ";
+	return err();
 }
 
 void escapeLineDirectivePath( std::wostream &out, wchar_t *path )
@@ -572,6 +579,7 @@ int wmain( int argc, const wchar_t **argv )
 	
 	_setmode(_fileno(stdin), _O_U8TEXT);
 	_setmode(_fileno(stdout), _O_U8TEXT);
+	_setmode(_fileno(stderr), _O_U8TEXT);
 
 	processArgs( argc, argv, id );
 

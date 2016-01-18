@@ -925,8 +925,8 @@ void ParseData::initKeyOps( )
 void ParseData::printNameInst( NameInst *nameInst, int level )
 {
 	for ( int i = 0; i < level; i++ )
-		wcerr << L"  ";
-	wcerr << (nameInst->name != 0 ? nameInst->name : L"<ANON>") << 
+		err() << L"  ";
+	err() << (nameInst->name != 0 ? nameInst->name : L"<ANON>") << 
 			L"  id: " << nameInst->id << 
 			L"  refs: " << nameInst->numRefs <<
 			L"  uses: " << nameInst->numUses << endl;
@@ -1124,12 +1124,12 @@ void ParseData::printNameTree()
 	for ( NameVect::Iter name = rootName->childVect; name.lte(); name++ )
 		printNameInst( *name, 0 );
 	
-	wcerr << L"name index:" << endl;
+	err() << L"name index:" << endl;
 	/* Show that the name index is correct. */
 	for ( int ni = 0; ni < nextNameId; ni++ ) {
-		wcerr << ni << L": ";
+		err() << ni << L": ";
 		const wchar_t *name = nameIndex[ni]->name;
-		wcerr << ( name != 0 ? name : L"<ANON>" ) << endl;
+		err() << ( name != 0 ? name : L"<ANON>" ) << endl;
 	}
 }
 
@@ -1441,9 +1441,9 @@ void ParseData::generateReduced( InputData &inputData )
 	backendGen.makeBackend();
 
 	if ( printStatistics ) {
-		wcerr << L"fsm name  : " << sectionName << endl;
-		wcerr << L"num states: " << sectionGraph->stateList.length() << endl;
-		wcerr << endl;
+		err() << L"fsm name  : " << sectionName << endl;
+		err() << L"num states: " << sectionGraph->stateList.length() << endl;
+		err() << endl;
 	}
 }
 
@@ -1458,9 +1458,9 @@ void ParseData::generateXML( wostream &out )
 	codeGen.writeXML();
 
 	if ( printStatistics ) {
-		wcerr << L"fsm name  : " << sectionName << endl;
-		wcerr << L"num states: " << sectionGraph->stateList.length() << endl;
-		wcerr << endl;
+		err() << L"fsm name  : " << sectionName << endl;
+		err() << L"num states: " << sectionGraph->stateList.length() << endl;
+		err() << endl;
 	}
 }
 

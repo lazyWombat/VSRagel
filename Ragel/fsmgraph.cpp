@@ -26,7 +26,6 @@
 #include "mergesort.h"
 #include "parsedata.h"
 
-using std::wcerr;
 using std::endl;
 
 /* Make a new state. The new state will be put on the graph's
@@ -894,34 +893,34 @@ void FsmAp::isolateStartState( )
 void logCondSpace( CondSpace *condSpace )
 {
 	if ( condSpace == 0 )
-		wcerr << L"<empty>";
+		err() << L"<empty>";
 	else {
 		for ( CondSet::Iter csi = condSpace->condSet.last(); csi.gtb(); csi-- ) {
 			if ( ! csi.last() )
-				wcerr << L',';
-			(*csi)->actionName( wcerr );
+				err() << L',';
+			(*csi)->actionName( err );
 		}
 	}
 }
 
 void logNewExpansion( Expansion *exp )
 {
-	wcerr << L"created expansion:" << endl;
-	wcerr << L"  range: " << exp->lowKey.getVal() << L" .. " << 
+	err() << L"created expansion:" << endl;
+	err() << L"  range: " << exp->lowKey.getVal() << L" .. " << 
 			exp->highKey.getVal() << endl;
 
-	wcerr << L"  fromCondSpace: ";
+	err() << L"  fromCondSpace: ";
 	logCondSpace( exp->fromCondSpace );
-	wcerr << endl;
-	wcerr << L"  fromVals: " << exp->fromVals << endl;
+	err() << endl;
+	err() << L"  fromVals: " << exp->fromVals << endl;
 
-	wcerr << L"  toCondSpace: ";
+	err() << L"  toCondSpace: ";
 	logCondSpace( exp->toCondSpace );
-	wcerr << endl;
-	wcerr << L"  toValsList: ";
+	err() << endl;
+	err() << L"  toValsList: ";
 	for ( LongVect::Iter to = exp->toValsList; to.lte(); to++ )
-		wcerr << L" " << *to;
-	wcerr << endl;
+		err() << L" " << *to;
+	err() << endl;
 }
 #endif
 
@@ -1014,7 +1013,7 @@ void FsmAp::findCondExpansions( ExpansionList &expansionList,
 
 			if ( srcOnlyCS.length() > 0 ) {
 				#ifdef LOG_CONDS
-				wcerr << L"there are " << srcOnlyCS.length() << L" item(s) that are "
+				err() << L"there are " << srcOnlyCS.length() << L" item(s) that are "
 							L"only in the srcCS" << endl;
 				#endif
 

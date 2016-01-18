@@ -30,7 +30,6 @@
 #include <codecvt>
 
 using std::wcout;
-using std::wcerr;
 using std::endl;
 using std::ios;
 using std::locale;

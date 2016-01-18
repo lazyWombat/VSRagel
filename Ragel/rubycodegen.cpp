@@ -41,7 +41,6 @@
 using std::wostream;
 using std::wostringstream;
 using std::wstring;
-using std::wcerr;
 using std::endl;
 using std::wistream;
 using std::wifstream;
@@ -49,7 +48,6 @@ using std::wostream;
 using std::ios;
 using std::cin;
 using std::wcout;
-using std::wcerr;
 using std::endl;
 
 /* Target ruby impl */
@@ -675,16 +673,16 @@ int RubyCodeGen::TRANS_ACTION( RedTransAp *trans )
 
 wostream &RubyCodeGen::source_warning( const InputLoc &loc )
 {
-	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
-	return wcerr;
+	err() << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return err();
 }
 
 wostream &RubyCodeGen::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
-	return wcerr;
+	err() << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return err();
 }
 
 void RubyCodeGen::finishRagelDef()

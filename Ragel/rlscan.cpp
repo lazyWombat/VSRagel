@@ -37,7 +37,6 @@ using std::wifstream;
 using std::wistream;
 using std::wostream;
 using std::wcout;
-using std::wcerr;
 using std::endl;
 using std::locale;
 using std::codecvt_utf8;
@@ -263,12 +262,12 @@ void Scanner::directToParser( Parser *toParser, const wchar_t *tokFileName, int 
 	InputLoc loc;
 
 	#ifdef LOG_TOKENS
-	wcerr << L"scanner:" << tokLine << L":" << tokColumn << 
+	err() << L"scanner:" << tokLine << L":" << tokColumn << 
 			L": sending token to the parser " << Parser_lelNames[type];
-	wcerr << L" " << toklen;
+	err() << L" " << toklen;
 	if ( tokdata != 0 )
-		wcerr << L" " << tokdata;
-	wcerr << endl;
+		err() << L" " << tokdata;
+	err() << endl;
 	#endif
 
 	loc.fileName = tokFileName;
@@ -364,8 +363,8 @@ wostream &Scanner::scan_error()
 {
 	/* Maintain the error count. */
 	gblErrorCount += 1;
-	wcerr << makeInputLoc( fileName, line, column ) << L": ";
-	return wcerr;
+	err() << makeInputLoc( fileName, line, column ) << L": ";
+	return err();
 }
 
 /* An approximate check for duplicate includes. Due to aliasing of files it's
@@ -387,7 +386,7 @@ void Scanner::updateCol()
 	wchar_t *from = lastnl;
 	if ( from == 0 )
 		from = ts;
-	//wcerr << L"adding " << te - from << L" to column" << endl;
+	//err() << L"adding " << te - from << L" to column" << endl;
 	column += te - from;
 	lastnl = 0;
 }

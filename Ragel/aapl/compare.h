@@ -36,7 +36,7 @@ namespace Aapl {
  * Compare classes are used by data structures that need to know the relative
  * ordering of elemets. To become a compare class, a class must imlement a
  * routine long compare(const T &key1, const T &key2) that behaves just like
- * strcmp. 
+ * wcscmp. 
  *
  * Compare classes are passed to the template data structure as a template
  * parameter and are inherited. In most cases the compare routine will base
@@ -52,15 +52,15 @@ namespace Aapl {
 /**
  * \brief Compare two null terminated character sequences.
  *
- * This comparision class is a wrapper for strcmp.
+ * This comparision class is a wrapper for wcscmp.
  */
 struct CmpStr
 {
 	/**
-	 * \brief Compare two null terminated string types.
+	 * \brief Compare two null terminated wstring types.
 	 */
-	static inline long compare(const char *k1, const char *k2)
-		{ return strcmp(k1, k2); }
+	static inline long compare(const wchar_t *k1, const wchar_t *k2)
+		{ return wcscmp(k1, k2); }
 };
 
 /**

@@ -73,7 +73,7 @@ template <class T, class Compare> void BubbleSort<T,Compare>::
 		for ( long i = 0; i < len-pass; i++ ) {
 			/* Do we swap pos with the next one? */
 			if ( this->compare( data[i], data[i+1] ) > 0 ) {
-				char tmp[sizeof(T)];
+				wchar_t tmp[sizeof(T)];
 
 				/* Swap the two items. */
 				memcpy( tmp, data+i, sizeof(T) );

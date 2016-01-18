@@ -33,81 +33,81 @@
 class RubyCodeGen : public CodeGenData
 {
 public:
-   RubyCodeGen( ostream &out ) : CodeGenData(out) { }
+   RubyCodeGen( wostream &out ) : CodeGenData(out) { }
    virtual ~RubyCodeGen() {}
 protected:
-	ostream &START_ARRAY_LINE();
-	ostream &ARRAY_ITEM( string item, int count, bool last );
-	ostream &END_ARRAY_LINE();
+	wostream &START_ARRAY_LINE();
+	wostream &ARRAY_ITEM( wstring item, int count, bool last );
+	wostream &END_ARRAY_LINE();
   
 
-	string FSM_NAME();
+	wstring FSM_NAME();
 
-        string START_STATE_ID();
-	string ERROR_STATE();
-	string FIRST_FINAL_STATE();
-        void INLINE_LIST(ostream &ret, GenInlineList *inlineList, int targState, bool inFinish);
-        string ACCESS();
+        wstring START_STATE_ID();
+	wstring ERROR_STATE();
+	wstring FIRST_FINAL_STATE();
+        void INLINE_LIST(wostream &ret, GenInlineList *inlineList, int targState, bool inFinish);
+        wstring ACCESS();
 
-        void ACTION( ostream &ret, GenAction *action, int targState, bool inFinish );
-	string GET_KEY();
-        string GET_WIDE_KEY();
-	string GET_WIDE_KEY( RedStateAp *state );
-	string KEY( Key key );
-	string TABS( int level );
-	string INT( int i );
-	void CONDITION( ostream &ret, GenAction *condition );
-	string ALPH_TYPE();
-	string WIDE_ALPH_TYPE();
-  	string ARRAY_TYPE( unsigned long maxVal );
-	ostream &ACTIONS_ARRAY();
+        void ACTION( wostream &ret, GenAction *action, int targState, bool inFinish );
+	wstring GET_KEY();
+        wstring GET_WIDE_KEY();
+	wstring GET_WIDE_KEY( RedStateAp *state );
+	wstring KEY( Key key );
+	wstring TABS( int level );
+	wstring INT( int i );
+	void CONDITION( wostream &ret, GenAction *condition );
+	wstring ALPH_TYPE();
+	wstring WIDE_ALPH_TYPE();
+  	wstring ARRAY_TYPE( unsigned long maxVal );
+	wostream &ACTIONS_ARRAY();
 	void STATE_IDS();
 
 
-	string DATA_PREFIX();
-	string PM() { return "_" + DATA_PREFIX() + "partition_map"; }
-	string C() { return "_" + DATA_PREFIX() + "cond_spaces"; }
-	string CK() { return "_" + DATA_PREFIX() + "cond_keys"; }
-	string K() { return "_" + DATA_PREFIX() + "trans_keys"; }
-	string I() { return "_" + DATA_PREFIX() + "indicies"; }
-	string CO() { return "_" + DATA_PREFIX() + "cond_offsets"; }
-	string KO() { return "_" + DATA_PREFIX() + "key_offsets"; }
-	string IO() { return "_" + DATA_PREFIX() + "index_offsets"; }
-	string CL() { return "_" + DATA_PREFIX() + "cond_lengths"; }
-	string SL() { return "_" + DATA_PREFIX() + "single_lengths"; }
-	string RL() { return "_" + DATA_PREFIX() + "range_lengths"; }
-	string A() { return "_" + DATA_PREFIX() + "actions"; }
-	string TA() { return "_" + DATA_PREFIX() + "trans_actions"; }
-	string TT() { return "_" + DATA_PREFIX() + "trans_targs"; }
-	string TSA() { return "_" + DATA_PREFIX() + "to_state_actions"; }
-	string FSA() { return "_" + DATA_PREFIX() + "from_state_actions"; }
-	string EA() { return "_" + DATA_PREFIX() + "eof_actions"; }
-	string ET() { return "_" + DATA_PREFIX() + "eof_trans"; }
-	string SP() { return "_" + DATA_PREFIX() + "key_spans"; }
-	string CSP() { return "_" + DATA_PREFIX() + "cond_key_spans"; }
-	string START() { return DATA_PREFIX() + "start"; }
-	string ERROR() { return DATA_PREFIX() + "error"; }
-	string FIRST_FINAL() { return DATA_PREFIX() + "first_final"; }
-	string CTXDATA() { return DATA_PREFIX() + "ctxdata"; }
+	wstring DATA_PREFIX();
+	wstring PM() { return L"_" + DATA_PREFIX() + L"partition_map"; }
+	wstring C() { return L"_" + DATA_PREFIX() + L"cond_spaces"; }
+	wstring CK() { return L"_" + DATA_PREFIX() + L"cond_keys"; }
+	wstring K() { return L"_" + DATA_PREFIX() + L"trans_keys"; }
+	wstring I() { return L"_" + DATA_PREFIX() + L"indicies"; }
+	wstring CO() { return L"_" + DATA_PREFIX() + L"cond_offsets"; }
+	wstring KO() { return L"_" + DATA_PREFIX() + L"key_offsets"; }
+	wstring IO() { return L"_" + DATA_PREFIX() + L"index_offsets"; }
+	wstring CL() { return L"_" + DATA_PREFIX() + L"cond_lengths"; }
+	wstring SL() { return L"_" + DATA_PREFIX() + L"single_lengths"; }
+	wstring RL() { return L"_" + DATA_PREFIX() + L"range_lengths"; }
+	wstring A() { return L"_" + DATA_PREFIX() + L"actions"; }
+	wstring TA() { return L"_" + DATA_PREFIX() + L"trans_actions"; }
+	wstring TT() { return L"_" + DATA_PREFIX() + L"trans_targs"; }
+	wstring TSA() { return L"_" + DATA_PREFIX() + L"to_state_actions"; }
+	wstring FSA() { return L"_" + DATA_PREFIX() + L"from_state_actions"; }
+	wstring EA() { return L"_" + DATA_PREFIX() + L"eof_actions"; }
+	wstring ET() { return L"_" + DATA_PREFIX() + L"eof_trans"; }
+	wstring SP() { return L"_" + DATA_PREFIX() + L"key_spans"; }
+	wstring CSP() { return L"_" + DATA_PREFIX() + L"cond_key_spans"; }
+	wstring START() { return DATA_PREFIX() + L"start"; }
+	wstring ERROR() { return DATA_PREFIX() + L"error"; }
+	wstring FIRST_FINAL() { return DATA_PREFIX() + L"first_final"; }
+	wstring CTXDATA() { return DATA_PREFIX() + L"ctxdata"; }
 
 public:
-	string NULL_ITEM();
-	ostream &OPEN_ARRAY( string type, string name );
-	ostream &CLOSE_ARRAY();
-	ostream &STATIC_VAR( string type, string name );
-	string ARR_OFF( string ptr, string offset );
+	wstring NULL_ITEM();
+	wostream &OPEN_ARRAY( wstring type, wstring name );
+	wostream &CLOSE_ARRAY();
+	wostream &STATIC_VAR( wstring type, wstring name );
+	wstring ARR_OFF( wstring ptr, wstring offset );
 
-	string P();
-	string PE();
-	string vEOF();
+	wstring P();
+	wstring PE();
+	wstring vEOF();
 
-	string vCS();
-	string TOP();
-	string STACK();
-	string ACT();
-	string TOKSTART();
-	string TOKEND();
-	string DATA();
+	wstring vCS();
+	wstring TOP();
+	wstring STACK();
+	wstring ACT();
+	wstring TOKSTART();
+	wstring TOKEND();
+	wstring DATA();
 
 
 	void finishRagelDef();
@@ -123,16 +123,16 @@ protected:
 	/* Determine if we should use indicies. */
 	virtual void calcIndexSize();
 
-	virtual void BREAK( ostream &ret, int targState ) = 0;
-	virtual void GOTO( ostream &ret, int gotoDest, bool inFinish ) = 0;
-	virtual void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish ) = 0;
-	virtual void CALL( ostream &ret, int callDest, int targState, bool inFinish ) = 0;
-	virtual void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish ) = 0;
-	virtual void RET( ostream &ret, bool inFinish ) = 0;
+	virtual void BREAK( wostream &ret, int targState ) = 0;
+	virtual void GOTO( wostream &ret, int gotoDest, bool inFinish ) = 0;
+	virtual void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish ) = 0;
+	virtual void CALL( wostream &ret, int callDest, int targState, bool inFinish ) = 0;
+	virtual void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish ) = 0;
+	virtual void RET( wostream &ret, bool inFinish ) = 0;
 
 
-	virtual void NEXT( ostream &ret, int nextDest, bool inFinish ) = 0;
-	virtual void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish ) = 0;
+	virtual void NEXT( wostream &ret, int nextDest, bool inFinish ) = 0;
+	virtual void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish ) = 0;
 
 	virtual int TO_STATE_ACTION( RedStateAp *state ) = 0;
 	virtual int FROM_STATE_ACTION( RedStateAp *state ) = 0;
@@ -140,19 +140,19 @@ protected:
 
 	virtual int TRANS_ACTION( RedTransAp *trans );
 
-        void EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish );
-	void LM_SWITCH( ostream &ret, GenInlineItem *item, int targState, int inFinish );
-	void SET_ACT( ostream &ret, GenInlineItem *item );
-	void INIT_TOKSTART( ostream &ret, GenInlineItem *item );
-	void INIT_ACT( ostream &ret, GenInlineItem *item );
-	void SET_TOKSTART( ostream &ret, GenInlineItem *item );
-	void SET_TOKEND( ostream &ret, GenInlineItem *item );
-	void GET_TOKEND( ostream &ret, GenInlineItem *item );
-	void SUB_ACTION( ostream &ret, GenInlineItem *item, int targState, bool inFinish );
+        void EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish );
+	void LM_SWITCH( wostream &ret, GenInlineItem *item, int targState, int inFinish );
+	void SET_ACT( wostream &ret, GenInlineItem *item );
+	void INIT_TOKSTART( wostream &ret, GenInlineItem *item );
+	void INIT_ACT( wostream &ret, GenInlineItem *item );
+	void SET_TOKSTART( wostream &ret, GenInlineItem *item );
+	void SET_TOKEND( wostream &ret, GenInlineItem *item );
+	void GET_TOKEND( wostream &ret, GenInlineItem *item );
+	void SUB_ACTION( wostream &ret, GenInlineItem *item, int targState, bool inFinish );
 
 protected:
-	ostream &source_warning(const InputLoc &loc);
-	ostream &source_error(const InputLoc &loc);
+	wostream &source_warning(const InputLoc &loc);
+	wostream &source_error(const InputLoc &loc);
 
 
         /* fields */
@@ -160,14 +160,14 @@ protected:
 	bool againLabelUsed;
 	bool useIndicies;
 
-	void genLineDirective( ostream &out );
+	void genLineDirective( wostream &out );
 };
 
 /*
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */
 

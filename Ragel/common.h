@@ -29,7 +29,7 @@
 /* Location in an input file. */
 struct InputLoc
 {
-	const char *fileName;
+	const wchar_t *fileName;
 	long line;
 	long col;
 };
@@ -73,17 +73,17 @@ public:
 	 * key implementation can hold. */
 	Size availableSpace() const;
 
-	bool isUpper() const { return ( 'A' <= key && key <= 'Z' ); }
-	bool isLower() const { return ( 'a' <= key && key <= 'z' ); }
+	bool isUpper() const { return ( L'A' <= key && key <= L'Z' ); }
+	bool isLower() const { return ( L'a' <= key && key <= L'z' ); }
 	bool isPrintable() const
 	{
 	    return ( 7 <= key && key <= 13 ) || ( 32 <= key && key < 127 );
 	}
 
 	Key toUpper() const
-		{ return Key( 'A' + ( key - 'a' ) ); }
+		{ return Key( L'A' + ( key - L'a' ) ); }
 	Key toLower() const
-		{ return Key( 'a' + ( key - 'A' ) ); }
+		{ return Key( L'a' + ( key - L'A' ) ); }
 
 	void operator+=( const Key other )
 	{
@@ -110,9 +110,9 @@ public:
 
 struct HostType
 {
-	const char *data1;
-	const char *data2;
-	const char *internalName;
+	const wchar_t *data1;
+	const wchar_t *data2;
+	const wchar_t *internalName;
 	bool isSigned;
 	bool isOrd;
 	bool isChar;
@@ -147,9 +147,9 @@ extern HostLang hostLangRuby;
 extern HostLang hostLangCSharp;
 extern HostLang hostLangOCaml;
 
-HostType *findAlphType( const char *s1 );
-HostType *findAlphType( const char *s1, const char *s2 );
-HostType *findAlphTypeInternal( const char *s1 );
+HostType *findAlphType( const wchar_t *s1 );
+HostType *findAlphType( const wchar_t *s1, const wchar_t *s2 );
+HostType *findAlphTypeInternal( const wchar_t *s1 );
 
 /* An abstraction of the key operators that manages key operations such as
  * comparison and increment according the signedness of the key. */
@@ -305,23 +305,23 @@ inline Key operator/(const Key key1, const Key key2)
 
 /* Filter on the output stream that keeps track of the number of lines
  * output. */
-class output_filter : public std::filebuf
+class output_filter : public std::wfilebuf
 {
 public:
-	output_filter( const char *fileName ) : fileName(fileName), line(1) { }
+	output_filter( const wchar_t *fileName ) : fileName(fileName), line(1) { }
 
 	virtual int sync();
-	virtual std::streamsize xsputn(const char* s, std::streamsize n);
+	virtual std::streamsize xsputn(const wchar_t* s, std::streamsize n);
 
-	const char *fileName;
+	const wchar_t *fileName;
 	int line;
 };
 
-class cfilebuf : public std::streambuf
+class cfilebuf : public std::wstreambuf
 {
 public:
-	cfilebuf( char *fileName, FILE* file ) : fileName(fileName), file(file) { }
-	char *fileName;
+	cfilebuf( wchar_t *fileName, FILE* file ) : fileName(fileName), file(file) { }
+	wchar_t *fileName;
 	FILE *file;
 
 	int sync()
@@ -337,18 +337,18 @@ public:
 		return 0;
 	}
 
-	std::streamsize xsputn( const char* s, std::streamsize n )
+	std::streamsize xsputn( const wchar_t* s, std::streamsize n )
 	{
 		std::streamsize written = fwrite( s, 1, n, file );
 		return written;
 	}
 };
 
-class costream : public std::ostream
+class costream : public std::wostream
 {
 public:
 	costream( cfilebuf *b ) : 
-		std::ostream(b), b(b) {}
+		std::wostream(b), b(b) {}
 	
 	~costream()
 		{ delete b; }
@@ -360,15 +360,15 @@ public:
 };
 
 
-const char *findFileExtension( const char *stemFile );
-const char *fileNameFromStem( const char *stemFile, const char *suffix );
+const wchar_t *findFileExtension( const wchar_t *stemFile );
+const wchar_t *fileNameFromStem( const wchar_t *stemFile, const wchar_t *suffix );
 
 struct Export
 {
-	Export( const char *name, Key key )
+	Export( const wchar_t *name, Key key )
 		: name(name), key(key) {}
 
-	const char *name;
+	const wchar_t *name;
 	Key key;
 
 	Export *prev, *next;
@@ -378,6 +378,6 @@ typedef DList<Export> ExportList;
 
 struct exit_object { };
 extern exit_object endp;
-void operator<<( std::ostream &out, exit_object & );
+void operator<<( std::wostream &out, exit_object & );
 
 #endif

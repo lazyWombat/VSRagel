@@ -21,7 +21,7 @@
 
 #include "fsmgraph.h"
 #include <iostream>
-using std::cerr;
+using std::wcerr;
 using std::endl;
 
 CondData *condData = 0;
@@ -110,7 +110,7 @@ void PriorTable::setPriors( const PriorTable &other )
  * no other entry points, then sets the priorities of all the transitions out
  * of the start state. If the start state is final, then the outPrior of the
  * start state is also set. The idea is that a machine that accepts the null
- * string can still specify the starting trans prior for when it accepts the
+ * wstring can still specify the starting trans prior for when it accepts the
  * null word. */
 void FsmAp::startFsmPrior( int ordering, PriorDesc *prior )
 {
@@ -173,7 +173,7 @@ void FsmAp::leaveFsmPrior( int ordering, PriorDesc *prior )
  * so it has no other entry points, then adds to the transition functions
  * of all the transitions out of the start state. If the start state is final,
  * then the func is also added to the start state's out func list. The idea is
- * that a machine that accepts the null string can execute a start func when it
+ * that a machine that accepts the null wstring can execute a start func when it
  * matches the null word, which can only be done when leaving the start/final
  * state. */
 void FsmAp::startFsmAction( int ordering, Action *action )
@@ -188,7 +188,7 @@ void FsmAp::startFsmAction( int ordering, Action *action )
 	}
 
 	/* If start state is final then add the action to the out action table.
-	 * This means that when the null string is accepted the start action will
+	 * This means that when the null wstring is accepted the start action will
 	 * not be bypassed. */
 	if ( startState->stateBits & STB_ISFINAL )
 		startState->outActionTable.setAction( ordering, action );
@@ -849,11 +849,11 @@ CondSpace *FsmAp::addCondSpace( const CondSet &condSet )
 		condData->condSpaceMap.insert( condSpace );
 
 		#ifdef LOG_CONDS
-		cerr << "adding new condition space" << endl;
-		cerr << "  condition set: ";
+		wcerr << L"adding new condition space" << endl;
+		wcerr << L"  condition set: ";
 		logCondSpace( condSpace );
-		cerr << endl;
-		cerr << "  baseKey: " << baseKey.getVal() << endl;
+		wcerr << endl;
+		wcerr << L"  baseKey: " << baseKey.getVal() << endl;
 		#endif
 	}
 	return condSpace;

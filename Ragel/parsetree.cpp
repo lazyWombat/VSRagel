@@ -31,46 +31,46 @@
 #include "parsetree.h"
 
 using namespace std;
-ostream &operator<<( ostream &out, const NameRef &nameRef );
-ostream &operator<<( ostream &out, const NameInst &nameInst );
+wostream &operator<<( wostream &out, const NameRef &nameRef );
+wostream &operator<<( wostream &out, const NameInst &nameInst );
 
-/* Convert the literal string which comes in from the scanner into an array of
+/* Convert the literal wstring which comes in from the scanner into an array of
  * characters with escapes and options interpreted. Also null terminates the
- * string. Though this null termination should not be relied on for
- * interpreting literals in the parser because the string may contain \0 */
-char *prepareLitString( const InputLoc &loc, const char *data, long length, 
+ * wstring. Though this null termination should not be relied on for
+ * interpreting literals in the parser because the wstring may contain \0 */
+wchar_t *prepareLitString( const InputLoc &loc, const wchar_t *data, long length, 
 		long &resLen, bool &caseInsensitive )
 {
-	char *resData = new char[length+1];
+	wchar_t *resData = new wchar_t[length+1];
 	caseInsensitive = false;
 
-	const char *src = data + 1;
-	const char *end = data + length - 1;
+	const wchar_t *src = data + 1;
+	const wchar_t *end = data + length - 1;
 
-	while ( *end != '\'' && *end != '\"' ) {
-		if ( *end == 'i' )
+	while ( *end != L'\'L' && *end != '\"' ) {
+		if ( *end == L'i' )
 			caseInsensitive = true;
 		else {
-			error( loc ) << "literal string '" << *end << 
-					"' option not supported" << endl;
+			error( loc ) << L"literal wstring '" << *end << 
+					L"' option not supported" << endl;
 		}
 		end -= 1;
 	}
 
-	char *dest = resData;
+	wchar_t *dest = resData;
 	long len = 0;
 	while ( src != end ) {
-		if ( *src == '\\' ) {
+		if ( *src == L'\\' ) {
 			switch ( src[1] ) {
-			case '0': dest[len++] = '\0'; break;
-			case 'a': dest[len++] = '\a'; break;
-			case 'b': dest[len++] = '\b'; break;
-			case 't': dest[len++] = '\t'; break;
-			case 'n': dest[len++] = '\n'; break;
-			case 'v': dest[len++] = '\v'; break;
-			case 'f': dest[len++] = '\f'; break;
-			case 'r': dest[len++] = '\r'; break;
-			case '\n':  break;
+			case L'0': dest[len++] = L'\0'; break;
+			case L'a': dest[len++] = L'\a'; break;
+			case L'b': dest[len++] = L'\b'; break;
+			case L't': dest[len++] = L'\t'; break;
+			case L'n': dest[len++] = L'\n'; break;
+			case L'v': dest[len++] = L'\v'; break;
+			case L'f': dest[len++] = L'\f'; break;
+			case L'r': dest[len++] = L'\r'; break;
+			case L'\n':  break;
 			default: dest[len++] = src[1]; break;
 			}
 			src += 2;
@@ -163,7 +163,7 @@ InputLoc LongestMatchPart::getLoc()
  */
 
 Action *LongestMatch::newAction( ParseData *pd, const InputLoc &loc, 
-		const char *name, InlineList *inlineList )
+		const wchar_t *name, InlineList *inlineList )
 {
 	Action *action = new Action( loc, name, inlineList, pd->nextCondId++ );
 	action->actionRefs.append( pd->curNameInst );
@@ -181,8 +181,8 @@ void LongestMatch::makeActions( ParseData *pd )
 		InlineList *inlineList = new InlineList;
 		inlineList->append( new InlineItem( lmi->getLoc(), this, lmi, 
 				InlineItem::LmSetActId ) );
-		char *actName = new char[50];
-		sprintf( actName, "store%i", lmi->longestMatchId );
+		wchar_t *actName = new wchar_t[50];
+		swprintf( actName, 50, L"store%i", lmi->longestMatchId );
 		lmi->setActId = newAction( pd, lmi->getLoc(), actName, inlineList );
 	}
 
@@ -194,8 +194,8 @@ void LongestMatch::makeActions( ParseData *pd )
 		InlineList *inlineList = new InlineList;
 		inlineList->append( new InlineItem( lmi->getLoc(), this, lmi, 
 				InlineItem::LmOnLast ) );
-		char *actName = new char[50];
-		sprintf( actName, "last%i", lmi->longestMatchId );
+		wchar_t *actName = new wchar_t[50];
+		swprintf( actName, 50, L"last%i", lmi->longestMatchId );
 		lmi->actOnLast = newAction( pd, lmi->getLoc(), actName, inlineList );
 	}
 
@@ -208,8 +208,8 @@ void LongestMatch::makeActions( ParseData *pd )
 		InlineList *inlineList = new InlineList;
 		inlineList->append( new InlineItem( lmi->getLoc(), this, lmi, 
 				InlineItem::LmOnNext ) );
-		char *actName = new char[50];
-		sprintf( actName, "next%i", lmi->longestMatchId );
+		wchar_t *actName = new wchar_t[50];
+		swprintf( actName, 50, L"next%i", lmi->longestMatchId );
 		lmi->actOnNext = newAction( pd, lmi->getLoc(), actName, inlineList );
 	}
 
@@ -221,20 +221,20 @@ void LongestMatch::makeActions( ParseData *pd )
 		InlineList *inlineList = new InlineList;
 		inlineList->append( new InlineItem( lmi->getLoc(), this, lmi, 
 				InlineItem::LmOnLagBehind ) );
-		char *actName = new char[50];
-		sprintf( actName, "lag%i", lmi->longestMatchId );
+		wchar_t *actName = new wchar_t[50];
+		swprintf( actName, 50, L"lag%i", lmi->longestMatchId );
 		lmi->actLagBehind = newAction( pd, lmi->getLoc(), actName, inlineList );
 	}
 
 	InputLoc loc;
 	loc.line = 1;
 	loc.col = 1;
-	loc.fileName = "NONE";
+	loc.fileName = L"NONE";
 
 	/* Create the error action. */
 	InlineList *il6 = new InlineList;
 	il6->append( new InlineItem( loc, this, 0, InlineItem::LmSwitch ) );
-	lmActSelect = newAction( pd, loc, "switch", il6 );
+	lmActSelect = newAction( pd, loc, L"switch", il6 );
 }
 
 void LongestMatch::findName( ParseData *pd )
@@ -649,8 +649,8 @@ void Join::makeNameTree( ParseData *pd )
 		NameInst *prevNameInst = pd->curNameInst;
 		pd->curNameInst = pd->addNameInst( loc, 0, false );
 
-		/* Join scopes need an implicit "final" target. */
-		pd->curNameInst->final = new NameInst( InputLoc(), pd->curNameInst, "final", 
+		/* Join scopes need an implicit L"final" target. */
+		pd->curNameInst->final = new NameInst( InputLoc(), pd->curNameInst, L"final", 
 				pd->nextNameId++, false );
 
 		/* Recurse into all expressions in the list. */
@@ -675,13 +675,13 @@ void Join::resolveNameRefs( ParseData *pd )
 		NameFrame nameFrame = pd->enterNameScope( true, 1 );
 
 		/* The join scope must contain a start label. */
-		NameSet resolved = pd->resolvePart( pd->localNameScope, "start", true );
+		NameSet resolved = pd->resolvePart( pd->localNameScope, L"start", true );
 		if ( resolved.length() > 0 ) {
 			/* Take the first. */
 			pd->curNameInst->start = resolved[0];
 			if ( resolved.length() > 1 ) {
 				/* Complain about the multiple references. */
-				error(loc) << "join operation has multiple start labels" << endl;
+				error(loc) << L"join operation has multiple start labels" << endl;
 				errorStateLabels( resolved );
 			}
 		}
@@ -693,7 +693,7 @@ void Join::resolveNameRefs( ParseData *pd )
 		}
 		else {
 			/* No start label. */
-			error(loc) << "join operation has no start label" << endl;
+			error(loc) << L"join operation has no start label" << endl;
 		}
 
 		/* Recurse into all expressions in the list. */
@@ -906,7 +906,7 @@ FsmAp *Term::walk( ParseData *pd, bool lastInSeq )
 
 			/* If the right machine's start state is final we need to guard
 			 * against the left machine persisting by moving through the empty
-			 * string. */
+			 * wstring. */
 			if ( rhs->startState->isFinState() ) {
 				rhs->startState->outPriorTable.setPrior( 
 						pd->curPriorOrd++, &priorDescs[1] );
@@ -1327,7 +1327,7 @@ void FactorWithAug::resolveNameRefs( ParseData *pd )
 		EpsilonLink &link = epsilonLinks[ep];
 		NameInst *resolvedName = 0;
 
-		if ( link.target.length() == 1 && strcmp( link.target.data[0], "final" ) == 0 ) {
+		if ( link.target.length() == 1 && wcscmp( link.target.data[0], L"final" ) == 0 ) {
 			/* Epsilon drawn to an implicit final state. An implicit final is
 			 * only available in join operations. */
 			resolvedName = pd->localNameScope->final;
@@ -1341,8 +1341,8 @@ void FactorWithAug::resolveNameRefs( ParseData *pd )
 				resolvedName = resolved[0];
 				if ( resolved.length() > 1 ) {
 					/* Complain about the multiple references. */
-					error(link.loc) << "state reference " << link.target << 
-							" resolves to multiple entry points" << endl;
+					error(link.loc) << L"state reference " << link.target << 
+							L" resolves to multiple entry points" << endl;
 					errorStateLabels( resolved );
 				}
 			}
@@ -1361,7 +1361,7 @@ void FactorWithAug::resolveNameRefs( ParseData *pd )
 		else {
 			/* Complain, no recovery action, the epsilon op will ignore any
 			 * epsilon transitions whose names did not resolve. */
-			error(link.loc) << "could not resolve label " << link.target << endl;
+			error(link.loc) << L"could not resolve label " << link.target << endl;
 		}
 	}
 
@@ -1394,8 +1394,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		/* Evaluate the FactorWithRep. */
 		retFsm = factorWithRep->walk( pd );
 		if ( retFsm->startState->isFinState() ) {
-			warning(loc) << "applying kleene star to a machine that "
-					"accepts zero length word" << endl;
+			warning(loc) << L"applying kleene star to a machine that "
+					L"accepts zero length word" << endl;
 			retFsm->unsetFinState( retFsm->startState );
 		}
 
@@ -1409,8 +1409,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		/* Evaluate the FactorWithRep. */
 		retFsm = factorWithRep->walk( pd );
 		if ( retFsm->startState->isFinState() ) {
-			warning(loc) << "applying kleene star to a machine that "
-					"accepts zero length word" << endl;
+			warning(loc) << L"applying kleene star to a machine that "
+					L"accepts zero length word" << endl;
 		}
 
 		/* Set up the prior descs. All gets priority one, whereas leaving gets
@@ -1448,8 +1448,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		/* Evaluate the FactorWithRep. */
 		retFsm = factorWithRep->walk( pd );
 		if ( retFsm->startState->isFinState() ) {
-			warning(loc) << "applying plus operator to a machine that "
-					"accepts zero length word" << endl;
+			warning(loc) << L"applying plus operator to a machine that "
+					L"accepts zero length word" << endl;
 		}
 
 		/* Need a duplicated for the star end. */
@@ -1471,8 +1471,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		if ( lowerRep == 0 ) {
 			/* No copies. Don't need to evaluate the factorWithRep. 
 			 * This Defeats the purpose so give a warning. */
-			warning(loc) << "exactly zero repetitions results "
-					"in the null machine" << endl;
+			warning(loc) << L"exactly zero repetitions results "
+					L"in the null machine" << endl;
 
 			retFsm = new FsmAp();
 			retFsm->lambdaFsm();
@@ -1481,8 +1481,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 			/* Evaluate the first FactorWithRep. */
 			retFsm = factorWithRep->walk( pd );
 			if ( retFsm->startState->isFinState() ) {
-				warning(loc) << "applying repetition to a machine that "
-						"accepts zero length word" << endl;
+				warning(loc) << L"applying repetition to a machine that "
+						L"accepts zero length word" << endl;
 			}
 
 			/* The start func orders need to be shifted before doing the
@@ -1500,8 +1500,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		if ( upperRep == 0 ) {
 			/* No copies. Don't need to evaluate the factorWithRep. 
 			 * This Defeats the purpose so give a warning. */
-			warning(loc) << "max zero repetitions results "
-					"in the null machine" << endl;
+			warning(loc) << L"max zero repetitions results "
+					L"in the null machine" << endl;
 
 			retFsm = new FsmAp();
 			retFsm->lambdaFsm();
@@ -1510,8 +1510,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 			/* Evaluate the first FactorWithRep. */
 			retFsm = factorWithRep->walk( pd );
 			if ( retFsm->startState->isFinState() ) {
-				warning(loc) << "applying max repetition to a machine that "
-						"accepts zero length word" << endl;
+				warning(loc) << L"applying max repetition to a machine that "
+						L"accepts zero length word" << endl;
 			}
 
 			/* The start func orders need to be shifted before doing the 
@@ -1528,8 +1528,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		/* Evaluate the repeated machine. */
 		retFsm = factorWithRep->walk( pd );
 		if ( retFsm->startState->isFinState() ) {
-			warning(loc) << "applying min repetition to a machine that "
-					"accepts zero length word" << endl;
+			warning(loc) << L"applying min repetition to a machine that "
+					L"accepts zero length word" << endl;
 		}
 
 		/* The start func orders need to be shifted before doing the repetition
@@ -1562,7 +1562,7 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 	case RangeType: {
 		/* Check for bogus range. */
 		if ( upperRep - lowerRep < 0 ) {
-			error(loc) << "invalid range repetition" << endl;
+			error(loc) << L"invalid range repetition" << endl;
 
 			/* Return null machine as recovery. */
 			retFsm = new FsmAp();
@@ -1571,8 +1571,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 		else if ( lowerRep == 0 && upperRep == 0 ) {
 			/* No copies. Don't need to evaluate the factorWithRep.  This
 			 * defeats the purpose so give a warning. */
-			warning(loc) << "zero to zero repetitions results "
-					"in the null machine" << endl;
+			warning(loc) << L"zero to zero repetitions results "
+					L"in the null machine" << endl;
 
 			retFsm = new FsmAp();
 			retFsm->lambdaFsm();
@@ -1581,8 +1581,8 @@ FsmAp *FactorWithRep::walk( ParseData *pd )
 			/* Now need to evaluate the repeated machine. */
 			retFsm = factorWithRep->walk( pd );
 			if ( retFsm->startState->isFinState() ) {
-				warning(loc) << "applying range repetition to a machine that "
-						"accepts zero length word" << endl;
+				warning(loc) << L"applying range repetition to a machine that "
+						L"accepts zero length word" << endl;
 			}
 
 			/* The start func orders need to be shifted before doing both kinds
@@ -1851,14 +1851,14 @@ FsmAp *Range::walk( ParseData *pd )
 	FsmAp *lowerFsm = lowerLit->walk( pd );
 	if ( !lowerFsm->checkSingleCharMachine() ) {
 		error(lowerLit->token.loc) << 
-			"bad range lower end, must be a single character" << endl;
+			L"bad range lower end, must be a single character" << endl;
 	}
 
 	/* Construct and verify the upper end. */
 	FsmAp *upperFsm = upperLit->walk( pd );
 	if ( !upperFsm->checkSingleCharMachine() ) {
 		error(upperLit->token.loc) << 
-			"bad range upper end, must be a single character" << endl;
+			L"bad range upper end, must be a single character" << endl;
 	}
 
 	/* Grab the keys from the machines, then delete them. */
@@ -1870,7 +1870,7 @@ FsmAp *Range::walk( ParseData *pd )
 	/* Validate the range. */
 	if ( lowKey > highKey ) {
 		/* Recover by setting upper to lower; */
-		error(lowerLit->token.loc) << "lower end of range is greater then upper end" << endl;
+		error(lowerLit->token.loc) << L"lower end of range is greater then upper end" << endl;
 		highKey = lowKey;
 	}
 
@@ -1899,7 +1899,7 @@ FsmAp *Literal::walk( ParseData *pd )
 		/* Make the array of keys in int format. */
 		long length;
 		bool caseInsensitive;
-		char *data = prepareLitString( token.loc, token.data, token.length, 
+		wchar_t *data = prepareLitString( token.loc, token.data, token.length, 
 				length, caseInsensitive );
 		Key *arr = new Key[length];
 		makeFsmKeyArray( arr, data, length, pd );
@@ -2021,8 +2021,8 @@ FsmAp *ReItem::walk( ParseData *pd, RegExpr *rootRegex )
 	/* If the item is followed by a star, then apply the star op. */
 	if ( star ) {
 		if ( rtnVal->startState->isFinState() ) {
-			warning(loc) << "applying kleene star to a machine that "
-					"accepts zero length word" << endl;
+			warning(loc) << L"applying kleene star to a machine that "
+					L"accepts zero length word" << endl;
 		}
 
 		rtnVal->starOp();
@@ -2082,8 +2082,8 @@ FsmAp *ReOrItem::walk( ParseData *pd, RegExpr *rootRegex )
 
 		/* Put the or data into an array of ints. Note that we find unique
 		 * keys. Duplicates are silently ignored. The alternative would be to
-		 * issue warning or an error but since we can't with [a0-9a] or 'a' |
-		 * 'a' don't bother here. */
+		 * issue warning or an error but since we canL't with [a0-9a] or 'a' |
+		 * L'a' don't bother here. */
 		KeySet keySet;
 		makeFsmUniqueKeyArray( keySet, token.data, token.length, 
 			rootRegex != 0 ? rootRegex->caseInsensitive : false, pd );
@@ -2100,7 +2100,7 @@ FsmAp *ReOrItem::walk( ParseData *pd, RegExpr *rootRegex )
 		/* Validate the range. */
 		if ( lowKey > highKey ) {
 			/* Recover by setting upper to lower; */
-			error(loc) << "lower end of range is greater then upper end" << endl;
+			error(loc) << L"lower end of range is greater then upper end" << endl;
 			highKey = lowKey;
 		}
 
@@ -2109,24 +2109,24 @@ FsmAp *ReOrItem::walk( ParseData *pd, RegExpr *rootRegex )
 		rtnVal->rangeFsm( lowKey, highKey );
 
 		if ( rootRegex != 0 && rootRegex->caseInsensitive ) {
-			if ( lowKey <= 'Z' && 'A' <= highKey ) {
-				Key otherLow = lowKey < 'A' ? Key('A') : lowKey;
-				Key otherHigh = 'Z' < highKey ? Key('Z') : highKey;
+			if ( lowKey <= L'Z' && L'A' <= highKey ) {
+				Key otherLow = lowKey < L'A' ? Key(L'A') : lowKey;
+				Key otherHigh = L'Z' < highKey ? Key(L'Z') : highKey;
 
-				otherLow = 'a' + ( otherLow - 'A' );
-				otherHigh = 'a' + ( otherHigh - 'A' );
+				otherLow = L'a' + ( otherLow - L'A' );
+				otherHigh = L'a' + ( otherHigh - L'A' );
 
 				FsmAp *otherRange = new FsmAp();
 				otherRange->rangeFsm( otherLow, otherHigh );
 				rtnVal->unionOp( otherRange );
 				rtnVal->minimizePartition2();
 			}
-			else if ( lowKey <= 'z' && 'a' <= highKey ) {
-				Key otherLow = lowKey < 'a' ? Key('a') : lowKey;
-				Key otherHigh = 'z' < highKey ? Key('z') : highKey;
+			else if ( lowKey <= L'z' && L'a' <= highKey ) {
+				Key otherLow = lowKey < L'a' ? Key(L'a') : lowKey;
+				Key otherHigh = L'z' < highKey ? Key(L'z') : highKey;
 
-				otherLow = 'A' + ( otherLow - 'a' );
-				otherHigh = 'A' + ( otherHigh - 'a' );
+				otherLow = L'A' + ( otherLow - L'a' );
+				otherHigh = L'A' + ( otherHigh - L'a' );
 
 				FsmAp *otherRange = new FsmAp();
 				otherRange->rangeFsm( otherLow, otherHigh );

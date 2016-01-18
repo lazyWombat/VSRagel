@@ -28,21 +28,21 @@
 class GraphvizDotGen : public CodeGenData
 {
 public:
-	GraphvizDotGen( ostream &out ) : CodeGenData(out) { }
+	GraphvizDotGen( wostream &out ) : CodeGenData(out) { }
 
 	/* Print an fsm to out stream. */
 	void writeTransList( RedStateAp *state );
 	void writeDotFile( );
 
 	virtual void finishRagelDef();
-	virtual bool writeStatement( InputLoc &, int, char ** );
+	virtual bool writeStatement( InputLoc &, int, wchar_t ** );
 
 private:
 	/* Writing labels and actions. */
-	std::ostream &ONCHAR( Key lowKey, Key highKey );
-	std::ostream &TRANS_ACTION( RedStateAp *fromState, RedTransAp *trans );
-	std::ostream &ACTION( RedAction *action );
-	std::ostream &KEY( Key key );
+	std::wostream &ONCHAR( Key lowKey, Key highKey );
+	std::wostream &TRANS_ACTION( RedStateAp *fromState, RedTransAp *trans );
+	std::wostream &ACTION( RedAction *action );
+	std::wostream &KEY( Key key );
 };
 
 #endif

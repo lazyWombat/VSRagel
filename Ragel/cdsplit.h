@@ -27,18 +27,18 @@
 class SplitCodeGen : public IpGotoCodeGen
 {
 public:
-	SplitCodeGen( ostream &out ) : FsmCodeGen(out), IpGotoCodeGen(out) {}
+	SplitCodeGen( wostream &out ) : FsmCodeGen(out), IpGotoCodeGen(out) {}
 
 	bool ptOutLabelUsed;
 
-	std::ostream &PART_MAP();
-	std::ostream &EXIT_STATES( int partition );
-	std::ostream &PART_TRANS( int partition );
-	std::ostream &TRANS_GOTO( RedTransAp *trans, int level );
+	std::wostream &PART_MAP();
+	std::wostream &EXIT_STATES( int partition );
+	std::wostream &PART_TRANS( int partition );
+	std::wostream &TRANS_GOTO( RedTransAp *trans, int level );
 	void GOTO_HEADER( RedStateAp *state, bool stateInPartition );
-	std::ostream &STATE_GOTOS( int partition );
-	std::ostream &PARTITION( int partition );
-	std::ostream &ALL_PARTITIONS();
+	std::wostream &STATE_GOTOS( int partition );
+	std::wostream &PARTITION( int partition );
+	std::wostream &ALL_PARTITIONS();
 	void writeData();
 	void writeExec();
 	void writeParts();
@@ -53,7 +53,7 @@ public:
 struct CSplitCodeGen
 	: public SplitCodeGen, public CCodeGen
 {
-	CSplitCodeGen( ostream &out ) : 
+	CSplitCodeGen( wostream &out ) : 
 		FsmCodeGen(out), SplitCodeGen(out), CCodeGen(out) {}
 };
 
@@ -63,7 +63,7 @@ struct CSplitCodeGen
 struct DSplitCodeGen
 	: public SplitCodeGen, public DCodeGen
 {
-	DSplitCodeGen( ostream &out ) : 
+	DSplitCodeGen( wostream &out ) : 
 		FsmCodeGen(out), SplitCodeGen(out), DCodeGen(out) {}
 };
 
@@ -73,7 +73,7 @@ struct DSplitCodeGen
 struct D2SplitCodeGen
 	: public SplitCodeGen, public D2CodeGen
 {
-	D2SplitCodeGen( ostream &out ) : 
+	D2SplitCodeGen( wostream &out ) : 
 		FsmCodeGen(out), SplitCodeGen(out), D2CodeGen(out) {}
 };
 

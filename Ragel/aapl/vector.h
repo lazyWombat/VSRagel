@@ -1106,7 +1106,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		wmemmove(BaseTable::data + pos + len, BaseTable::data + pos,
 				sizeof(T)*(BaseTable::tabLen-pos));
 	}
 
@@ -1143,7 +1143,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		wmemmove(BaseTable::data + pos + len, BaseTable::data + pos,
 				sizeof(T)*(BaseTable::tabLen-pos));
 	}
 

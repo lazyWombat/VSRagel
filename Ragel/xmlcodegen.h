@@ -81,12 +81,12 @@ struct NextRedTrans
 
 struct GenBase
 {
-	GenBase( char *fsmName, ParseData *pd, FsmAp *fsm );
+	GenBase( wchar_t *fsmName, ParseData *pd, FsmAp *fsm );
 
 	void appendTrans( TransListVect &outList, Key lowKey, Key highKey, TransAp *trans );
 	void reduceActionTables();
 
-	char *fsmName;
+	wchar_t *fsmName;
 	ParseData *pd;
 	FsmAp *fsm;
 
@@ -97,7 +97,7 @@ struct GenBase
 class XMLCodeGen : protected GenBase
 {
 public:
-	XMLCodeGen( char *fsmName, ParseData *pd, FsmAp *fsm, std::ostream &out );
+	XMLCodeGen( wchar_t *fsmName, ParseData *pd, FsmAp *fsm, std::wostream &out );
 
 	void writeXML( );
 
@@ -135,13 +135,13 @@ private:
 	void writeMachine();
 	void writeActionExec( InlineItem *item );
 
-	std::ostream &out;
+	std::wostream &out;
 };
 
 class BackendGen : protected GenBase
 {
 public:
-	BackendGen( char *fsmName, ParseData *pd, FsmAp *fsm, CodeGenData *cgd );
+	BackendGen( wchar_t *fsmName, ParseData *pd, FsmAp *fsm, CodeGenData *cgd );
 	void makeBackend( );
 
 private:
@@ -166,7 +166,7 @@ private:
 	void makeActionTableList();
 	void makeConditions();
 	void makeEntryPoints();
-	bool makeNameInst( std::string &out, NameInst *nameInst );
+	bool makeNameInst( std::wstring &out, NameInst *nameInst );
 	void makeStateList();
 
 	void makeStateActions( StateAp *state );

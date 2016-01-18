@@ -71,19 +71,19 @@
 #include "rubyfflat.h"
 #include "rbxgoto.h"
 
-string itoa( int i )
+wstring itoa( int i )
 {
-	char buf[16];
-	sprintf( buf, "%i", i );
+	wchar_t buf[16];
+	swprintf( buf, 16, L"%i", i );
 	return buf;
 }
 
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *dotMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *dotMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = new GraphvizDotGen(out);
 
@@ -99,7 +99,7 @@ CodeGenData *dotMakeCodeGen( const char *sourceFileName, const char *fsmName, os
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *cdMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *cdMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = 0;
 	switch ( hostLang->lang ) {
@@ -200,7 +200,7 @@ CodeGenData *cdMakeCodeGen( const char *sourceFileName, const char *fsmName, ost
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *javaMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *javaMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = new JavaTabCodeGen(out);
 
@@ -211,7 +211,7 @@ CodeGenData *javaMakeCodeGen( const char *sourceFileName, const char *fsmName, o
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *goMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *goMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = 0;
 
@@ -238,7 +238,7 @@ CodeGenData *goMakeCodeGen( const char *sourceFileName, const char *fsmName, ost
 		codeGen = new GoIpGotoCodeGen(out);
 		break;
 	default:
-		cerr << "Invalid output style, only -T0, -T1, -F0, -F1, -G0, -G1 and -G2 are supported for Go.\n";
+		wcerr << L"Invalid output style, only -T0, -T1, -F0, -F1, -G0, -G1 and -G2 are supported for Go.\n";
 		exit(1);
 	}
 
@@ -249,7 +249,7 @@ CodeGenData *goMakeCodeGen( const char *sourceFileName, const char *fsmName, ost
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *rubyMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *rubyMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = 0;
 	switch ( codeStyle ) {
@@ -269,15 +269,15 @@ CodeGenData *rubyMakeCodeGen( const char *sourceFileName, const char *fsmName, o
 			if ( rubyImpl == Rubinius ) {
 				codeGen = new RbxGotoCodeGen(out);
 			} else {
-				cerr << "Goto style is still _very_ experimental " 
-					"and only supported using Rubinius.\n"
-					"You may want to enable the --rbx flag "
-					" to give it a try.\n";
+				wcerr << L"Goto style is still _very_ experimental " 
+					L"and only supported using Rubinius.\n"
+					L"You may want to enable the --rbx flag "
+					L" to give it a try.\n";
 				exit(1);
 			}
 			break;
 		default:
-			cout << "Invalid code style\n";
+			wcout << L"Invalid code style\n";
 			exit(1);
 			break;
 	}
@@ -288,7 +288,7 @@ CodeGenData *rubyMakeCodeGen( const char *sourceFileName, const char *fsmName, o
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *csharpMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *csharpMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = 0;
 
@@ -326,7 +326,7 @@ CodeGenData *csharpMakeCodeGen( const char *sourceFileName, const char *fsmName,
 }
 
 /* Invoked by the parser when a ragel definition is opened. */
-CodeGenData *ocamlMakeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *ocamlMakeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *codeGen = 0;
 
@@ -350,7 +350,7 @@ CodeGenData *ocamlMakeCodeGen( const char *sourceFileName, const char *fsmName, 
 		codeGen = new OCamlFGotoCodeGen(out);
 		break;
 	default:
-		cerr << "I only support the -T0 -T1 -F0 -F1 -G0 and -G1 output styles for OCaml.\n";
+		wcerr << L"I only support the -T0 -T1 -F0 -F1 -G0 and -G1 output styles for OCaml.\n";
 		exit(1);
 	}
 
@@ -361,7 +361,7 @@ CodeGenData *ocamlMakeCodeGen( const char *sourceFileName, const char *fsmName, 
 }
 
 
-CodeGenData *makeCodeGen( const char *sourceFileName, const char *fsmName, ostream &out )
+CodeGenData *makeCodeGen( const wchar_t *sourceFileName, const wchar_t *fsmName, wostream &out )
 {
 	CodeGenData *cgd = 0;
 	if ( generateDot )
@@ -385,7 +385,7 @@ CodeGenData *makeCodeGen( const char *sourceFileName, const char *fsmName, ostre
 	return cgd;
 }
 
-void lineDirective( ostream &out, const char *fileName, int line )
+void lineDirective( wostream &out, const wchar_t *fileName, int line )
 {
 	if ( !generateDot ) {
 		if ( hostLang == &hostLangC )
@@ -407,9 +407,9 @@ void lineDirective( ostream &out, const char *fileName, int line )
 	}
 }
 
-void genLineDirective( ostream &out )
+void genLineDirective( wostream &out )
 {
-	std::streambuf *sbuf = out.rdbuf();
+	std::wstreambuf *sbuf = out.rdbuf();
 	output_filter *filter = static_cast<output_filter*>(sbuf);
 	lineDirective( out, filter->fileName, filter->line + 1 );
 }
@@ -418,7 +418,7 @@ void genLineDirective( ostream &out )
 /* Total error count. */
 /* int gblErrorCount = 0; */
 
-CodeGenData::CodeGenData( ostream &out )
+CodeGenData::CodeGenData( wostream &out )
 :
 	sourceFileName(0),
 	fsmName(0), 
@@ -468,7 +468,7 @@ void CodeGenData::initActionList( unsigned long length )
 		actionList.append( allActions+a );
 }
 
-void CodeGenData::newAction( int anum, const char *name,
+void CodeGenData::newAction( int anum, const wchar_t *name,
 		const InputLoc &loc, GenInlineList *inlineList )
 {
 	allActions[anum].actionId = anum;
@@ -512,7 +512,7 @@ void CodeGenData::setErrorState( unsigned long errState )
 	this->errState = errState;
 }
 
-void CodeGenData::addEntryPoint( char *name, unsigned long entryState )
+void CodeGenData::addEntryPoint( wchar_t *name, unsigned long entryState )
 {
 	entryPointIds.append( entryState );
 	entryPointNames.append( name );
@@ -677,7 +677,7 @@ void CodeGenData::closeMachine()
 }
 
 
-bool CodeGenData::setAlphType( const char *data )
+bool CodeGenData::setAlphType( const wchar_t *data )
 {
 	HostType *alphType = findAlphTypeInternal( data );
 	if ( alphType == 0 )
@@ -1057,61 +1057,61 @@ void CodeGenData::analyzeMachine()
 	setValueLimits();
 }
 
-void CodeGenData::write_option_error( InputLoc &loc, char *arg )
+void CodeGenData::write_option_error( InputLoc &loc, wchar_t *arg )
 {
-	source_warning(loc) << "unrecognized write option \"" << arg << "\"" << endl;
+	source_warning(loc) << L"unrecognized write option \"" << arg << "\"" << endl;
 }
 
 /* returns true if the following section should generate line directives. */
-bool CodeGenData::writeStatement( InputLoc &loc, int nargs, char **args )
+bool CodeGenData::writeStatement( InputLoc &loc, int nargs, wchar_t **args )
 {
 	bool followLineDirective = false;
 
-	if ( strcmp( args[0], "data" ) == 0 ) {
-		out << '\n';
+	if ( wcscmp( args[0], L"data" ) == 0 ) {
+		out << L'\n';
 		genLineDirective( out );
 		followLineDirective = true;
 
 		for ( int i = 1; i < nargs; i++ ) {
-			if ( strcmp( args[i], "noerror" ) == 0 )
+			if ( wcscmp( args[i], L"noerror" ) == 0 )
 				noError = true;
-			else if ( strcmp( args[i], "noprefix" ) == 0 )
+			else if ( wcscmp( args[i], L"noprefix" ) == 0 )
 				noPrefix = true;
-			else if ( strcmp( args[i], "nofinal" ) == 0 )
+			else if ( wcscmp( args[i], L"nofinal" ) == 0 )
 				noFinal = true;
 			else
 				write_option_error( loc, args[i] );
 		}
 		writeData();
 	}
-	else if ( strcmp( args[0], "init" ) == 0 ) {
-		out << '\n';
+	else if ( wcscmp( args[0], L"init" ) == 0 ) {
+		out << L'\n';
 		genLineDirective( out );
 		followLineDirective = true;
 
 		for ( int i = 1; i < nargs; i++ ) {
-			if ( strcmp( args[i], "nocs" ) == 0 )
+			if ( wcscmp( args[i], L"nocs" ) == 0 )
 				noCS = true;
 			else
 				write_option_error( loc, args[i] );
 		}
 		writeInit();
 	}
-	else if ( strcmp( args[0], "exec" ) == 0 ) {
-		out << '\n';
+	else if ( wcscmp( args[0], L"exec" ) == 0 ) {
+		out << L'\n';
 		genLineDirective( out );
 		followLineDirective = true;
 
 		for ( int i = 1; i < nargs; i++ ) {
-			if ( strcmp( args[i], "noend" ) == 0 )
+			if ( wcscmp( args[i], L"noend" ) == 0 )
 				noEnd = true;
 			else
 				write_option_error( loc, args[i] );
 		}
 		writeExec();
 	}
-	else if ( strcmp( args[0], "exports" ) == 0 ) {
-		out << '\n';
+	else if ( wcscmp( args[0], L"exports" ) == 0 ) {
+		out << L'\n';
 		genLineDirective( out );
 		followLineDirective = true;
 
@@ -1119,41 +1119,41 @@ bool CodeGenData::writeStatement( InputLoc &loc, int nargs, char **args )
 			write_option_error( loc, args[i] );
 		writeExports();
 	}
-	else if ( strcmp( args[0], "start" ) == 0 ) {
+	else if ( wcscmp( args[0], L"start" ) == 0 ) {
 		for ( int i = 1; i < nargs; i++ )
 			write_option_error( loc, args[i] );
 		writeStart();
 	}
-	else if ( strcmp( args[0], "first_final" ) == 0 ) {
+	else if ( wcscmp( args[0], L"first_final" ) == 0 ) {
 		for ( int i = 1; i < nargs; i++ )
 			write_option_error( loc, args[i] );
 		writeFirstFinal();
 	}
-	else if ( strcmp( args[0], "error" ) == 0 ) {
+	else if ( wcscmp( args[0], L"error" ) == 0 ) {
 		for ( int i = 1; i < nargs; i++ )
 			write_option_error( loc, args[i] );
 		writeError();
 	}
 	else {
 		/* EMIT An error here. */
-		source_error(loc) << "unrecognized write command \"" << 
-				args[0] << "\"" << endl;
+		source_error(loc) << L"unrecognized write command \"" << 
+				args[0] << L"\"" << endl;
 	}
 	return followLineDirective;
 }
 
-ostream &CodeGenData::source_warning( const InputLoc &loc )
+wostream &CodeGenData::source_warning( const InputLoc &loc )
 {
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": warning: ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return wcerr;
 }
 
-ostream &CodeGenData::source_error( const InputLoc &loc )
+wostream &CodeGenData::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return wcerr;
 }
 
 

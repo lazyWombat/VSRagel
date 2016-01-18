@@ -27,117 +27,117 @@
 #include "ragel.h"
 #include "rubyftable.h"
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
 
-void RubyFTabCodeGen::GOTO( ostream &out, int gotoDest, bool inFinish )
+void RubyFTabCodeGen::GOTO( wostream &out, int gotoDest, bool inFinish )
 {
 	out << 
-		"	begin\n"
-		"		" << vCS() << " = " << gotoDest << "\n"
-		"		_goto_level = _again\n"
-		"		next\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << vCS() << L" = " << gotoDest << L"\n"
+		L"		_goto_level = _again\n"
+		L"		next\n"
+		L"	end\n";
 }
 
-void RubyFTabCodeGen::GOTO_EXPR( ostream &out, GenInlineItem *ilItem, bool inFinish )
+void RubyFTabCodeGen::GOTO_EXPR( wostream &out, GenInlineItem *ilItem, bool inFinish )
 {
 	out << 
-		"	begin\n"
-		"		" << vCS() << " = (";
+		L"	begin\n"
+		L"		" << vCS() << L" = (";
 	INLINE_LIST( out, ilItem->children, 0, inFinish );
-	out << ")\n";
+	out << L")\n";
 	out <<
-		"		_goto_level = _again\n"
-		"		next\n"
-		"	end\n";
+		L"		_goto_level = _again\n"
+		L"		next\n"
+		L"	end\n";
 }
 
-void RubyFTabCodeGen::CALL( ostream &out, int callDest, int targState, bool inFinish )
+void RubyFTabCodeGen::CALL( wostream &out, int callDest, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, prePushExpr, 0, false );
 	}
 
 	out <<
-		"	begin\n"
-		"		" << STACK() << "[" << TOP() << "] = " << vCS() << "\n"
-		"		" << TOP() << "+= 1\n"
-		"		" << vCS() << " = " << callDest << "\n"
-		"		_goto_level = _again\n"
-		"		next\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << STACK() << L"[" << TOP() << L"] = " << vCS() << L"\n"
+		L"		" << TOP() << L"+= 1\n"
+		L"		" << vCS() << L" = " << callDest << L"\n"
+		L"		_goto_level = _again\n"
+		L"		next\n"
+		L"	end\n";
 
 	if ( prePushExpr != 0 )
-		out << "end\n";
+		out << L"end\n";
 }
 
-void RubyFTabCodeGen::CALL_EXPR(ostream &out, GenInlineItem *ilItem, 
+void RubyFTabCodeGen::CALL_EXPR(wostream &out, GenInlineItem *ilItem, 
 		int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, prePushExpr, 0, false );
 	}
 
 	out <<
-		"	begin\n"
-		"		" << STACK() << "[" << TOP() << "] = " << vCS() << "\n"
-		"		" << TOP() << " += 1\n"
-		"		" << vCS() << " = (";
+		L"	begin\n"
+		L"		" << STACK() << L"[" << TOP() << L"] = " << vCS() << L"\n"
+		L"		" << TOP() << L" += 1\n"
+		L"		" << vCS() << L" = (";
 	INLINE_LIST( out, ilItem->children, targState, inFinish );
-	out << ")\n";
+	out << L")\n";
 
 	out << 
-		"		_goto_level = _again\n"
-		"		next\n"
-		"	end\n";
+		L"		_goto_level = _again\n"
+		L"		next\n"
+		L"	end\n";
 
 	if ( prePushExpr != 0 )
-		out << "end\n";
+		out << L"end\n";
 }
 
-void RubyFTabCodeGen::RET( ostream &out, bool inFinish )
+void RubyFTabCodeGen::RET( wostream &out, bool inFinish )
 {
 	out <<
-		"	begin\n"
-		"		" << TOP() << " -= 1\n"
-		"		" << vCS() << " = " << STACK() << "[" << TOP() << "]\n";
+		L"	begin\n"
+		L"		" << TOP() << L" -= 1\n"
+		L"		" << vCS() << L" = " << STACK() << L"[" << TOP() << L"]\n";
 
 	if ( postPopExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, postPopExpr, 0, false );
-		out << "end\n";
+		out << L"end\n";
 	}
 
 	out <<
-		"		_goto_level = _again\n"
-		"		next\n"
-		"	end\n";
+		L"		_goto_level = _again\n"
+		L"		next\n"
+		L"	end\n";
 }
 
-void RubyFTabCodeGen::BREAK( ostream &out, int targState )
+void RubyFTabCodeGen::BREAK( wostream &out, int targState )
 {
 	out << 
-		"	begin\n"
-		"		" << P() << " += 1\n"
-		"		_goto_level = _out\n"
-		"		next\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << P() << L" += 1\n"
+		L"		_goto_level = _out\n"
+		L"		next\n"
+		L"	end\n";
 }
 
 
-std::ostream &RubyFTabCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &RubyFTabCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numToStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\twhen " << redAct->actListId+1 << " then\n";
+			out << L"\twhen " << redAct->actListId+1 << L" then\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -152,13 +152,13 @@ std::ostream &RubyFTabCodeGen::TO_STATE_ACTION_SWITCH()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &RubyFTabCodeGen::FROM_STATE_ACTION_SWITCH()
+std::wostream &RubyFTabCodeGen::FROM_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numFromStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\twhen " << redAct->actListId+1 << " then\n";
+			out << L"\twhen " << redAct->actListId+1 << L" then\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -171,13 +171,13 @@ std::ostream &RubyFTabCodeGen::FROM_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RubyFTabCodeGen::EOF_ACTION_SWITCH()
+std::wostream &RubyFTabCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numEofRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\twhen " << redAct->actListId+1 << " then\n";
+			out << L"\twhen " << redAct->actListId+1 << L" then\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -192,13 +192,13 @@ std::ostream &RubyFTabCodeGen::EOF_ACTION_SWITCH()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &RubyFTabCodeGen::ACTION_SWITCH()
+std::wostream &RubyFTabCodeGen::ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\twhen " << redAct->actListId+1 << " then\n";
+			out << L"\twhen " << redAct->actListId+1 << L" then\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -253,78 +253,78 @@ void RubyFTabCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondOffset), CO() );
 		COND_OFFSETS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondLen), CL() );
 		COND_LENS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( WIDE_ALPH_TYPE(), CK() );
 		COND_KEYS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondSpaceId), C() );
 		COND_SPACES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxKeyOffset), KO() );
 	KEY_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( WIDE_ALPH_TYPE(), K() );
 	KEYS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxSingleLen), SL() );
 	SINGLE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxRangeLen), RL() );
 	RANGE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset), IO() );
 	INDEX_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	if ( useIndicies ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndex), I() );
 		INDICIES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS_WI();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), TA() );
 			TRANS_ACTIONS_WI();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 	else {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), TA() );
 			TRANS_ACTIONS();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 
@@ -332,28 +332,28 @@ void RubyFTabCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofTrans() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset+1), ET() );
 		EOF_TRANS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	STATE_IDS();
@@ -362,57 +362,57 @@ void RubyFTabCodeGen::writeData()
 void RubyFTabCodeGen::writeExec()
 {
 	out << 
-		"begin\n"
-		"	testEof = false\n"
-		"	_klen, _trans, _keys";
+		L"begin\n"
+		L"	testEof = false\n"
+		L"	_klen, _trans, _keys";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << ", _ps";
+		out << L", _ps";
 
 	if ( redFsm->anyConditions() )
-		out << ", _widec";
+		out << L", _widec";
 
-	out << " = nil\n";
-
-	out << 
-		"	_goto_level = 0\n"
-		"	_resume = 10\n"
-		"	_eof_trans = 15\n"
-		"	_again = 20\n"
-		"	_test_eof = 30\n"
-		"	_out = 40\n";
+	out << L" = nil\n";
 
 	out << 
-		"	while true\n"
-		"	if _goto_level <= 0\n";
+		L"	_goto_level = 0\n"
+		L"	_resume = 10\n"
+		L"	_eof_trans = 15\n"
+		L"	_again = 20\n"
+		L"	_test_eof = 30\n"
+		L"	_out = 40\n";
+
+	out << 
+		L"	while true\n"
+		L"	if _goto_level <= 0\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " == " << PE() << "\n"
-			"		_goto_level = _test_eof\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << P() << L" == " << PE() << L"\n"
+			L"		_goto_level = _test_eof\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		out << 
-			"	if " << vCS() << " == " << redFsm->errState->id << "\n"
-			"		_goto_level = _out\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L"\n"
+			L"		_goto_level = _out\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	/* The resume label. */
 	out << 
-		"	end\n"
-		"	if _goto_level <= _resume\n";
+		L"	end\n"
+		L"	if _goto_level <= _resume\n";
 	
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	case " << FSA() << "[" << vCS() << "] \n";
+			L"	case " << FSA() << L"[" << vCS() << L"] \n";
 			FROM_STATE_ACTION_SWITCH() <<
-			"	end # from state action switch \n"
-			"\n";
+			L"	end # from state action switch \n"
+			L"\n";
 	}
 
 	if ( redFsm->anyConditions() )
@@ -421,109 +421,109 @@ void RubyFTabCodeGen::writeExec()
 	LOCATE_TRANS();
 
 	if ( useIndicies )
-		out << "	_trans = " << I() << "[_trans];\n";
+		out << L"	_trans = " << I() << L"[_trans];\n";
 
 	if ( redFsm->anyEofTrans() ) {
 		out << 
-			"	end\n"
-			"	if _goto_level <= _eof_trans\n";
+			L"	end\n"
+			L"	if _goto_level <= _eof_trans\n";
 	}
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	_ps = " << vCS() << ";\n";
+		out << L"	_ps = " << vCS() << L";\n";
 
 	out <<
-		"	" << vCS() << " = " << TT() << "[_trans];\n"
-		"\n";
+		L"	" << vCS() << L" = " << TT() << L"[_trans];\n"
+		L"\n";
 
 	if ( redFsm->anyRegActions() ) {
 		out << 
-			"	if " << TA() << "[_trans] != 0\n"
-			"\n"
-			"		case " << TA() << "[_trans] \n";
+			L"	if " << TA() << L"[_trans] != 0\n"
+			L"\n"
+			L"		case " << TA() << L"[_trans] \n";
 			ACTION_SWITCH() <<
-			"		end # action switch \n"
-			"	end\n"
-			"\n";
+			L"		end # action switch \n"
+			L"	end\n"
+			L"\n";
 	}
         
 	/* The again label. */
 	out <<
-		"	end\n"
-		"	if _goto_level <= _again\n";
+		L"	end\n"
+		L"	if _goto_level <= _again\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	case " << TSA() << "[" << vCS() << "] \n";
+			L"	case " << TSA() << L"[" << vCS() << L"] \n";
 			TO_STATE_ACTION_SWITCH() <<
-			"	end\n"
-			"\n";
+			L"	end\n"
+			L"\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		out << 
-			"	if " << vCS() << " == " << redFsm->errState->id << "\n"
-			"		_goto_level = _out\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L"\n"
+			L"		_goto_level = _out\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
-	out << "	" << P() << " += 1\n";
+	out << L"	" << P() << L" += 1\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " != " << PE() << "\n"
-			"		_goto_level = _resume\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << P() << L" != " << PE() << L"\n"
+			L"		_goto_level = _resume\n"
+			L"		next\n"
+			L"	end\n";
 	}
 	else {
 		out <<
-			"	_goto_level = _resume\n"
-			"	next\n";
+			L"	_goto_level = _resume\n"
+			L"	next\n";
 	}
 
 	/* The test eof label. */
 	out <<
-		"	end\n"
-		"	if _goto_level <= _test_eof\n";
+		L"	end\n"
+		L"	if _goto_level <= _test_eof\n";
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if " << P() << " == " << vEOF() << "\n";
+			L"	if " << P() << L" == " << vEOF() << L"\n";
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"	if " << ET() << "[" << vCS() << "] > 0\n"
-				"		_trans = " << ET() << "[" << vCS() << "] - 1;\n"
-				"		_goto_level = _eof_trans\n"
-				"		next;\n"
-				"	end\n";
+				L"	if " << ET() << L"[" << vCS() << L"] > 0\n"
+				L"		_trans = " << ET() << L"[" << vCS() << L"] - 1;\n"
+				L"		_goto_level = _eof_trans\n"
+				L"		next;\n"
+				L"	end\n";
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"	begin\n"
-				"		case ( " << EA() << "[" << vCS() << "] )\n";
+				L"	begin\n"
+				L"		case ( " << EA() << L"[" << vCS() << L"] )\n";
 				EOF_ACTION_SWITCH() <<
-				"		end\n"
-				"	end\n";
+				L"		end\n"
+				L"	end\n";
 		}
 
 		out << 
-			"	end\n"
-			"\n";
+			L"	end\n"
+			L"\n";
 	}
 
 	out << 
-		"	end\n"
-		"	if _goto_level <= _out\n"
-		"		break\n"
-		"	end\n"
-		"end\n";
+		L"	end\n"
+		L"	if _goto_level <= _out\n"
+		L"		break\n"
+		L"	end\n"
+		L"end\n";
 
 	/* Wrapping the execute block. */
-	out << "	end\n";
+	out << L"	end\n";
 }
 
 
@@ -558,6 +558,6 @@ void RubyFTabCodeGen::calcIndexSize()
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */

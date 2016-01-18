@@ -146,7 +146,7 @@ struct InlineItem;
 struct InlineList;
 
 /* Reference to a named state. */
-typedef Vector<char*> NameRef;
+typedef Vector<wchar_t*> NameRef;
 typedef Vector<NameRef*> NameRefList;
 typedef Vector<NameInst*> NameTargList;
 
@@ -162,11 +162,11 @@ struct EpsilonLink
 
 struct Label
 {
-	Label( const InputLoc &loc, char *data )
+	Label( const InputLoc &loc, wchar_t *data )
 		: loc(loc), data(data) { }
 
 	InputLoc loc;
-	char *data;
+	wchar_t *data;
 };
 
 /* Structrue represents an action assigned to some FactorWithAug node. The
@@ -195,15 +195,15 @@ struct ConditionTest
 
 struct Token
 {
-	char *data;
+	wchar_t *data;
 	int length;
 	InputLoc loc;
 
 	void append( const Token &other );
-	void set( const char *str, int len );
+	void set( const wchar_t *str, int len );
 };
 
-char *prepareLitString( const InputLoc &loc, const char *src, long length, 
+wchar_t *prepareLitString( const InputLoc &loc, const wchar_t *src, long length, 
 			long &resLen, bool &caseInsensitive );
 
 /* Store the value and type of a priority augmentation. */
@@ -222,7 +222,7 @@ struct PriorityAug
  */
 struct VarDef
 {
-	VarDef( const char *name, MachineDef *machineDef )
+	VarDef( const wchar_t *name, MachineDef *machineDef )
 		: name(name), machineDef(machineDef), isExport(false) { }
 	
 	/* Parse tree traversal. */
@@ -230,7 +230,7 @@ struct VarDef
 	void makeNameTree( const InputLoc &loc, ParseData *pd );
 	void resolveNameRefs( ParseData *pd );
 
-	const char *name;
+	const wchar_t *name;
 	MachineDef *machineDef;
 	bool isExport;
 };
@@ -303,7 +303,7 @@ struct LongestMatch
 	void resolveNameRefs( ParseData *pd );
 	void transferScannerLeavingActions( FsmAp *graph );
 	void runLongestMatch( ParseData *pd, FsmAp *graph );
-	Action *newAction( ParseData *pd, const InputLoc &loc, const char *name, 
+	Action *newAction( ParseData *pd, const InputLoc &loc, const wchar_t *name, 
 			InlineList *inlineList );
 	void makeActions( ParseData *pd );
 	void findName( ParseData *pd );
@@ -311,7 +311,7 @@ struct LongestMatch
 
 	InputLoc loc;
 	LmPartList *longestMatchList;
-	const char *name;
+	const wchar_t *name;
 
 	Action *lmActSelect;
 	bool lmSwitchHandlesError;
@@ -625,7 +625,7 @@ struct Range
 	Literal *upperLit;
 };
 
-/* Some literal machine. Can be a number or literal string. */
+/* Some literal machine. Can be a number or literal wstring. */
 struct Literal
 {
 	enum LiteralType { Number, LitString };
@@ -735,7 +735,7 @@ struct InlineItem
 		LmInitTokStart, LmSetTokStart, Break
 	};
 
-	InlineItem( const InputLoc &loc, char *data, Type type ) : 
+	InlineItem( const InputLoc &loc, wchar_t *data, Type type ) : 
 		loc(loc), data(data), nameRef(0), children(0), type(type) { }
 
 	InlineItem( const InputLoc &loc, NameRef *nameRef, Type type ) : 
@@ -754,7 +754,7 @@ struct InlineItem
 		loc(loc), data(0), nameRef(0), children(0), type(type) { }
 	
 	InputLoc loc;
-	char *data;
+	wchar_t *data;
 	NameRef *nameRef;
 	NameInst *nameTarg;
 	InlineList *children;

@@ -27,279 +27,279 @@
 #include "ragel.h"
 #include "rubytable.h"
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
 
 
 
-void RubyTabCodeGen::GOTO( ostream &out, int gotoDest, bool inFinish )
+void RubyTabCodeGen::GOTO( wostream &out, int gotoDest, bool inFinish )
 {
 	out << 
-		"	begin\n"
-		"		" << vCS() << " = " << gotoDest << "\n"
-		"		_trigger_goto = true\n"
-		"		_goto_level = _again\n"
-		"		break\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << vCS() << L" = " << gotoDest << L"\n"
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _again\n"
+		L"		break\n"
+		L"	end\n";
 }
 
-void RubyTabCodeGen::GOTO_EXPR( ostream &out, GenInlineItem *ilItem, bool inFinish )
+void RubyTabCodeGen::GOTO_EXPR( wostream &out, GenInlineItem *ilItem, bool inFinish )
 {
 	out << 
-		"	begin\n"
-		"		" << vCS() << " = (";
+		L"	begin\n"
+		L"		" << vCS() << L" = (";
 	INLINE_LIST( out, ilItem->children, 0, inFinish );
-	out << ")\n";
+	out << L")\n";
 	out <<
-		"		_trigger_goto = true\n"
-		"		_goto_level = _again\n"
-		"		break\n"
-		"	end\n";
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _again\n"
+		L"		break\n"
+		L"	end\n";
 }
 
-void RubyTabCodeGen::CALL( ostream &out, int callDest, int targState, bool inFinish )
+void RubyTabCodeGen::CALL( wostream &out, int callDest, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, prePushExpr, 0, false );
 	}
 
 	out <<
-		"	begin\n"
-		"		" << STACK() << "[" << TOP() << "] = " << vCS() << "\n"
-		"		" << TOP() << "+= 1\n"
-		"		" << vCS() << " = " << callDest << "\n"
-		"		_trigger_goto = true\n"
-		"		_goto_level = _again\n"
-		"		break\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << STACK() << L"[" << TOP() << L"] = " << vCS() << L"\n"
+		L"		" << TOP() << L"+= 1\n"
+		L"		" << vCS() << L" = " << callDest << L"\n"
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _again\n"
+		L"		break\n"
+		L"	end\n";
 
 	if ( prePushExpr != 0 )
-		out << "end\n";
+		out << L"end\n";
 }
 
-void RubyTabCodeGen::CALL_EXPR(ostream &out, GenInlineItem *ilItem, int targState, bool inFinish )
+void RubyTabCodeGen::CALL_EXPR(wostream &out, GenInlineItem *ilItem, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, prePushExpr, 0, false );
 	}
 
 	out <<
-		"	begin\n"
-		"		" << STACK() << "[" << TOP() << "] = " << vCS() << "\n"
-		"		" << TOP() << " += 1\n"
-		"		" << vCS() << " = (";
+		L"	begin\n"
+		L"		" << STACK() << L"[" << TOP() << L"] = " << vCS() << L"\n"
+		L"		" << TOP() << L" += 1\n"
+		L"		" << vCS() << L" = (";
 	INLINE_LIST( out, ilItem->children, targState, inFinish );
-	out << ")\n";
+	out << L")\n";
 
 	out << 
-		"		_trigger_goto = true\n"
-		"		_goto_level = _again\n"
-		"		break\n"
-		"	end\n";
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _again\n"
+		L"		break\n"
+		L"	end\n";
 
 	if ( prePushExpr != 0 )
-		out << "end\n";
+		out << L"end\n";
 }
 
-void RubyTabCodeGen::RET( ostream &out, bool inFinish )
+void RubyTabCodeGen::RET( wostream &out, bool inFinish )
 {
 	out <<
-		"	begin\n"
-		"		" << TOP() << " -= 1\n"
-		"		" << vCS() << " = " << STACK() << "[" << TOP() << "]\n";
+		L"	begin\n"
+		L"		" << TOP() << L" -= 1\n"
+		L"		" << vCS() << L" = " << STACK() << L"[" << TOP() << L"]\n";
 
 	if ( postPopExpr != 0 ) {
-		out << "begin\n";
+		out << L"begin\n";
 		INLINE_LIST( out, postPopExpr, 0, false );
-		out << "end\n";
+		out << L"end\n";
 	}
 
 	out <<
-		"		_trigger_goto = true\n"
-		"		_goto_level = _again\n"
-		"		break\n"
-		"	end\n";
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _again\n"
+		L"		break\n"
+		L"	end\n";
 }
 
-void RubyTabCodeGen::BREAK( ostream &out, int targState )
+void RubyTabCodeGen::BREAK( wostream &out, int targState )
 {
 	out << 
-		"	begin\n"
-		"		" << P() << " += 1\n"
-		"		_trigger_goto = true\n"
-		"		_goto_level = _out\n"
-		"		break\n"
-		"	end\n";
+		L"	begin\n"
+		L"		" << P() << L" += 1\n"
+		L"		_trigger_goto = true\n"
+		L"		_goto_level = _out\n"
+		L"		break\n"
+		L"	end\n";
 }
 
 void RubyTabCodeGen::COND_TRANSLATE()
 {
 	out <<
-		"	_widec = " << GET_KEY() << "\n"
-		"	_keys = " << CO() << "[" << vCS() << "]*2\n"
-		"	_klen = " << CL() << "[" << vCS() << "]\n"
-		"	if _klen > 0\n"
-		"		_lower = _keys\n"
-		"		_upper = _keys + (_klen<<1) - 2\n"
-		"		loop do\n"
-		"			break if _upper < _lower\n"
-		"			_mid = _lower + (((_upper-_lower) >> 1) & ~1)\n"
-		"			if " << GET_WIDE_KEY() << " < " << CK() << "[_mid]\n"
-		"				_upper = _mid - 2\n"
-		"			elsif " << GET_WIDE_KEY() << " > " << CK() << "[_mid+1]\n"
-		"				_lower = _mid + 2\n"
-		"			else\n"
-		"				case " << C() << "[" << CO() << "[" << vCS() << "]"
-							" + ((_mid - _keys)>>1)]\n";
+		L"	_widec = " << GET_KEY() << L"\n"
+		L"	_keys = " << CO() << L"[" << vCS() << L"]*2\n"
+		L"	_klen = " << CL() << L"[" << vCS() << L"]\n"
+		L"	if _klen > 0\n"
+		L"		_lower = _keys\n"
+		L"		_upper = _keys + (_klen<<1) - 2\n"
+		L"		loop do\n"
+		L"			break if _upper < _lower\n"
+		L"			_mid = _lower + (((_upper-_lower) >> 1) & ~1)\n"
+		L"			if " << GET_WIDE_KEY() << L" < " << CK() << L"[_mid]\n"
+		L"				_upper = _mid - 2\n"
+		L"			elsif " << GET_WIDE_KEY() << L" > " << CK() << L"[_mid+1]\n"
+		L"				_lower = _mid + 2\n"
+		L"			else\n"
+		L"				case " << C() << L"[" << CO() << L"[" << vCS() << L"]"
+							L" + ((_mid - _keys)>>1)]\n";
 
 	for ( CondSpaceList::Iter csi = condSpaceList; csi.lte(); csi++ ) {
 		GenCondSpace *condSpace = csi;
-		out << "	when " << condSpace->condSpaceId << " then" ;
-		out << "	_widec = " << KEY(condSpace->baseKey) << 
-				"+ (" << GET_KEY() << " - " << KEY(keyOps->minKey) << ")\n";
+		out << L"	when " << condSpace->condSpaceId << L" then" ;
+		out << L"	_widec = " << KEY(condSpace->baseKey) << 
+				L"+ (" << GET_KEY() << L" - " << KEY(keyOps->minKey) << L")\n";
 
 		for ( GenCondSet::Iter csi = condSpace->condSet; csi.lte(); csi++ ) {
 			Size condValOffset = ((1 << csi.pos()) * keyOps->alphSize());
-			out << "	_widec += " << condValOffset << " if ( ";
+			out << L"	_widec += " << condValOffset << L" if ( ";
 			CONDITION( out, *csi );
-			out << " )\n";
+			out << L" )\n";
 		}
 	}
 
 	out <<
-		"				end # case\n"
-		"			end\n"
-		"		end # loop\n"
-		"	end\n";
+		L"				end # case\n"
+		L"			end\n"
+		L"		end # loop\n"
+		L"	end\n";
 }
 
 
 void RubyTabCodeGen::LOCATE_TRANS()
 {
 	out <<
-		"	_keys = " << KO() << "[" << vCS() << "]\n"
-		"	_trans = " << IO() << "[" << vCS() << "]\n"
-		"	_klen = " << SL() << "[" << vCS() << "]\n"
-		"	_break_match = false\n"
-		"	\n"
-		"	begin\n"
-		"	  if _klen > 0\n"
-		"	     _lower = _keys\n"
-		"	     _upper = _keys + _klen - 1\n"
-		"\n"
-		"	     loop do\n"
-		"	        break if _upper < _lower\n"
-		"	        _mid = _lower + ( (_upper - _lower) >> 1 )\n"
-		"\n"
-		"	        if " << GET_WIDE_KEY() << " < " << K() << "[_mid]\n"
-		"	           _upper = _mid - 1\n"
-		"	        elsif " << GET_WIDE_KEY() << " > " << K() << "[_mid]\n"
-		"	           _lower = _mid + 1\n"
-		"	        else\n"
-		"	           _trans += (_mid - _keys)\n"
-		"	           _break_match = true\n"
-		"	           break\n"
-		"	        end\n"
-		"	     end # loop\n"
-		"	     break if _break_match\n"
-		"	     _keys += _klen\n"
-		"	     _trans += _klen\n"
-		"	  end"
-		"\n"
-		"	  _klen = " << RL() << "[" << vCS() << "]\n"
-		"	  if _klen > 0\n"
-		"	     _lower = _keys\n"
-		"	     _upper = _keys + (_klen << 1) - 2\n"
-		"	     loop do\n"
-		"	        break if _upper < _lower\n"
-		"	        _mid = _lower + (((_upper-_lower) >> 1) & ~1)\n"
-		"	        if " << GET_WIDE_KEY() << " < " << K() << "[_mid]\n"
-		"	          _upper = _mid - 2\n"
-		"	        elsif " << GET_WIDE_KEY() << " > " << K() << "[_mid+1]\n"
-		"	          _lower = _mid + 2\n"
-		"	        else\n"
-		"	          _trans += ((_mid - _keys) >> 1)\n"
-		"	          _break_match = true\n"
-		"	          break\n"
-		"	        end\n"
-		"	     end # loop\n"
-		"	     break if _break_match\n"
-		"	     _trans += _klen\n"
-		"	  end\n"
-		"	end while false\n";
+		L"	_keys = " << KO() << L"[" << vCS() << L"]\n"
+		L"	_trans = " << IO() << L"[" << vCS() << L"]\n"
+		L"	_klen = " << SL() << L"[" << vCS() << L"]\n"
+		L"	_break_match = false\n"
+		L"	\n"
+		L"	begin\n"
+		L"	  if _klen > 0\n"
+		L"	     _lower = _keys\n"
+		L"	     _upper = _keys + _klen - 1\n"
+		L"\n"
+		L"	     loop do\n"
+		L"	        break if _upper < _lower\n"
+		L"	        _mid = _lower + ( (_upper - _lower) >> 1 )\n"
+		L"\n"
+		L"	        if " << GET_WIDE_KEY() << L" < " << K() << L"[_mid]\n"
+		L"	           _upper = _mid - 1\n"
+		L"	        elsif " << GET_WIDE_KEY() << L" > " << K() << L"[_mid]\n"
+		L"	           _lower = _mid + 1\n"
+		L"	        else\n"
+		L"	           _trans += (_mid - _keys)\n"
+		L"	           _break_match = true\n"
+		L"	           break\n"
+		L"	        end\n"
+		L"	     end # loop\n"
+		L"	     break if _break_match\n"
+		L"	     _keys += _klen\n"
+		L"	     _trans += _klen\n"
+		L"	  end"
+		L"\n"
+		L"	  _klen = " << RL() << L"[" << vCS() << L"]\n"
+		L"	  if _klen > 0\n"
+		L"	     _lower = _keys\n"
+		L"	     _upper = _keys + (_klen << 1) - 2\n"
+		L"	     loop do\n"
+		L"	        break if _upper < _lower\n"
+		L"	        _mid = _lower + (((_upper-_lower) >> 1) & ~1)\n"
+		L"	        if " << GET_WIDE_KEY() << L" < " << K() << L"[_mid]\n"
+		L"	          _upper = _mid - 2\n"
+		L"	        elsif " << GET_WIDE_KEY() << L" > " << K() << L"[_mid+1]\n"
+		L"	          _lower = _mid + 2\n"
+		L"	        else\n"
+		L"	          _trans += ((_mid - _keys) >> 1)\n"
+		L"	          _break_match = true\n"
+		L"	          break\n"
+		L"	        end\n"
+		L"	     end # loop\n"
+		L"	     break if _break_match\n"
+		L"	     _trans += _klen\n"
+		L"	  end\n"
+		L"	end while false\n";
 }
 
 void RubyTabCodeGen::writeExec()
 {
 	out << 
-		"begin\n"
-		"	_klen, _trans, _keys";
+		L"begin\n"
+		L"	_klen, _trans, _keys";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << ", _ps";
+		out << L", _ps";
 	if ( redFsm->anyConditions() ) 
-		out << ", _widec";
+		out << L", _widec";
 	if ( redFsm->anyToStateActions() || redFsm->anyRegActions() 
 			|| redFsm->anyFromStateActions() )
-		out << ", _acts, _nacts";
+		out << L", _acts, _nacts";
 
-	out << " = nil\n";
-
-	out << 
-		"	_goto_level = 0\n"
-		"	_resume = 10\n"
-		"	_eof_trans = 15\n"
-		"	_again = 20\n"
-		"	_test_eof = 30\n"
-		"	_out = 40\n";
+	out << L" = nil\n";
 
 	out << 
-		"	while true\n"
-		"	_trigger_goto = false\n"
-		"	if _goto_level <= 0\n";
+		L"	_goto_level = 0\n"
+		L"	_resume = 10\n"
+		L"	_eof_trans = 15\n"
+		L"	_again = 20\n"
+		L"	_test_eof = 30\n"
+		L"	_out = 40\n";
+
+	out << 
+		L"	while true\n"
+		L"	_trigger_goto = false\n"
+		L"	if _goto_level <= 0\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " == " << PE() << "\n"
-			"		_goto_level = _test_eof\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << P() << L" == " << PE() << L"\n"
+			L"		_goto_level = _test_eof\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		out << 
-			"	if " << vCS() << " == " << redFsm->errState->id << "\n"
-			"		_goto_level = _out\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L"\n"
+			L"		_goto_level = _out\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	/* The resume label. */
 	out << 
-		"	end\n"
-		"	if _goto_level <= _resume\n";
+		L"	end\n"
+		L"	if _goto_level <= _resume\n";
 	
 	if ( redFsm->anyFromStateActions() ) {
 		out << 
-			"	_acts = " << FSA() << "[" << vCS() << "]\n"
-			"	_nacts = " << A() << "[_acts]\n"
-			"	_acts += 1\n"
-			"	while _nacts > 0\n"
-			"		_nacts -= 1\n"
-			"		_acts += 1\n"
-			"		case " << A() << "[_acts - 1]\n";
+			L"	_acts = " << FSA() << L"[" << vCS() << L"]\n"
+			L"	_nacts = " << A() << L"[_acts]\n"
+			L"	_acts += 1\n"
+			L"	while _nacts > 0\n"
+			L"		_nacts -= 1\n"
+			L"		_acts += 1\n"
+			L"		case " << A() << L"[_acts - 1]\n";
 		FROM_STATE_ACTION_SWITCH();
 		out <<
-			"		end # from state action switch\n"
-			"	end\n"
-			"	if _trigger_goto\n"
-			"		next\n"
-			"	end\n";
+			L"		end # from state action switch\n"
+			L"	end\n"
+			L"	if _trigger_goto\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	if ( redFsm->anyConditions() )
@@ -308,147 +308,147 @@ void RubyTabCodeGen::writeExec()
 	LOCATE_TRANS();
 
 	if ( useIndicies )
-		out << "	_trans = " << I() << "[_trans]\n";
+		out << L"	_trans = " << I() << L"[_trans]\n";
 
 	if ( redFsm->anyEofTrans() ) {
 		out << 
-			"	end\n"
-			"	if _goto_level <= _eof_trans\n";
+			L"	end\n"
+			L"	if _goto_level <= _eof_trans\n";
 	}
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	_ps = " << vCS() << "\n";
+		out << L"	_ps = " << vCS() << L"\n";
 
-	out << "	" << vCS() << " = " << TT() << "[_trans]\n";
+	out << L"	" << vCS() << L" = " << TT() << L"[_trans]\n";
 
 	if ( redFsm->anyRegActions() ) {
 		out << 
-			"	if " << TA() << "[_trans] != 0\n"
-			"		_acts = " << TA() << "[_trans]\n"
-			"		_nacts = " << A() << "[_acts]\n"
-			"		_acts += 1\n"
-			"		while _nacts > 0\n"
-			"			_nacts -= 1\n"
-			"			_acts += 1\n"
-			"			case " << A() << "[_acts - 1]\n";
+			L"	if " << TA() << L"[_trans] != 0\n"
+			L"		_acts = " << TA() << L"[_trans]\n"
+			L"		_nacts = " << A() << L"[_acts]\n"
+			L"		_acts += 1\n"
+			L"		while _nacts > 0\n"
+			L"			_nacts -= 1\n"
+			L"			_acts += 1\n"
+			L"			case " << A() << L"[_acts - 1]\n";
 		ACTION_SWITCH();
 		out <<
-			"			end # action switch\n"
-			"		end\n"
-			"	end\n"
-			"	if _trigger_goto\n"
-			"		next\n"
-			"	end\n";
+			L"			end # action switch\n"
+			L"		end\n"
+			L"	end\n"
+			L"	if _trigger_goto\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	/* The again label. */
 	out <<
-		"	end\n"
-		"	if _goto_level <= _again\n";
+		L"	end\n"
+		L"	if _goto_level <= _again\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	_acts = " << TSA() << "["  << vCS() << "]\n"
-			"	_nacts = " << A() << "[_acts]\n"
-			"	_acts += 1\n"
-			"	while _nacts > 0\n"
-			"		_nacts -= 1\n"
-			"		_acts += 1\n"
-			"		case " << A() << "[_acts - 1]\n";
+			L"	_acts = " << TSA() << L"["  << vCS() << L"]\n"
+			L"	_nacts = " << A() << L"[_acts]\n"
+			L"	_acts += 1\n"
+			L"	while _nacts > 0\n"
+			L"		_nacts -= 1\n"
+			L"		_acts += 1\n"
+			L"		case " << A() << L"[_acts - 1]\n";
 		TO_STATE_ACTION_SWITCH();
 		out <<
-			"		end # to state action switch\n"
-			"	end\n"
-			"	if _trigger_goto\n"
-			"		next\n"
-			"	end\n";
+			L"		end # to state action switch\n"
+			L"	end\n"
+			L"	if _trigger_goto\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		out << 
-			"	if " << vCS() << " == " << redFsm->errState->id << "\n"
-			"		_goto_level = _out\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L"\n"
+			L"		_goto_level = _out\n"
+			L"		next\n"
+			L"	end\n";
 	}
 
-	out << "	" << P() << " += 1\n";
+	out << L"	" << P() << L" += 1\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " != " << PE() << "\n"
-			"		_goto_level = _resume\n"
-			"		next\n"
-			"	end\n";
+			L"	if " << P() << L" != " << PE() << L"\n"
+			L"		_goto_level = _resume\n"
+			L"		next\n"
+			L"	end\n";
 	}
 	else {
 		out <<
-			"	_goto_level = _resume\n"
-			"	next\n";
+			L"	_goto_level = _resume\n"
+			L"	next\n";
 	}
 
 	/* The test_eof label. */
 	out <<
-		"	end\n"
-		"	if _goto_level <= _test_eof\n";
+		L"	end\n"
+		L"	if _goto_level <= _test_eof\n";
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out << 
-			"	if " << P() << " == " << vEOF() << "\n";
+			L"	if " << P() << L" == " << vEOF() << L"\n";
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"	if " << ET() << "[" << vCS() << "] > 0\n"
-				"		_trans = " << ET() << "[" << vCS() << "] - 1;\n"
-				"		_goto_level = _eof_trans\n"
-				"		next;\n"
-				"	end\n";
+				L"	if " << ET() << L"[" << vCS() << L"] > 0\n"
+				L"		_trans = " << ET() << L"[" << vCS() << L"] - 1;\n"
+				L"		_goto_level = _eof_trans\n"
+				L"		next;\n"
+				L"	end\n";
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out << 
-				"	__acts = " << EA() << "[" << vCS() << "]\n"
-				"	__nacts = " << " " << A() << "[__acts]\n"
-				"	__acts += 1\n"
-				"	while __nacts > 0\n"
-				"		__nacts -= 1\n"
-				"		__acts += 1\n"
-				"		case " << A() << "[__acts - 1]\n";
+				L"	__acts = " << EA() << L"[" << vCS() << L"]\n"
+				L"	__nacts = " << L" " << A() << L"[__acts]\n"
+				L"	__acts += 1\n"
+				L"	while __nacts > 0\n"
+				L"		__nacts -= 1\n"
+				L"		__acts += 1\n"
+				L"		case " << A() << L"[__acts - 1]\n";
 			EOF_ACTION_SWITCH() <<
-				"		end # eof action switch\n"
-				"	end\n"
-				"	if _trigger_goto\n"
-				"		next\n"
-				"	end\n";
+				L"		end # eof action switch\n"
+				L"	end\n"
+				L"	if _trigger_goto\n"
+				L"		next\n"
+				L"	end\n";
 		}
 
 		out << 
-			"end\n";
+			L"end\n";
 	}
 
 	out << 
-		"	end\n"
-		"	if _goto_level <= _out\n"
-		"		break\n"
-		"	end\n";
+		L"	end\n"
+		L"	if _goto_level <= _out\n"
+		L"		break\n"
+		L"	end\n";
 
 	/* The loop for next. */
 	out << 
-		"	end\n";
+		L"	end\n";
 
 	/* Wrapping the execute block. */
 	out << 
-		"	end\n";
+		L"	end\n";
 }
 
-std::ostream &RubyTabCodeGen::FROM_STATE_ACTION_SWITCH() 
+std::wostream &RubyTabCodeGen::FROM_STATE_ACTION_SWITCH() 
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numFromStateRefs > 0 ) {
 			/* Write the case label, the action */
-			out << "			when " << act->actionId << " then\n";
+			out << L"			when " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -458,14 +458,14 @@ std::ostream &RubyTabCodeGen::FROM_STATE_ACTION_SWITCH()
 }
 
 
-std::ostream &RubyTabCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &RubyTabCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numToStateRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "when " << act->actionId << " then\n";
+			out << L"when " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -474,14 +474,14 @@ std::ostream &RubyTabCodeGen::TO_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::EOF_ACTION_SWITCH()
+std::wostream &RubyTabCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numEofRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "when " << act->actionId << " then\n";
+			out << L"when " << act->actionId << L" then\n";
 			ACTION( out, act, 0, true );
 		}
 	}
@@ -490,14 +490,14 @@ std::ostream &RubyTabCodeGen::EOF_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::ACTION_SWITCH()
+std::wostream &RubyTabCodeGen::ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numTransRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "when " << act->actionId << " then\n";
+			out << L"when " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -507,16 +507,16 @@ std::ostream &RubyTabCodeGen::ACTION_SWITCH()
 }
 
 
-void RubyTabCodeGen::NEXT( ostream &ret, int nextDest, bool inFinish )
+void RubyTabCodeGen::NEXT( wostream &ret, int nextDest, bool inFinish )
 {
-	ret << vCS() << " = " << nextDest << ";";
+	ret << vCS() << L" = " << nextDest << L";";
 }
 
-void RubyTabCodeGen::NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void RubyTabCodeGen::NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << vCS() << " = (";
+	ret << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish );
-	ret << ");";
+	ret << L");";
 }
 
 
@@ -545,7 +545,7 @@ int RubyTabCodeGen::EOF_ACTION( RedStateAp *state )
 }
 
 
-std::ostream &RubyTabCodeGen::COND_OFFSETS()
+std::wostream &RubyTabCodeGen::COND_OFFSETS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0, curKeyOffset = 0;
@@ -560,7 +560,7 @@ std::ostream &RubyTabCodeGen::COND_OFFSETS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::KEY_OFFSETS()
+std::wostream &RubyTabCodeGen::KEY_OFFSETS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0, curKeyOffset = 0;
@@ -576,7 +576,7 @@ std::ostream &RubyTabCodeGen::KEY_OFFSETS()
 }
 
 
-std::ostream &RubyTabCodeGen::INDEX_OFFSETS()
+std::wostream &RubyTabCodeGen::INDEX_OFFSETS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0, curIndOffset = 0;
@@ -593,7 +593,7 @@ std::ostream &RubyTabCodeGen::INDEX_OFFSETS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::COND_LENS()
+std::wostream &RubyTabCodeGen::COND_LENS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -606,7 +606,7 @@ std::ostream &RubyTabCodeGen::COND_LENS()
 }
 
 
-std::ostream &RubyTabCodeGen::SINGLE_LENS()
+std::wostream &RubyTabCodeGen::SINGLE_LENS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -618,7 +618,7 @@ std::ostream &RubyTabCodeGen::SINGLE_LENS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::RANGE_LENS()
+std::wostream &RubyTabCodeGen::RANGE_LENS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -630,7 +630,7 @@ std::ostream &RubyTabCodeGen::RANGE_LENS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::TO_STATE_ACTIONS()
+std::wostream &RubyTabCodeGen::TO_STATE_ACTIONS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -642,7 +642,7 @@ std::ostream &RubyTabCodeGen::TO_STATE_ACTIONS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::FROM_STATE_ACTIONS()
+std::wostream &RubyTabCodeGen::FROM_STATE_ACTIONS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -654,7 +654,7 @@ std::ostream &RubyTabCodeGen::FROM_STATE_ACTIONS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::EOF_ACTIONS()
+std::wostream &RubyTabCodeGen::EOF_ACTIONS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -666,7 +666,7 @@ std::ostream &RubyTabCodeGen::EOF_ACTIONS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::EOF_TRANS()
+std::wostream &RubyTabCodeGen::EOF_TRANS()
 {
 	START_ARRAY_LINE();
 	int totalStateNum = 0;
@@ -685,7 +685,7 @@ std::ostream &RubyTabCodeGen::EOF_TRANS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::COND_KEYS()
+std::wostream &RubyTabCodeGen::COND_KEYS()
 {
 	START_ARRAY_LINE();
 	int totalTrans = 0;
@@ -705,7 +705,7 @@ std::ostream &RubyTabCodeGen::COND_KEYS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::COND_SPACES()
+std::wostream &RubyTabCodeGen::COND_SPACES()
 {
 	START_ARRAY_LINE();
 	int totalTrans = 0;
@@ -724,7 +724,7 @@ std::ostream &RubyTabCodeGen::COND_SPACES()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::KEYS()
+std::wostream &RubyTabCodeGen::KEYS()
 {
 	START_ARRAY_LINE();
 	int totalTrans = 0;
@@ -751,7 +751,7 @@ std::ostream &RubyTabCodeGen::KEYS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::INDICIES()
+std::wostream &RubyTabCodeGen::INDICIES()
 {
 	int totalTrans = 0;
 	START_ARRAY_LINE();
@@ -779,7 +779,7 @@ std::ostream &RubyTabCodeGen::INDICIES()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::TRANS_TARGS()
+std::wostream &RubyTabCodeGen::TRANS_TARGS()
 {
 	int totalTrans = 0;
 	START_ARRAY_LINE();
@@ -819,7 +819,7 @@ std::ostream &RubyTabCodeGen::TRANS_TARGS()
 }
 
 
-std::ostream &RubyTabCodeGen::TRANS_ACTIONS()
+std::wostream &RubyTabCodeGen::TRANS_ACTIONS()
 {
 	int totalTrans = 0;
 	START_ARRAY_LINE();
@@ -857,7 +857,7 @@ std::ostream &RubyTabCodeGen::TRANS_ACTIONS()
 	return out;
 }
 
-std::ostream &RubyTabCodeGen::TRANS_TARGS_WI()
+std::wostream &RubyTabCodeGen::TRANS_TARGS_WI()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -881,7 +881,7 @@ std::ostream &RubyTabCodeGen::TRANS_TARGS_WI()
 }
 
 
-std::ostream &RubyTabCodeGen::TRANS_ACTIONS_WI()
+std::wostream &RubyTabCodeGen::TRANS_ACTIONS_WI()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -906,90 +906,90 @@ std::ostream &RubyTabCodeGen::TRANS_ACTIONS_WI()
 void RubyTabCodeGen::writeData()
 {
 	/* If there are any transtion functions then output the array. If there
-	 * are none, don't bother emitting an empty array that won't be used. */
+	 * are none, donL't bother emitting an empty array that won't be used. */
 	if ( redFsm->anyActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActArrItem), A() );
 		ACTIONS_ARRAY();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyConditions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondOffset), CO() );
 		COND_OFFSETS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondLen), CL() );
 		COND_LENS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( WIDE_ALPH_TYPE(), CK() );
 		COND_KEYS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondSpaceId), C() );
 		COND_SPACES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxKeyOffset), KO() );
 	KEY_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( WIDE_ALPH_TYPE(), K() );
 	KEYS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxSingleLen), SL() );
 	SINGLE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxRangeLen), RL() );
 	RANGE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset), IO() );
 	INDEX_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	if ( useIndicies ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndex), I() );
 		INDICIES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS_WI();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TA() );
 			TRANS_ACTIONS_WI();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 	else {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TA() );
 			TRANS_ACTIONS();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 
@@ -997,28 +997,28 @@ void RubyTabCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofTrans() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset+1), ET() );
 		EOF_TRANS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 	
 	STATE_IDS();
@@ -1028,6 +1028,6 @@ void RubyTabCodeGen::writeData()
  Local Variables:
  mode: c++
  indent-tabs-mode: 1
- c-file-style: "bsd"
+ c-file-style: L"bsd"
  End:
  */

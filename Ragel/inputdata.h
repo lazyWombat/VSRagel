@@ -37,10 +37,10 @@ struct InputItem
 	};
 
 	Type type;
-	std::ostringstream data;
-	std::string name;
+	std::wostringstream data;
+	std::wstring name;
 	ParseData *pd;
-	Vector<char *> writeArgs;
+	Vector<wchar_t *> writeArgs;
 
 	InputLoc loc;
 
@@ -49,11 +49,11 @@ struct InputItem
 
 struct Parser;
 
-typedef AvlMap<const char*, Parser*, CmpStr> ParserDict;
-typedef AvlMapEl<const char*, Parser*> ParserDictEl;
+typedef AvlMap<const wchar_t*, Parser*, CmpStr> ParserDict;
+typedef AvlMapEl<const wchar_t*, Parser*> ParserDictEl;
 typedef DList<Parser> ParserList;
 typedef DList<InputItem> InputItemList;
-typedef Vector<const char *> ArgsVector;
+typedef Vector<const wchar_t *> ArgsVector;
 
 struct InputData
 {
@@ -67,12 +67,12 @@ struct InputData
 	{}
 
 	/* The name of the root section, this does not change during an include. */
-	const char *inputFileName;
-	const char *outputFileName;
+	const wchar_t *inputFileName;
+	const wchar_t *outputFileName;
 
 	/* Io globals. */
-	std::istream *inStream;
-	std::ostream *outStream;
+	std::wistream *inStream;
+	std::wostream *outStream;
 	output_filter *outFilter;
 
 	Parser *dotGenParser;
@@ -92,15 +92,15 @@ struct InputData
 	void prepareMachineGen();
 	void terminateAllParsers();
 
-	void cdDefaultFileName( const char *inputFile );
-	void goDefaultFileName( const char *inputFile );
-	void javaDefaultFileName( const char *inputFile );
-	void rubyDefaultFileName( const char *inputFile );
-	void csharpDefaultFileName( const char *inputFile );
-	void ocamlDefaultFileName( const char *inputFile );
+	void cdDefaultFileName( const wchar_t *inputFile );
+	void goDefaultFileName( const wchar_t *inputFile );
+	void javaDefaultFileName( const wchar_t *inputFile );
+	void rubyDefaultFileName( const wchar_t *inputFile );
+	void csharpDefaultFileName( const wchar_t *inputFile );
+	void ocamlDefaultFileName( const wchar_t *inputFile );
 
-	void writeLanguage( std::ostream &out );
-	void writeXML( std::ostream &out );
+	void writeLanguage( std::wostream &out );
+	void writeXML( std::wostream &out );
 };
 
 #endif

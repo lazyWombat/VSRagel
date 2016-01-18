@@ -34,26 +34,26 @@ class GoIpGotoCodeGen
 	: public GoGotoCodeGen
 {
 public:
-	GoIpGotoCodeGen( ostream &out )
+	GoIpGotoCodeGen( wostream &out )
 			: GoGotoCodeGen(out) {}
 
-	std::ostream &EXIT_STATES();
-	std::ostream &TRANS_GOTO( RedTransAp *trans, int level );
+	std::wostream &EXIT_STATES();
+	std::wostream &TRANS_GOTO( RedTransAp *trans, int level );
 	int TRANS_NR( RedTransAp *trans );
-	std::ostream &FINISH_CASES( int level );
-	std::ostream &AGAIN_CASES( int level );
-	std::ostream &STATE_GOTOS_SWITCH( int level );
+	std::wostream &FINISH_CASES( int level );
+	std::wostream &AGAIN_CASES( int level );
+	std::wostream &STATE_GOTOS_SWITCH( int level );
 
-	void GOTO( ostream &ret, int gotoDest, bool inFinish );
-	void CALL( ostream &ret, int callDest, int targState, bool inFinish );
-	void NEXT( ostream &ret, int nextDest, bool inFinish );
-	void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
-	void RET( ostream &ret, bool inFinish );
-	void CURS( ostream &ret, bool inFinish );
-	void TARGS( ostream &ret, bool inFinish, int targState );
-	void BREAK( ostream &ret, int targState, bool csForced );
+	void GOTO( wostream &ret, int gotoDest, bool inFinish );
+	void CALL( wostream &ret, int callDest, int targState, bool inFinish );
+	void NEXT( wostream &ret, int nextDest, bool inFinish );
+	void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
+	void RET( wostream &ret, bool inFinish );
+	void CURS( wostream &ret, bool inFinish );
+	void TARGS( wostream &ret, bool inFinish, int targState );
+	void BREAK( wostream &ret, int targState, bool csForced );
 
 	virtual void writeData();
 	virtual void writeExec();

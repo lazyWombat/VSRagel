@@ -27,7 +27,7 @@
 #include "redfsm.h"
 #include "gendata.h"
 
-std::ostream &OCamlFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
+std::wostream &OCamlFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->toStateAction != 0 )
@@ -36,7 +36,7 @@ std::ostream &OCamlFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
+std::wostream &OCamlFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->fromStateAction != 0 )
@@ -45,7 +45,7 @@ std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::EOF_ACTION( RedStateAp *state )
+std::wostream &OCamlFlatCodeGen::EOF_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->eofAction != 0 )
@@ -54,7 +54,7 @@ std::ostream &OCamlFlatCodeGen::EOF_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
+std::wostream &OCamlFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
 {
 	/* If there are actions, emit them. Otherwise emit zero. */
 	int act = 0;
@@ -64,16 +64,16 @@ std::ostream &OCamlFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &OCamlFlatCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numToStateRefs > 0 ) {
 			/* Write the case label, the action and the case break */
-			out << "\t| " << act->actionId << " ->\n";
+			out << L"\t| " << act->actionId << L" ->\n";
 			ACTION( out, act, 0, false );
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -81,16 +81,16 @@ std::ostream &OCamlFlatCodeGen::TO_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTION_SWITCH()
+std::wostream &OCamlFlatCodeGen::FROM_STATE_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numFromStateRefs > 0 ) {
 			/* Write the case label, the action and the case break */
-			out << "\t| " << act->actionId << " ->\n";
+			out << L"\t| " << act->actionId << L" ->\n";
 			ACTION( out, act, 0, false );
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -98,16 +98,16 @@ std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::EOF_ACTION_SWITCH()
+std::wostream &OCamlFlatCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numEofRefs > 0 ) {
 			/* Write the case label, the action and the case break */
-			out << "\t| " << act->actionId << " ->\n";
+			out << L"\t| " << act->actionId << L" ->\n";
 			ACTION( out, act, 0, true );
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -116,16 +116,16 @@ std::ostream &OCamlFlatCodeGen::EOF_ACTION_SWITCH()
 }
 
 
-std::ostream &OCamlFlatCodeGen::ACTION_SWITCH()
+std::wostream &OCamlFlatCodeGen::ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numTransRefs > 0 ) {
 			/* Write the case label, the action and the case break */
-			out << "\t| " << act->actionId << " ->\n";
+			out << L"\t| " << act->actionId << L" ->\n";
 			ACTION( out, act, 0, false );
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -134,9 +134,9 @@ std::ostream &OCamlFlatCodeGen::ACTION_SWITCH()
 }
 
 
-std::ostream &OCamlFlatCodeGen::FLAT_INDEX_OFFSET()
+std::wostream &OCamlFlatCodeGen::FLAT_INDEX_OFFSET()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0, curIndOffset = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write the index offset. */
@@ -144,7 +144,7 @@ std::ostream &OCamlFlatCodeGen::FLAT_INDEX_OFFSET()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 
 		/* Move the index offset ahead. */
@@ -154,13 +154,13 @@ std::ostream &OCamlFlatCodeGen::FLAT_INDEX_OFFSET()
 		if ( st->defTrans != 0 )
 			curIndOffset += 1;
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::KEY_SPANS()
+std::wostream &OCamlFlatCodeGen::KEY_SPANS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write singles length. */
@@ -171,16 +171,16 @@ std::ostream &OCamlFlatCodeGen::KEY_SPANS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::TO_STATE_ACTIONS()
+std::wostream &OCamlFlatCodeGen::TO_STATE_ACTIONS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
@@ -188,16 +188,16 @@ std::ostream &OCamlFlatCodeGen::TO_STATE_ACTIONS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTIONS()
+std::wostream &OCamlFlatCodeGen::FROM_STATE_ACTIONS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
@@ -205,16 +205,16 @@ std::ostream &OCamlFlatCodeGen::FROM_STATE_ACTIONS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::EOF_ACTIONS()
+std::wostream &OCamlFlatCodeGen::EOF_ACTIONS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
@@ -222,16 +222,16 @@ std::ostream &OCamlFlatCodeGen::EOF_ACTIONS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::EOF_TRANS()
+std::wostream &OCamlFlatCodeGen::EOF_TRANS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
@@ -246,35 +246,35 @@ std::ostream &OCamlFlatCodeGen::EOF_TRANS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
 
-std::ostream &OCamlFlatCodeGen::COND_KEYS()
+std::wostream &OCamlFlatCodeGen::COND_KEYS()
 {
-	out << '\t';
+	out << L'\t';
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Emit just cond low key and cond high key. */
 		out << ALPHA_KEY( st->condLowKey ) << ARR_SEP();
 		out << ALPHA_KEY( st->condHighKey ) << ARR_SEP();
 		if ( ++totalTrans % IALL == 0 )
-			out << "\n\t";
+			out << L"\n\t";
 	}
 
 	/* Output one last number so we don't have to figure out when the last
 	 * entry is and avoid writing a comma. */
-	out << /*"(char) " <<*/ 0 << "\n";
+	out << /*L"(char) " <<*/ 0 << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::COND_KEY_SPANS()
+std::wostream &OCamlFlatCodeGen::COND_KEY_SPANS()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write singles length. */
@@ -285,17 +285,17 @@ std::ostream &OCamlFlatCodeGen::COND_KEY_SPANS()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::CONDS()
+std::wostream &OCamlFlatCodeGen::CONDS()
 {
 	int totalTrans = 0;
-	out << '\t';
+	out << L'\t';
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->condList != 0 ) {
 			/* Walk the singles. */
@@ -304,22 +304,22 @@ std::ostream &OCamlFlatCodeGen::CONDS()
 				if ( st->condList[pos] != 0 )
 					out << st->condList[pos]->condSpaceId + 1 << ARR_SEP();
 				else
-					out << "0" << ARR_SEP();
+					out << L"0" << ARR_SEP();
 				if ( ++totalTrans % IALL == 0 )
-					out << "\n\t";
+					out << L"\n\t";
 			}
 		}
 	}
 
 	/* Output one last number so we don't have to figure out when the last
 	 * entry is and avoid writing a comma. */
-	out << 0 << "\n";
+	out << 0 << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::COND_INDEX_OFFSET()
+std::wostream &OCamlFlatCodeGen::COND_INDEX_OFFSET()
 {
-	out << "\t";
+	out << L"\t";
 	int totalStateNum = 0, curIndOffset = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write the index offset. */
@@ -327,40 +327,40 @@ std::ostream &OCamlFlatCodeGen::COND_INDEX_OFFSET()
 		if ( !st.last() ) {
 			out << ARR_SEP();
 			if ( ++totalStateNum % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 
 		/* Move the index offset ahead. */
 		if ( st->condList != 0 )
 			curIndOffset += keyOps->span( st->condLowKey, st->condHighKey );
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
 
-std::ostream &OCamlFlatCodeGen::KEYS()
+std::wostream &OCamlFlatCodeGen::KEYS()
 {
-	out << '\t';
+	out << L'\t';
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Emit just low key and high key. */
 		out << ALPHA_KEY( st->lowKey ) << ARR_SEP();
 		out << ALPHA_KEY( st->highKey ) << ARR_SEP();
 		if ( ++totalTrans % IALL == 0 )
-			out << "\n\t";
+			out << L"\n\t";
 	}
 
 	/* Output one last number so we don't have to figure out when the last
 	 * entry is and avoid writing a comma. */
-	out << /*"(char) " <<*/ 0 << "\n";
+	out << /*L"(char) " <<*/ 0 << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::INDICIES()
+std::wostream &OCamlFlatCodeGen::INDICIES()
 {
 	int totalTrans = 0;
-	out << '\t';
+	out << L'\t';
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->transList != 0 ) {
 			/* Walk the singles. */
@@ -368,7 +368,7 @@ std::ostream &OCamlFlatCodeGen::INDICIES()
 			for ( unsigned long long pos = 0; pos < span; pos++ ) {
 				out << st->transList[pos]->id << ARR_SEP();
 				if ( ++totalTrans % IALL == 0 )
-					out << "\n\t";
+					out << L"\n\t";
 			}
 		}
 
@@ -377,16 +377,16 @@ std::ostream &OCamlFlatCodeGen::INDICIES()
 			out << st->defTrans->id << ARR_SEP();
 
 		if ( ++totalTrans % IALL == 0 )
-			out << "\n\t";
+			out << L"\n\t";
 	}
 
 	/* Output one last number so we don't have to figure out when the last
 	 * entry is and avoid writing a comma. */
-	out << 0 << "\n";
+	out << 0 << L"\n";
 	return out;
 }
 
-std::ostream &OCamlFlatCodeGen::TRANS_TARGS()
+std::wostream &OCamlFlatCodeGen::TRANS_TARGS()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -394,7 +394,7 @@ std::ostream &OCamlFlatCodeGen::TRANS_TARGS()
 		transPtrs[trans->id] = trans;
 
 	/* Keep a count of the num of items in the array written. */
-	out << '\t';
+	out << L'\t';
 	int totalStates = 0;
 	for ( int t = 0; t < redFsm->transSet.length(); t++ ) {
 		/* Record the position, need this for eofTrans. */
@@ -406,16 +406,16 @@ std::ostream &OCamlFlatCodeGen::TRANS_TARGS()
 		if ( t < redFsm->transSet.length()-1 ) {
 			out << ARR_SEP();
 			if ( ++totalStates % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	delete[] transPtrs;
 	return out;
 }
 
 
-std::ostream &OCamlFlatCodeGen::TRANS_ACTIONS()
+std::wostream &OCamlFlatCodeGen::TRANS_ACTIONS()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -423,7 +423,7 @@ std::ostream &OCamlFlatCodeGen::TRANS_ACTIONS()
 		transPtrs[trans->id] = trans;
 
 	/* Keep a count of the num of items in the array written. */
-	out << '\t';
+	out << L'\t';
 	int totalAct = 0;
 	for ( int t = 0; t < redFsm->transSet.length(); t++ ) {
 		/* Write the function for the transition. */
@@ -432,271 +432,271 @@ std::ostream &OCamlFlatCodeGen::TRANS_ACTIONS()
 		if ( t < redFsm->transSet.length()-1 ) {
 			out << ARR_SEP();
 			if ( ++totalAct % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	delete[] transPtrs;
 	return out;
 }
 
 void OCamlFlatCodeGen::LOCATE_TRANS()
 {
-  std::ostringstream temp;
-  temp << "inds + (\n"
-		"		if slen > 0 && " << AT( K(), "keys" ) << " <= " << GET_WIDE_KEY() << " &&\n"
-		"		" << GET_WIDE_KEY() << " <= " << AT( K(), "keys+1" ) << " then\n"
-		"		" << GET_WIDE_KEY() << " - " << AT(K(), "keys" ) << " else slen)";
+  std::wostringstream temp;
+  temp << L"inds + (\n"
+		L"		if slen > 0 && " << AT( K(), L"keys" ) << L" <= " << GET_WIDE_KEY() << L" &&\n"
+		L"		" << GET_WIDE_KEY() << L" <= " << AT( K(), L"keys+1" ) << L" then\n"
+		L"		" << GET_WIDE_KEY() << L" - " << AT(K(), L"keys" ) << L" else slen)";
 	out <<
-		"	let keys = " << vCS() << " lsl 1 in\n"
-		"	let inds = " << AT( IO(), vCS() ) << " in\n"
-		"\n"
-		"	let slen = " << AT( SP(), vCS() ) << " in\n"
-		"	state.trans <- " << AT( I(), temp.str() ) << ";\n"
-		"\n";
+		L"	let keys = " << vCS() << L" lsl 1 in\n"
+		L"	let inds = " << AT( IO(), vCS() ) << L" in\n"
+		L"\n"
+		L"	let slen = " << AT( SP(), vCS() ) << L" in\n"
+		L"	state.trans <- " << AT( I(), temp.str() ) << L";\n"
+		L"\n";
 }
 
-void OCamlFlatCodeGen::GOTO( ostream &ret, int gotoDest, bool inFinish )
+void OCamlFlatCodeGen::GOTO( wostream &ret, int gotoDest, bool inFinish )
 {
-	ret << "begin " << vCS() << " <- " << gotoDest << "; " << 
-			CTRL_FLOW() << "raise Goto_again end";
+	ret << L"begin " << vCS() << L" <- " << gotoDest << L"; " << 
+			CTRL_FLOW() << L"raise Goto_again end";
 }
 
-void OCamlFlatCodeGen::GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void OCamlFlatCodeGen::GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << "begin " << vCS() << " <- (";
+	ret << L"begin " << vCS() << L" <- (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish );
-	ret << "); " << CTRL_FLOW() << " raise Goto_again end";
+	ret << L"); " << CTRL_FLOW() << L" raise Goto_again end";
 }
 
-void OCamlFlatCodeGen::CURS( ostream &ret, bool inFinish )
+void OCamlFlatCodeGen::CURS( wostream &ret, bool inFinish )
 {
-	ret << "(_ps)";
+	ret << L"(_ps)";
 }
 
-void OCamlFlatCodeGen::TARGS( ostream &ret, bool inFinish, int targState )
+void OCamlFlatCodeGen::TARGS( wostream &ret, bool inFinish, int targState )
 {
-	ret << "(" << vCS() << ")";
+	ret << L"(" << vCS() << L")";
 }
 
-void OCamlFlatCodeGen::NEXT( ostream &ret, int nextDest, bool inFinish )
+void OCamlFlatCodeGen::NEXT( wostream &ret, int nextDest, bool inFinish )
 {
-	ret << vCS() << " <- " << nextDest << ";";
+	ret << vCS() << L" <- " << nextDest << L";";
 }
 
-void OCamlFlatCodeGen::NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void OCamlFlatCodeGen::NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << vCS() << " <- (";
+	ret << vCS() << L" <- (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish );
-	ret << ");";
+	ret << L");";
 }
 
-void OCamlFlatCodeGen::CALL( ostream &ret, int callDest, int targState, bool inFinish )
+void OCamlFlatCodeGen::CALL( wostream &ret, int callDest, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "begin ";
+		ret << L"begin ";
 		INLINE_LIST( ret, prePushExpr, 0, false );
 	}
 
-	ret << "begin " << AT( STACK(), POST_INCR(TOP()) ) << " <- " << vCS() << "; ";
-  ret << vCS() << " <- " << callDest << "; " << CTRL_FLOW() << "raise Goto_again end ";
+	ret << L"begin " << AT( STACK(), POST_INCR(TOP()) ) << L" <- " << vCS() << L"; ";
+  ret << vCS() << L" <- " << callDest << L"; " << CTRL_FLOW() << L"raise Goto_again end ";
 
 	if ( prePushExpr != 0 )
-		ret << "end";
+		ret << L"end";
 }
 
-void OCamlFlatCodeGen::CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
+void OCamlFlatCodeGen::CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "begin ";
+		ret << L"begin ";
 		INLINE_LIST( ret, prePushExpr, 0, false );
 	}
 
-	ret << "begin " << AT(STACK(), POST_INCR(TOP()) ) << " <- " << vCS() << "; " << vCS() << " <- (";
+	ret << L"begin " << AT(STACK(), POST_INCR(TOP()) ) << L" <- " << vCS() << L"; " << vCS() << L" <- (";
 	INLINE_LIST( ret, ilItem->children, targState, inFinish );
-	ret << "); " << CTRL_FLOW() << "raise Goto_again end ";
+	ret << L"); " << CTRL_FLOW() << L"raise Goto_again end ";
 
 	if ( prePushExpr != 0 )
-		ret << "end";
+		ret << L"end";
 }
 
-void OCamlFlatCodeGen::RET( ostream &ret, bool inFinish )
+void OCamlFlatCodeGen::RET( wostream &ret, bool inFinish )
 {
-	ret << "begin " << vCS() << " <- " << AT(STACK(), PRE_DECR(TOP()) ) << "; ";
+	ret << L"begin " << vCS() << L" <- " << AT(STACK(), PRE_DECR(TOP()) ) << L"; ";
 
 	if ( postPopExpr != 0 ) {
-		ret << "begin ";
+		ret << L"begin ";
 		INLINE_LIST( ret, postPopExpr, 0, false );
-		ret << "end ";
+		ret << L"end ";
 	}
 
-	ret << CTRL_FLOW() <<  "raise Goto_again end";
+	ret << CTRL_FLOW() <<  L"raise Goto_again end";
 }
 
-void OCamlFlatCodeGen::BREAK( ostream &ret, int targState )
+void OCamlFlatCodeGen::BREAK( wostream &ret, int targState )
 {
 	outLabelUsed = true;
-	ret << "begin " << P() << " <- " << P() << " + 1; " << CTRL_FLOW() << "raise Goto_out end";
+	ret << L"begin " << P() << L" <- " << P() << L" + 1; " << CTRL_FLOW() << L"raise Goto_out end";
 }
 
 void OCamlFlatCodeGen::writeData()
 {
 	/* If there are any transtion functions then output the array. If there
-	 * are none, don't bother emitting an empty array that won't be used. */
+	 * are none, donL't bother emitting an empty array that won't be used. */
 	if ( redFsm->anyActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActArrItem), A() );
 		ACTIONS_ARRAY();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyConditions() ) {
 		OPEN_ARRAY( WIDE_ALPH_TYPE(), CK() );
 		COND_KEYS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondSpan), CSP() );
 		COND_KEY_SPANS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCond), C() );
 		CONDS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondIndexOffset), CO() );
 		COND_INDEX_OFFSET();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	OPEN_ARRAY( WIDE_ALPH_TYPE(), K() );
 	KEYS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxSpan), SP() );
 	KEY_SPANS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxFlatIndexOffset), IO() );
 	FLAT_INDEX_OFFSET();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndex), I() );
 	INDICIES();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 	TRANS_TARGS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	if ( redFsm->anyActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TA() );
 		TRANS_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyToStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofTrans() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset+1), ET() );
 		EOF_TRANS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	STATE_IDS();
 
-  out << "type " << TYPE_STATE() << " = { mutable trans : int; mutable acts : int; mutable nacts : int; }"
+  out << L"type " << TYPE_STATE() << L" = { mutable trans : int; mutable acts : int; mutable nacts : int; }"
     << TOP_SEP();
 
-  out << "exception Goto_match" << TOP_SEP();
-  out << "exception Goto_again" << TOP_SEP();
-  out << "exception Goto_eof_trans" << TOP_SEP();
+  out << L"exception Goto_match" << TOP_SEP();
+  out << L"exception Goto_again" << TOP_SEP();
+  out << L"exception Goto_eof_trans" << TOP_SEP();
 }
 
 void OCamlFlatCodeGen::COND_TRANSLATE()
 {
 	out << 
-		"	_widec = " << GET_KEY() << ";\n";
+		L"	_widec = " << GET_KEY() << L";\n";
 
 	out <<
-		"   _keys = " << vCS() << "<<1;\n"
-		"   _conds = " << CO() << "[" << vCS() << "];\n"
-//		"	_keys = " << ARR_OFF( CK(), "(" + vCS() + "<<1)" ) << ";\n"
-//		"	_conds = " << ARR_OFF( C(), CO() + "[" + vCS() + "]" ) << ";\n"
-		"\n"
-		"	_slen = " << CSP() << "[" << vCS() << "];\n"
-		"	if (_slen > 0 && " << CK() << "[_keys] <=" 
-			<< GET_WIDE_KEY() << " &&\n"
-		"		" << GET_WIDE_KEY() << " <= " << CK() << "[_keys+1])\n"
-		"		_cond = " << C() << "[_conds+" << GET_WIDE_KEY() << " - " << 
-			CK() << "[_keys]];\n"
-		"	else\n"
-		"		_cond = 0;"
-		"\n";
+		L"   _keys = " << vCS() << L"<<1;\n"
+		L"   _conds = " << CO() << L"[" << vCS() << L"];\n"
+//		L"	_keys = " << ARR_OFF( CK(), L"(" + vCS() + L"<<1)" ) << L";\n"
+//		L"	_conds = " << ARR_OFF( C(), CO() + L"[" + vCS() + L"]" ) << L";\n"
+		L"\n"
+		L"	_slen = " << CSP() << L"[" << vCS() << L"];\n"
+		L"	if (_slen > 0 && " << CK() << L"[_keys] <=" 
+			<< GET_WIDE_KEY() << L" &&\n"
+		L"		" << GET_WIDE_KEY() << L" <= " << CK() << L"[_keys+1])\n"
+		L"		_cond = " << C() << L"[_conds+" << GET_WIDE_KEY() << L" - " << 
+			CK() << L"[_keys]];\n"
+		L"	else\n"
+		L"		_cond = 0;"
+		L"\n";
 	/*  XXX This version of the code doesn't work because Mono is weird.  Works
 	 *  fine in Microsoft's csc, even though the bug report filed claimed it
 	 *  didn't.
-		"	_slen = " << CSP() << "[" << vCS() << "];\n"
-		"	_cond = _slen > 0 && " << CK() << "[_keys] <=" 
-			<< GET_WIDE_KEY() << " &&\n"
-		"		" << GET_WIDE_KEY() << " <= " << CK() << "[_keys+1] ?\n"
-		"		" << C() << "[_conds+" << GET_WIDE_KEY() << " - " << CK() 
-			<< "[_keys]] : 0;\n"
-		"\n";
+		L"	_slen = " << CSP() << L"[" << vCS() << L"];\n"
+		L"	_cond = _slen > 0 && " << CK() << L"[_keys] <=" 
+			<< GET_WIDE_KEY() << L" &&\n"
+		L"		" << GET_WIDE_KEY() << L" <= " << CK() << L"[_keys+1] ?\n"
+		L"		" << C() << L"[_conds+" << GET_WIDE_KEY() << L" - " << CK() 
+			<< L"[_keys]] : 0;\n"
+		L"\n";
 		*/
 	out <<
-		"	switch ( _cond ) {\n";
+		L"	switch ( _cond ) {\n";
 	for ( CondSpaceList::Iter csi = condSpaceList; csi.lte(); csi++ ) {
 		GenCondSpace *condSpace = csi;
-		out << "	case " << condSpace->condSpaceId + 1 << ": {\n";
-		out << TABS(2) << "_widec = " << CAST(WIDE_ALPH_TYPE()) << "(" <<
-				KEY(condSpace->baseKey) << " + (" << GET_KEY() << 
-				" - " << KEY(keyOps->minKey) << "));\n";
+		out << L"	case " << condSpace->condSpaceId + 1 << L": {\n";
+		out << TABS(2) << L"_widec = " << CAST(WIDE_ALPH_TYPE()) << L"(" <<
+				KEY(condSpace->baseKey) << L" + (" << GET_KEY() << 
+				L" - " << KEY(keyOps->minKey) << L"));\n";
 
 		for ( GenCondSet::Iter csi = condSpace->condSet; csi.lte(); csi++ ) {
-			out << TABS(2) << "if ( ";
+			out << TABS(2) << L"if ( ";
 			CONDITION( out, *csi );
 			Size condValOffset = ((1 << csi.pos()) * keyOps->alphSize());
-			out << " ) _widec += " << condValOffset << ";\n";
+			out << L" ) _widec += " << condValOffset << L";\n";
 		}
 
-		out << "		}\n";
-		out << "		break;\n";
+		out << L"		}\n";
+		out << L"		break;\n";
 	}
 
 	SWITCH_DEFAULT();
 
 	out <<
-		"	}\n";
+		L"	}\n";
 }
 
 void OCamlFlatCodeGen::writeExec()
@@ -706,200 +706,200 @@ void OCamlFlatCodeGen::writeExec()
 	initVarTypes();
 
 	out << 
-		"	begin\n";
-//		"	" << slenType << " _slen";
+		L"	begin\n";
+//		L"	" << slenType << L" _slen";
 
 //	if ( redFsm->anyRegCurStateRef() )
-//		out << ", _ps";
+//		out << L", _ps";
 
 //	out << 
-//		"	" << transType << " _trans";
+//		L"	" << transType << L" _trans";
 
 //	if ( redFsm->anyConditions() )
-//		out << ", _cond";
-//	out << ";\n";
+//		out << L", _cond";
+//	out << L";\n";
 
 //	if ( redFsm->anyToStateActions() || 
 //			redFsm->anyRegActions() || redFsm->anyFromStateActions() )
 //	{
 //		out << 
-//			"	int _acts;\n"
-//			"	int _nacts;\n"; 
+//			L"	int _acts;\n"
+//			L"	int _nacts;\n"; 
 //	}
 
 //	out <<
-//		"	" << "int _keys;\n"
-//		"	" << indsType << " _inds;\n";
+//		L"	" << L"int _keys;\n"
+//		L"	" << indsType << L" _inds;\n";
 		/*
-		"	" << PTR_CONST() << WIDE_ALPH_TYPE() << POINTER() << "_keys;\n"
-		"	" << PTR_CONST() << ARRAY_TYPE(redFsm->maxIndex) << POINTER() << "_inds;\n";*/
+		L"	" << PTR_CONST() << WIDE_ALPH_TYPE() << POINTER() << L"_keys;\n"
+		L"	" << PTR_CONST() << ARRAY_TYPE(redFsm->maxIndex) << POINTER() << L"_inds;\n";*/
 
 	if ( redFsm->anyConditions() ) {
 		out << 
-			"	" << condsType << " _conds;\n"
-			"	" << WIDE_ALPH_TYPE() << " _widec;\n";
+			L"	" << condsType << L" _conds;\n"
+			L"	" << WIDE_ALPH_TYPE() << L" _widec;\n";
 	}
 
-	out << "\n";
+	out << L"\n";
 
   out <<
-    "	let state = { trans = 0; acts = 0; nacts = 0; } in\n"
-    "	let rec do_start () =\n";
+    L"	let state = { trans = 0; acts = 0; nacts = 0; } in\n"
+    L"	let rec do_start () =\n";
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out << 
-			"	if " << P() << " = " << PE() << " then\n"
-			"		do_test_eof ()\n"
-      "\telse\n";
+			L"	if " << P() << L" = " << PE() << L" then\n"
+			L"		do_test_eof ()\n"
+      L"\telse\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if " << vCS() << " = " << redFsm->errState->id << " then\n"
-			"		do_out ()\n"
-      "\telse\n";
+			L"	if " << vCS() << L" = " << redFsm->errState->id << L" then\n"
+			L"		do_out ()\n"
+      L"\telse\n";
 	}
 
-  out << "\tdo_resume ()\n";
+  out << L"\tdo_resume ()\n";
 
-	out << "and do_resume () =\n";
+	out << L"and do_resume () =\n";
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	state.acts <- " << AT( FSA(), vCS() ) << ";\n"
-			"	state.nacts <- " << AT( A(), POST_INCR("state.acts") ) << ";\n"
-			"	while " << POST_DECR("state.nacts") << " > 0 do\n"
-			"		begin match " << AT( A(), POST_INCR("state.acts") ) << " with\n";
+			L"	state.acts <- " << AT( FSA(), vCS() ) << L";\n"
+			L"	state.nacts <- " << AT( A(), POST_INCR(L"state.acts") ) << L";\n"
+			L"	while " << POST_DECR(L"state.nacts") << L" > 0 do\n"
+			L"		begin match " << AT( A(), POST_INCR(L"state.acts") ) << L" with\n";
 			FROM_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"		end\n"
-			"	done;\n"
-			"\n";
+			L"		end\n"
+			L"	done;\n"
+			L"\n";
 	}
 
 	if ( redFsm->anyConditions() )
 		COND_TRANSLATE();
 
-//  out << "\tbegin try\n";
+//  out << L"\tbegin try\n";
 	LOCATE_TRANS();
-//  out << "\twith Goto_match -> () end;\n";
+//  out << L"\twith Goto_match -> () end;\n";
 
-  out << "\tdo_eof_trans ()\n";
+  out << L"\tdo_eof_trans ()\n";
 
 //	if ( redFsm->anyEofTrans() )
-  out << "and do_eof_trans () =\n";
+  out << L"and do_eof_trans () =\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	let ps = " << vCS() << " in\n";
+		out << L"	let ps = " << vCS() << L" in\n";
 
 	out <<
-		"	" << vCS() << " <- " << AT( TT() ,"state.trans" ) << ";\n"
-		"\n";
+		L"	" << vCS() << L" <- " << AT( TT() ,L"state.trans" ) << L";\n"
+		L"\n";
 
 	if ( redFsm->anyRegActions() ) {
 		out <<
-			"\tbegin try\n"
-      "	match " << AT( TA(), "state.trans" ) << " with\n"
-			"\t| 0 -> raise Goto_again\n"
-      "\t| _ ->\n"
-			"	state.acts <- " << AT( TA(), "state.trans" ) << ";\n"
-			"	state.nacts <- " << AT( A(), POST_INCR("state.acts") ) << ";\n"
-			"	while " << POST_DECR("state.nacts") << " > 0 do\n"
-			"		begin match " << AT( A(), POST_INCR("state.acts") ) << " with\n";
+			L"\tbegin try\n"
+      L"	match " << AT( TA(), L"state.trans" ) << L" with\n"
+			L"\t| 0 -> raise Goto_again\n"
+      L"\t| _ ->\n"
+			L"	state.acts <- " << AT( TA(), L"state.trans" ) << L";\n"
+			L"	state.nacts <- " << AT( A(), POST_INCR(L"state.acts") ) << L";\n"
+			L"	while " << POST_DECR(L"state.nacts") << L" > 0 do\n"
+			L"		begin match " << AT( A(), POST_INCR(L"state.acts") ) << L" with\n";
 			ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"		end;\n"
-			"	done\n"
-      "\twith Goto_again -> () end;\n";
+			L"		end;\n"
+			L"	done\n"
+      L"\twith Goto_again -> () end;\n";
 	}
-  out << "\tdo_again ()\n";
+  out << L"\tdo_again ()\n";
 
 //	if ( redFsm->anyRegActions() || redFsm->anyActionGotos() || 
 //			redFsm->anyActionCalls() || redFsm->anyActionRets() )
-  out << "\tand do_again () =\n";
+  out << L"\tand do_again () =\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	state.acts <- " << AT( TSA(), vCS() ) << ";\n"
-			"	state.nacts <- " << AT( A(), POST_INCR("state.acts") ) << ";\n"
-			"	while " << POST_DECR("state.nacts") << " > 0 do\n"
-			"		begin match " << AT( A(), POST_INCR("state.acts") ) << " with\n";
+			L"	state.acts <- " << AT( TSA(), vCS() ) << L";\n"
+			L"	state.nacts <- " << AT( A(), POST_INCR(L"state.acts") ) << L";\n"
+			L"	while " << POST_DECR(L"state.nacts") << L" > 0 do\n"
+			L"		begin match " << AT( A(), POST_INCR(L"state.acts") ) << L" with\n";
 			TO_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"		end\n"
-			"	done;\n"
-			"\n";
+			L"		end\n"
+			L"	done;\n"
+			L"\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	match " << vCS() << " with\n"
-      "\t| " << redFsm->errState->id << " -> do_out ()\n"
-      "\t| _ ->\n";
+			L"	match " << vCS() << L" with\n"
+      L"\t| " << redFsm->errState->id << L" -> do_out ()\n"
+      L"\t| _ ->\n";
 	}
 
-  out << "\t" << P() << " <- " << P() << " + 1;\n";
+  out << L"\t" << P() << L" <- " << P() << L" + 1;\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " <> " << PE() << " then\n"
-			"		do_resume ()\n"
-      "\telse do_test_eof ()\n";
+			L"	if " << P() << L" <> " << PE() << L" then\n"
+			L"		do_resume ()\n"
+      L"\telse do_test_eof ()\n";
 	}
 	else {
 		out << 
-			"	do_resume ()\n";
+			L"	do_resume ()\n";
 	}
 
 //	if ( testEofUsed )
-	out << "and do_test_eof () =\n";
+	out << L"and do_test_eof () =\n";
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out << 
-			"	if " << P() << " = " << vEOF() << " then\n"
-			"	begin try\n";
+			L"	if " << P() << L" = " << vEOF() << L" then\n"
+			L"	begin try\n";
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"	if " << AT( ET(), vCS() ) << " > 0 then\n"
-				"	begin\n"
-        "   state.trans <- " << CAST(transType) << "(" << AT( ET(), vCS() ) << " - 1);\n"
-				"		raise Goto_eof_trans;\n"
-				"	end;\n";
+				L"	if " << AT( ET(), vCS() ) << L" > 0 then\n"
+				L"	begin\n"
+        L"   state.trans <- " << CAST(transType) << L"(" << AT( ET(), vCS() ) << L" - 1);\n"
+				L"		raise Goto_eof_trans;\n"
+				L"	end;\n";
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"	let __acts = ref " << AT( EA(), vCS() ) << " in\n"
-				"	let __nacts = ref " << AT( A(), "!__acts" ) << " in\n"
-        " incr __acts;\n"
-				"	while !__nacts > 0 do\n"
-        "   decr __nacts;\n"
-				"		begin match " << AT( A(), POST_INCR("__acts.contents") ) << " with\n";
+				L"	let __acts = ref " << AT( EA(), vCS() ) << L" in\n"
+				L"	let __nacts = ref " << AT( A(), L"!__acts" ) << L" in\n"
+        L" incr __acts;\n"
+				L"	while !__nacts > 0 do\n"
+        L"   decr __nacts;\n"
+				L"		begin match " << AT( A(), POST_INCR(L"__acts.contents") ) << L" with\n";
 				EOF_ACTION_SWITCH();
 				SWITCH_DEFAULT() <<
-				"		end;\n"
-				"	done\n";
+				L"		end;\n"
+				L"	done\n";
 		}
 
 		out << 
-			"	with Goto_again -> do_again ()\n"
-			"	| Goto_eof_trans -> do_eof_trans () end\n"
-			"\n";
+			L"	with Goto_again -> do_again ()\n"
+			L"	| Goto_eof_trans -> do_eof_trans () end\n"
+			L"\n";
 	}
   else
   {
-    out << "\t()\n";
+    out << L"\t()\n";
   }
 
 	if ( outLabelUsed )
-		out << "	and do_out () = ()\n";
+		out << L"	and do_out () = ()\n";
 
-  out << "\tin do_start ()\n";
-	out << "	end;\n";
+  out << L"\tin do_start ()\n";
+	out << L"	end;\n";
 }
 
 void OCamlFlatCodeGen::initVarTypes()

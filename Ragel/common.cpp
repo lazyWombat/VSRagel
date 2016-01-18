@@ -27,14 +27,14 @@
 
 HostType hostTypesC[] =
 {
-	{ "char",     0,       "char",    true,   true,  false,  CHAR_MIN,  CHAR_MAX,   sizeof(char) },
-	{ "unsigned", "char",  "uchar",   false,  true,  false,  0,         UCHAR_MAX,  sizeof(unsigned char) },
-	{ "short",    0,       "short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,   sizeof(short) },
-	{ "unsigned", "short", "ushort",  false,  true,  false,  0,         USHRT_MAX,  sizeof(unsigned short) },
-	{ "int",      0,       "int",     true,   true,  false,  INT_MIN,   INT_MAX,    sizeof(int) },
-	{ "unsigned", "int",   "uint",    false,  true,  false,  0,         UINT_MAX,   sizeof(unsigned int) },
-	{ "long",     0,       "long",    true,   true,  false,  LONG_MIN,  LONG_MAX,   sizeof(long) },
-	{ "unsigned", "long",  "ulong",   false,  true,  false,  0,         ULONG_MAX,  sizeof(unsigned long) }
+	{ L"char",     0,       L"char",    true,   true,  false,  CHAR_MIN,  CHAR_MAX,   sizeof(char) },
+	{ L"unsigned", L"char",  L"uchar",   false,  true,  false,  0,         UCHAR_MAX,  sizeof(unsigned char) },
+	{ L"short",    0,       L"short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,   sizeof(short) },
+	{ L"unsigned", L"short", L"ushort",  false,  true,  false,  0,         USHRT_MAX,  sizeof(unsigned short) },
+	{ L"int",      0,       L"int",     true,   true,  false,  INT_MIN,   INT_MAX,    sizeof(int) },
+	{ L"unsigned", L"int",   L"uint",    false,  true,  false,  0,         UINT_MAX,   sizeof(unsigned int) },
+	{ L"long",     0,       L"long",    true,   true,  false,  LONG_MIN,  LONG_MAX,   sizeof(long) },
+	{ L"unsigned", L"long",  L"ulong",   false,  true,  false,  0,         ULONG_MAX,  sizeof(unsigned long) }
 };
 
 #define S8BIT_MIN  -128
@@ -52,7 +52,7 @@ HostType hostTypesC[] =
 #define S31BIT_MIN -1073741824L
 #define S31BIT_MAX 1073741823L
 
-#define S32BIT_MIN -2147483648L
+#define S32BIT_MIN -2147483648LL
 #define S32BIT_MAX 2147483647L
 
 #define U32BIT_MIN 0
@@ -66,63 +66,63 @@ HostType hostTypesC[] =
 
 HostType hostTypesD[] =
 {
-	{ "byte",    0,  "byte",    true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
-	{ "ubyte",   0,  "ubyte",   false,  true,  false,  0,         UCHAR_MAX,   1 },
-	{ "char",    0,  "char",    false,  true,  false,  0,         UCHAR_MAX,   1 },
-	{ "short",   0,  "short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
-	{ "ushort",  0,  "ushort",  false,  true,  false,  0,         USHRT_MAX,   2 },
-	{ "wchar",   0,  "wchar",   false,  true,  false,  0,         USHRT_MAX,   2 },
-	{ "int",     0,  "int",     true,   true,  false,  INT_MIN,   INT_MAX,     4 },
-	{ "uint",    0,  "uint",    false,  true,  false,  0,         UINT_MAX,    4 },
-	{ "dchar",   0,  "dchar",   false,  true,  false,  0,         UINT_MAX,    4 }
+	{ L"byte",    0,  L"byte",    true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
+	{ L"ubyte",   0,  L"ubyte",   false,  true,  false,  0,         UCHAR_MAX,   1 },
+	{ L"char",    0,  L"char",    false,  true,  false,  0,         UCHAR_MAX,   1 },
+	{ L"short",   0,  L"short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
+	{ L"ushort",  0,  L"ushort",  false,  true,  false,  0,         USHRT_MAX,   2 },
+	{ L"wchar_t",   0,  L"wchar_t",   false,  true,  false,  0,         USHRT_MAX,   2 },
+	{ L"int",     0,  L"int",     true,   true,  false,  INT_MIN,   INT_MAX,     4 },
+	{ L"uint",    0,  L"uint",    false,  true,  false,  0,         UINT_MAX,    4 },
+	{ L"dchar",   0,  L"dchar",   false,  true,  false,  0,         UINT_MAX,    4 }
 };
 
 HostType hostTypesGo[] = 
 {
-	{ "byte",    0,  "uint8",   false,  true,  false,  U8BIT_MIN,  U8BIT_MAX,   1 },
-	{ "int8",    0,  "int8",    true,   true,  false,  S8BIT_MIN,  S8BIT_MAX,   1 },
-	{ "uint8",   0,  "uint8",   false,  true,  false,  U8BIT_MIN,  U8BIT_MAX,   1 },
-	{ "int16",   0,  "int16",   true,   true,  false,  S16BIT_MIN, S16BIT_MAX,  2 },
-	{ "uint16",  0,  "uint16",  false,  true,  false,  U16BIT_MIN, U16BIT_MAX,  2 },
-	{ "int32",   0,  "int32",   true,   true,  false,  S32BIT_MIN, S32BIT_MAX,  4 },
-	{ "uint32",  0,  "uint32",  false,  true,  false,  U32BIT_MIN, U32BIT_MAX,  4 },
-	{ "int64",   0,  "int64",   true,   true,  false,  S64BIT_MIN, S64BIT_MAX,  8 },
-	{ "uint64",  0,  "uint64",  false,  true,  false,  U64BIT_MIN, U64BIT_MAX,  8 },
-	{ "rune",    0,  "int32",   true,   true,  true,   S32BIT_MIN, S32BIT_MAX,  4 }
+	{ L"byte",    0,  L"uint8",   false,  true,  false,  U8BIT_MIN,  U8BIT_MAX,   1 },
+	{ L"int8",    0,  L"int8",    true,   true,  false,  S8BIT_MIN,  S8BIT_MAX,   1 },
+	{ L"uint8",   0,  L"uint8",   false,  true,  false,  U8BIT_MIN,  U8BIT_MAX,   1 },
+	{ L"int16",   0,  L"int16",   true,   true,  false,  S16BIT_MIN, S16BIT_MAX,  2 },
+	{ L"uint16",  0,  L"uint16",  false,  true,  false,  U16BIT_MIN, U16BIT_MAX,  2 },
+	{ L"int32",   0,  L"int32",   true,   true,  false,  S32BIT_MIN, S32BIT_MAX,  4 },
+	{ L"uint32",  0,  L"uint32",  false,  true,  false,  U32BIT_MIN, U32BIT_MAX,  4 },
+	{ L"int64",   0,  L"int64",   true,   true,  false,  S64BIT_MIN, S64BIT_MAX,  8 },
+	{ L"uint64",  0,  L"uint64",  false,  true,  false,  U64BIT_MIN, U64BIT_MAX,  8 },
+	{ L"rune",    0,  L"int32",   true,   true,  true,   S32BIT_MIN, S32BIT_MAX,  4 }
 };
 
 HostType hostTypesJava[] = 
 {
-	{ "byte",    0,  "byte",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
-	{ "short",   0,  "short",  true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
-	{ "char",    0,  "char",   false,  true,  false,  0,         USHRT_MAX,   2 },
-	{ "int",     0,  "int",    true,   true,  false,  INT_MIN,   INT_MAX,     4 },
+	{ L"byte",    0,  L"byte",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
+	{ L"short",   0,  L"short",  true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
+	{ L"char",    0,  L"char",   false,  true,  false,  0,         USHRT_MAX,   2 },
+	{ L"int",     0,  L"int",    true,   true,  false,  INT_MIN,   INT_MAX,     4 },
 };
 
 /* What are the appropriate types for ruby? */
 HostType hostTypesRuby[] = 
 {
-	{ "char",    0,  "char",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
-	{ "int",     0,  "int",    true,   true,  false,  INT_MIN,   INT_MAX,     4 },
+	{ L"char",    0,  L"char",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
+	{ L"int",     0,  L"int",    true,   true,  false,  INT_MIN,   INT_MAX,     4 },
 };
 
 HostType hostTypesCSharp[] =
 {
-	{ "sbyte",   0,  "sbyte",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
-	{ "byte",    0,  "byte",    false,  true,  false,  0,         UCHAR_MAX,   1 },
-	{ "short",   0,  "short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
-	{ "ushort",  0,  "ushort",  false,  true,  false,  0,         USHRT_MAX,   2 },
-	{ "char",    0,  "char",    false,  true,  true,   0,         USHRT_MAX,   2 },
-	{ "int",     0,  "int",     true,   true,  false,  INT_MIN,   INT_MAX,     4 },
-	{ "uint",    0,  "uint",    false,  true,  false,  0,         UINT_MAX,    4 },
-	{ "long",    0,  "long",    true,   true,  false,  LONG_MIN,  LONG_MAX,    8 },
-	{ "ulong",   0,  "ulong",   false,  true,  false,  0,         ULONG_MAX,   8 }
+	{ L"sbyte",   0,  L"sbyte",   true,   true,  false,  CHAR_MIN,  CHAR_MAX,    1 },
+	{ L"byte",    0,  L"byte",    false,  true,  false,  0,         UCHAR_MAX,   1 },
+	{ L"short",   0,  L"short",   true,   true,  false,  SHRT_MIN,  SHRT_MAX,    2 },
+	{ L"ushort",  0,  L"ushort",  false,  true,  false,  0,         USHRT_MAX,   2 },
+	{ L"char",    0,  L"char",    false,  true,  true,   0,         USHRT_MAX,   2 },
+	{ L"int",     0,  L"int",     true,   true,  false,  INT_MIN,   INT_MAX,     4 },
+	{ L"uint",    0,  L"uint",    false,  true,  false,  0,         UINT_MAX,    4 },
+	{ L"long",    0,  L"long",    true,   true,  false,  LONG_MIN,  LONG_MAX,    8 },
+	{ L"ulong",   0,  L"ulong",   false,  true,  false,  0,         ULONG_MAX,   8 }
 };
 
 HostType hostTypesOCaml[] =
 {
-//	{ "char",   0,  "char",     false,  true,  false, 0,          UCHAR_MAX,  1 },
-	{ "int",    0,  "int",      true,   true,  false, S31BIT_MIN, S31BIT_MAX, 4 },
+//	{ L"char",   0,  L"char",     false,  true,  false, 0,          UCHAR_MAX,  1 },
+	{ L"int",    0,  L"int",      true,   true,  false, S31BIT_MIN, S31BIT_MAX, 4 },
 };
 
 HostLang hostLangC =      { HostLang::C,      hostTypesC,      8,  hostTypesC+0,       true };
@@ -136,10 +136,10 @@ HostLang hostLangOCaml =  { HostLang::OCaml,  hostTypesOCaml,  1,  hostTypesOCam
 
 HostLang *hostLang = &hostLangC;
 
-HostType *findAlphType( const char *s1 )
+HostType *findAlphType( const wchar_t *s1 )
 {
 	for ( int i = 0; i < hostLang->numHostTypes; i++ ) {
-		if ( strcmp( s1, hostLang->hostTypes[i].data1 ) == 0 && 
+		if ( wcscmp( s1, hostLang->hostTypes[i].data1 ) == 0 && 
 				hostLang->hostTypes[i].data2 == 0 )
 		{
 			return hostLang->hostTypes + i;
@@ -149,12 +149,12 @@ HostType *findAlphType( const char *s1 )
 	return 0;
 }
 
-HostType *findAlphType( const char *s1, const char *s2 )
+HostType *findAlphType( const wchar_t *s1, const wchar_t *s2 )
 {
 	for ( int i = 0; i < hostLang->numHostTypes; i++ ) {
-		if ( strcmp( s1, hostLang->hostTypes[i].data1 ) == 0 && 
+		if ( wcscmp( s1, hostLang->hostTypes[i].data1 ) == 0 && 
 				hostLang->hostTypes[i].data2 != 0 && 
-				strcmp( s2, hostLang->hostTypes[i].data2 ) == 0 )
+				wcscmp( s2, hostLang->hostTypes[i].data2 ) == 0 )
 		{
 			return hostLang->hostTypes + i;
 		}
@@ -163,10 +163,10 @@ HostType *findAlphType( const char *s1, const char *s2 )
 	return 0;
 }
 
-HostType *findAlphTypeInternal( const char *s1 )
+HostType *findAlphTypeInternal( const wchar_t *s1 )
 {
 	for ( int i = 0; i < hostLang->numHostTypes; i++ ) {
-		if ( strcmp( s1, hostLang->hostTypes[i].internalName ) == 0 )
+		if ( wcscmp( s1, hostLang->hostTypes[i].internalName ) == 0 )
 			return hostLang->hostTypes + i;
 	}
 
@@ -174,7 +174,7 @@ HostType *findAlphTypeInternal( const char *s1 )
 }
 
 /* Construct a new parameter checker with for paramSpec. */
-ParamCheck::ParamCheck( const char *paramSpec, int argc, const char **argv )
+ParamCheck::ParamCheck( const wchar_t *paramSpec, int argc, const wchar_t **argv )
 :
 	state(noparam),
 	argOffset(0),
@@ -199,7 +199,7 @@ bool ParamCheck::check()
 	}
 
 	if ( argOffset != 0 && *argOffset == 0 ) {
-		/* We are at the end of an arg string. */
+		/* We are at the end of an arg wstring. */
 		iCurArg += 1;
 		if ( iCurArg >= argc ) {
 			state = noparam;
@@ -212,9 +212,9 @@ bool ParamCheck::check()
 		/* Set the current arg. */
 		curArg = argv[iCurArg];
 
-		/* We are at the beginning of an arg string. */
+		/* We are at the beginning of an arg wstring. */
 		if ( argv[iCurArg] == 0 ||        /* Argv[iCurArg] is null. */
-			 argv[iCurArg][0] != '-' ||   /* Not a param. */
+			 argv[iCurArg][0] != L'-' ||   /* Not a param. */
 			 argv[iCurArg][1] == 0 ) {    /* Only a dash. */
 			parameter = 0;
 			paramArg = 0;
@@ -227,18 +227,18 @@ bool ParamCheck::check()
 	}
 
 	/* Get the arg char. */
-	char argChar = *argOffset;
+	wchar_t argChar = *argOffset;
 	
 	/* Loop over all the parms and look for a match. */
-	const char *pSpec = paramSpec;
+	const wchar_t *pSpec = paramSpec;
 	while ( *pSpec != 0 ) {
-		char pSpecChar = *pSpec;
+		wchar_t pSpecChar = *pSpec;
 
-		/* If there is a ':' following the char then
+		/* If there is a L':' following the char then
 		 * it requires a parm.  If a parm is required
 		 * then move ahead two in the parmspec. Otherwise
 		 * move ahead one in the parm spec. */
-		if ( pSpec[1] == ':' ) {
+		if ( pSpec[1] == L':' ) {
 			requiresParam = true;
 			pSpec += 2;
 		}
@@ -306,43 +306,43 @@ bool ParamCheck::check()
 int output_filter::sync( )
 {
 	line += 1;
-	return std::filebuf::sync();
+	return std::wfilebuf::sync();
 }
 
 /* Counts newlines before sending data out to file. */
-std::streamsize output_filter::xsputn( const char *s, std::streamsize n )
+std::streamsize output_filter::xsputn( const wchar_t *s, std::streamsize n )
 {
 	for ( int i = 0; i < n; i++ ) {
-		if ( s[i] == '\n' )
+		if ( s[i] == L'\n' )
 			line += 1;
 	}
-	return std::filebuf::xsputn( s, n );
+	return std::wfilebuf::xsputn( s, n );
 }
 
-/* Scans a string looking for the file extension. If there is a file
- * extension then pointer returned points to inside the string
+/* Scans a wstring looking for the file extension. If there is a file
+ * extension then pointer returned points to inside the wstring
  * passed in. Otherwise returns null. */
-const char *findFileExtension( const char *stemFile )
+const wchar_t *findFileExtension( const wchar_t *stemFile )
 {
-	const char *ppos = stemFile + strlen(stemFile) - 1;
+	const wchar_t *ppos = stemFile + wcslen(stemFile) - 1;
 
 	/* Scan backwards from the end looking for the first dot.
-	 * If we encounter a '/' before the first dot, then stop the scan. */
+	 * If we encounter a L'/' before the first dot, then stop the scan. */
 	while ( 1 ) {
-		/* If we found a dot or got to the beginning of the string then
+		/* If we found a dot or got to the beginning of the wstring then
 		 * we are done. */
-		if ( ppos == stemFile || *ppos == '.' )
+		if ( ppos == stemFile || *ppos == L'.' )
 			break;
 
 		/* If we hit a / then there is no extension. Done. */
-		if ( *ppos == '/' ) {
+		if ( *ppos == L'/' ) {
 			ppos = stemFile;
 			break;
 		}
 		ppos--;
 	} 
 
-	/* If we got to the front of the string then bail we 
+	/* If we got to the front of the wstring then bail we 
 	 * did not find an extension  */
 	if ( ppos == stemFile )
 		ppos = 0;
@@ -351,30 +351,30 @@ const char *findFileExtension( const char *stemFile )
 }
 
 /* Make a file name from a stem. Removes the old filename suffix and
- * replaces it with a new one. Returns a newed up string. */
-const char *fileNameFromStem( const char *stemFile, const char *suffix )
+ * replaces it with a new one. Returns a newed up wstring. */
+const wchar_t *fileNameFromStem( const wchar_t *stemFile, const wchar_t *suffix )
 {
-	long len = strlen( stemFile );
+	long len = wcslen( stemFile );
 	assert( len > 0 );
 
 	/* Get the extension. */
-	const char *ppos = findFileExtension( stemFile );
+	const wchar_t *ppos = findFileExtension( stemFile );
 
 	/* If an extension was found, then shorten what we think the len is. */
 	if ( ppos != 0 )
 		len = ppos - stemFile;
 
-	/* Make the return string from the stem and the suffix. */
-	char *retVal = new char[ len + strlen( suffix ) + 1 ];
-	strncpy( retVal, stemFile, len );
-	strcpy( retVal + len, suffix );
+	/* Make the return wstring from the stem and the suffix. */
+	wchar_t *retVal = new wchar_t[ len + wcslen( suffix ) + 1 ];
+	wcsncpy_s( retVal, len + wcslen(suffix) + 1, stemFile, len );
+	wcscpy_s( retVal + len, wcslen(suffix) + 1, suffix );
 
 	return retVal;
 }
 
 exit_object endp;
 
-void operator<<( std::ostream &out, exit_object & )
+void operator<<( std::wostream &out, exit_object & )
 {
     out << std::endl;
     exit(1);

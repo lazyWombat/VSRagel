@@ -36,24 +36,24 @@ struct CodeGenData;
 class CSharpIpGotoCodeGen : public CSharpGotoCodeGen
 {
 public:
-	CSharpIpGotoCodeGen( ostream &out ) : CSharpFsmCodeGen(out),
+	CSharpIpGotoCodeGen( wostream &out ) : CSharpFsmCodeGen(out),
 		CSharpGotoCodeGen(out) {}
 
-	std::ostream &EXIT_STATES();
-	std::ostream &TRANS_GOTO( RedTransAp *trans, int level );
-	std::ostream &FINISH_CASES();
-	std::ostream &AGAIN_CASES();
+	std::wostream &EXIT_STATES();
+	std::wostream &TRANS_GOTO( RedTransAp *trans, int level );
+	std::wostream &FINISH_CASES();
+	std::wostream &AGAIN_CASES();
 
-	void GOTO( ostream &ret, int gotoDest, bool inFinish );
-	void CALL( ostream &ret, int callDest, int targState, bool inFinish );
-	void NEXT( ostream &ret, int nextDest, bool inFinish );
-	void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
-	void RET( ostream &ret, bool inFinish );
-	void CURS( ostream &ret, bool inFinish );
-	void TARGS( ostream &ret, bool inFinish, int targState );
-	void BREAK( ostream &ret, int targState );
+	void GOTO( wostream &ret, int gotoDest, bool inFinish );
+	void CALL( wostream &ret, int callDest, int targState, bool inFinish );
+	void NEXT( wostream &ret, int nextDest, bool inFinish );
+	void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
+	void RET( wostream &ret, bool inFinish );
+	void CURS( wostream &ret, bool inFinish );
+	void TARGS( wostream &ret, bool inFinish, int targState );
+	void BREAK( wostream &ret, int targState );
 
 	virtual void writeData();
 	virtual void writeExec();

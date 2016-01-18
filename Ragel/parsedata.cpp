@@ -36,12 +36,12 @@
 
 using namespace std;
 
-char mainMachine[] = "main";
+wchar_t mainMachine[] = L"main";
 
-void Token::set( const char *str, int len )
+void Token::set( const wchar_t *str, int len )
 {
 	length = len;
-	data = new char[len+1];
+	data = new wchar_t[len+1];
 	memcpy( data, str, len );
 	data[len] = 0;
 }
@@ -49,7 +49,7 @@ void Token::set( const char *str, int len )
 void Token::append( const Token &other )
 {
 	int newLength = length + other.length;
-	char *newString = new char[newLength+1];
+	wchar_t *newString = new wchar_t[newLength+1];
 	memcpy( newString, data, length );
 	memcpy( newString + length, other.data, other.length );
 	newString[newLength] = 0;
@@ -98,7 +98,7 @@ int countTransitions( FsmAp *fsm )
 	return numTrans;
 }
 
-Key makeFsmKeyHex( char *str, const InputLoc &loc, ParseData *pd )
+Key makeFsmKeyHex( wchar_t *str, const InputLoc &loc, ParseData *pd )
 {
 	/* Reset errno so we can check for overflow or underflow. In the event of
 	 * an error, sets the return val to the upper or lower bound being tested
@@ -107,10 +107,10 @@ Key makeFsmKeyHex( char *str, const InputLoc &loc, ParseData *pd )
 	unsigned int size = keyOps->alphType->size;
 	bool unusedBits = size < sizeof(unsigned long);
 
-	unsigned long ul = strtoul( str, 0, 16 );
+	unsigned long ul = wcstoul( str, 0, 16 );
 
 	if ( errno == ERANGE || ( unusedBits && ul >> (size * 8) ) ) {
-		error(loc) << "literal " << str << " overflows the alphabet type" << endl;
+		error(loc) << L"literal " << str << L" overflows the alphabet type" << endl;
 		ul = 1 << (size * 8);
 	}
 
@@ -120,7 +120,7 @@ Key makeFsmKeyHex( char *str, const InputLoc &loc, ParseData *pd )
 	return Key( (long)ul );
 }
 
-Key makeFsmKeyDec( char *str, const InputLoc &loc, ParseData *pd )
+Key makeFsmKeyDec( wchar_t *str, const InputLoc &loc, ParseData *pd )
 {
 	/* Convert the number to a decimal. First reset errno so we can check
 	 * for overflow or underflow. */
@@ -128,16 +128,16 @@ Key makeFsmKeyDec( char *str, const InputLoc &loc, ParseData *pd )
 	long long minVal = keyOps->alphType->minVal;
 	long long maxVal = keyOps->alphType->maxVal;
 
-	long long ll = strtoll( str, 0, 10 );
+	long long ll = wcstoll( str, 0, 10 );
 
 	/* Check for underflow. */
 	if ( ( errno == ERANGE && ll < 0 ) || ll < minVal) {
-		error(loc) << "literal " << str << " underflows the alphabet type" << endl;
+		error(loc) << L"literal " << str << L" underflows the alphabet type" << endl;
 		ll = minVal;
 	}
 	/* Check for overflow. */
 	else if ( ( errno == ERANGE && ll > 0 ) || ll > maxVal ) {
-		error(loc) << "literal " << str << " overflows the alphabet type" << endl;
+		error(loc) << L"literal " << str << L" overflows the alphabet type" << endl;
 		ll = maxVal;
 	}
 
@@ -150,10 +150,10 @@ Key makeFsmKeyDec( char *str, const InputLoc &loc, ParseData *pd )
 /* Make an fsm key in int format (what the fsm graph uses) from an alphabet
  * number returned by the parser. Validates that the number doesn't overflow
  * the alphabet type. */
-Key makeFsmKeyNum( char *str, const InputLoc &loc, ParseData *pd )
+Key makeFsmKeyNum( wchar_t *str, const InputLoc &loc, ParseData *pd )
 {
 	/* Switch on hex/decimal format. */
-	if ( str[0] == '0' && str[1] == 'x' )
+	if ( str[0] == L'0' && str[1] == L'x' )
 		return makeFsmKeyHex( str, loc, pd );
 	else
 		return makeFsmKeyDec( str, loc, pd );
@@ -174,20 +174,20 @@ Key makeFsmKeyChar( char c, ParseData *pd )
 	}
 }
 
-/* Make an fsm key array in int format (what the fsm graph uses) from a string
+/* Make an fsm key array in int format (what the fsm graph uses) from a wstring
  * of characters. Performs proper conversion depending on signed/unsigned
  * property of the alphabet. */
-void makeFsmKeyArray( Key *result, char *data, int len, ParseData *pd )
+void makeFsmKeyArray( Key *result, wchar_t *data, int len, ParseData *pd )
 {
 	if ( keyOps->isSigned ) {
 		/* Copy from a char star type. */
-		char *src = data;
+		wchar_t *src = data;
 		for ( int i = 0; i < len; i++ )
 			result[i] = Key(src[i]);
 	}
 	else {
 		/* Copy from an unsigned byte ptr type. */
-		unsigned char *src = (unsigned char*) data;
+		wchar_t *src = (wchar_t*) data;
 		for ( int i = 0; i < len; i++ )
 			result[i] = Key(src[i]);
 	}
@@ -195,13 +195,13 @@ void makeFsmKeyArray( Key *result, char *data, int len, ParseData *pd )
 
 /* Like makeFsmKeyArray except the result has only unique keys. They ordering
  * will be changed. */
-void makeFsmUniqueKeyArray( KeySet &result, char *data, int len, 
+void makeFsmUniqueKeyArray( KeySet &result, wchar_t *data, int len, 
 		bool caseInsensitive, ParseData *pd )
 {
 	/* Use a transitions list for getting unique keys. */
 	if ( keyOps->isSigned ) {
 		/* Copy from a char star type. */
-		char *src = data;
+		wchar_t *src = data;
 		for ( int si = 0; si < len; si++ ) {
 			Key key( src[si] );
 			result.insert( key );
@@ -215,7 +215,7 @@ void makeFsmUniqueKeyArray( KeySet &result, char *data, int len,
 	}
 	else {
 		/* Copy from an unsigned byte ptr type. */
-		unsigned char *src = (unsigned char*) data;
+		unsigned wchar_t *src = (unsigned wchar_t*) data;
 		for ( int si = 0; si < len; si++ ) {
 			Key key( src[si] );
 			result.insert( key );
@@ -279,8 +279,8 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 	case BT_Alpha: {
 		/* Alpha [A-Za-z]. */
 		FsmAp *upper = new FsmAp(), *lower = new FsmAp();
-		upper->rangeFsm( 'A', 'Z' );
-		lower->rangeFsm( 'a', 'z' );
+		upper->rangeFsm( L'A', L'Z' );
+		lower->rangeFsm( L'a', L'z' );
 		upper->unionOp( lower );
 		upper->minimizePartition2();
 		retFsm = upper;
@@ -289,16 +289,16 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 	case BT_Digit: {
 		/* Digits [0-9]. */
 		retFsm = new FsmAp();
-		retFsm->rangeFsm( '0', '9' );
+		retFsm->rangeFsm( L'0', L'9' );
 		break;
 	}
 	case BT_Alnum: {
 		/* Alpha numerics [0-9A-Za-z]. */
 		FsmAp *digit = new FsmAp(), *lower = new FsmAp();
 		FsmAp *upper = new FsmAp();
-		digit->rangeFsm( '0', '9' );
-		upper->rangeFsm( 'A', 'Z' );
-		lower->rangeFsm( 'a', 'z' );
+		digit->rangeFsm( L'0', L'9' );
+		upper->rangeFsm( L'A', L'Z' );
+		lower->rangeFsm( L'a', L'z' );
 		digit->unionOp( upper );
 		digit->unionOp( lower );
 		digit->minimizePartition2();
@@ -308,13 +308,13 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 	case BT_Lower: {
 		/* Lower case characters. */
 		retFsm = new FsmAp();
-		retFsm->rangeFsm( 'a', 'z' );
+		retFsm->rangeFsm( L'a', L'z' );
 		break;
 	}
 	case BT_Upper: {
 		/* Upper case characters. */
 		retFsm = new FsmAp();
-		retFsm->rangeFsm( 'A', 'Z' );
+		retFsm->rangeFsm( L'A', L'Z' );
 		break;
 	}
 	case BT_Cntrl: {
@@ -331,13 +331,13 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 	case BT_Graph: {
 		/* Graphical ascii characters [!-~]. */
 		retFsm = new FsmAp();
-		retFsm->rangeFsm( '!', '~' );
+		retFsm->rangeFsm( L'!', L'~' );
 		break;
 	}
 	case BT_Print: {
 		/* Printable characters. Same as graph except includes space. */
 		retFsm = new FsmAp();
-		retFsm->rangeFsm( ' ', '~' );
+		retFsm->rangeFsm( L' ', L'~' );
 		break;
 	}
 	case BT_Punct: {
@@ -346,10 +346,10 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 		FsmAp *range2 = new FsmAp();
 		FsmAp *range3 = new FsmAp(); 
 		FsmAp *range4 = new FsmAp();
-		range1->rangeFsm( '!', '/' );
-		range2->rangeFsm( ':', '@' );
-		range3->rangeFsm( '[', '`' );
-		range4->rangeFsm( '{', '~' );
+		range1->rangeFsm( L'!', L'/' );
+		range2->rangeFsm( L':', L'@' );
+		range3->rangeFsm( L'[', L'`' );
+		range4->rangeFsm( L'{', L'~' );
 		range1->unionOp( range2 );
 		range1->unionOp( range3 );
 		range1->unionOp( range4 );
@@ -361,8 +361,8 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 		/* Whitespace: [\t\v\f\n\r ]. */
 		FsmAp *cntrl = new FsmAp();
 		FsmAp *space = new FsmAp();
-		cntrl->rangeFsm( '\t', '\r' );
-		space->concatFsm( ' ' );
+		cntrl->rangeFsm( L'\t', L'\r' );
+		space->concatFsm( L' ' );
 		cntrl->unionOp( space );
 		cntrl->minimizePartition2();
 		retFsm = cntrl;
@@ -373,9 +373,9 @@ FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd )
 		FsmAp *digit = new FsmAp();
 		FsmAp *upper = new FsmAp();
 		FsmAp *lower = new FsmAp();
-		digit->rangeFsm( '0', '9' );
-		upper->rangeFsm( 'A', 'F' );
-		lower->rangeFsm( 'a', 'f' );
+		digit->rangeFsm( L'0', L'9' );
+		upper->rangeFsm( L'A', L'F' );
+		lower->rangeFsm( L'a', L'f' );
 		digit->unionOp( upper );
 		digit->unionOp( lower );
 		digit->minimizePartition2();
@@ -417,7 +417,7 @@ bool NameInst::anyRefsRec()
 
 /* Initialize the structure that will collect info during the parse of a
  * machine. */
-ParseData::ParseData( const char *fileName, char *sectionName, 
+ParseData::ParseData( const wchar_t *fileName, wchar_t *sectionName, 
 		const InputLoc &sectionLoc )
 :	
 	sectionGraph(0),
@@ -467,13 +467,13 @@ ParseData::ParseData( const char *fileName, char *sectionName,
 ParseData::~ParseData()
 {
 	/* Delete all the nodes in the action list. Will cause all the
-	 * string data that represents the actions to be deallocated. */
+	 * wstring data that represents the actions to be deallocated. */
 	actionList.empty();
 }
 
 /* Make a name id in the current name instantiation scope if it is not
  * already there. */
-NameInst *ParseData::addNameInst( const InputLoc &loc, const char *data, bool isLabel )
+NameInst *ParseData::addNameInst( const InputLoc &loc, const wchar_t *data, bool isLabel )
 {
 	/* Create the name instantitaion object and insert it. */
 	NameInst *newNameInst = new NameInst( loc, curNameInst, data, nextNameId++, isLabel );
@@ -558,7 +558,7 @@ void ParseData::unsetObsoleteEntries( FsmAp *graph )
 	}
 }
 
-NameSet ParseData::resolvePart( NameInst *refFrom, const char *data, bool recLabelsOnly )
+NameSet ParseData::resolvePart( NameInst *refFrom, const wchar_t *data, bool recLabelsOnly )
 {
 	/* Queue needed for breadth-first search, load it with the start node. */
 	NameInstList nameQueue;
@@ -610,20 +610,20 @@ void ParseData::resolveFrom( NameSet &result, NameInst *refFrom,
 }
 
 /* Write out a name reference. */
-ostream &operator<<( ostream &out, const NameRef &nameRef )
+wostream &operator<<( wostream &out, const NameRef &nameRef )
 {
 	int pos = 0;
 	if ( nameRef[pos] == 0 ) {
-		out << "::";
+		out << L"::";
 		pos += 1;
 	}
 	out << nameRef[pos++];
 	for ( ; pos < nameRef.length(); pos++ )
-		out << "::" << nameRef[pos];
+		out << L"::" << nameRef[pos];
 	return out;
 }
 
-ostream &operator<<( ostream &out, const NameInst &nameInst )
+wostream &operator<<( wostream &out, const NameInst &nameInst )
 {
 	/* Count the number fully qualified name parts. */
 	int numParents = 0;
@@ -643,10 +643,10 @@ ostream &operator<<( ostream &out, const NameInst &nameInst )
 		
 	/* Write the parents out, skip the root. */
 	for ( int p = 1; p < numParents; p++ )
-		out << "::" << ( parents[p]->name != 0 ? parents[p]->name : "<ANON>" );
+		out << L"::" << ( parents[p]->name != 0 ? parents[p]->name : L"<ANON>" );
 
 	/* Write the name and cleanup. */
-	out << "::" << ( nameInst.name != 0 ? nameInst.name : "<ANON>" );
+	out << L"::" << ( nameInst.name != 0 ? nameInst.name : L"<ANON>" );
 	delete[] parents;
 	return out;
 }
@@ -672,7 +672,7 @@ void errorStateLabels( const NameSet &resolved )
 	MergeSort<NameInst*, CmpNameInstLoc> mergeSort;
 	mergeSort.sort( resolved.data, resolved.length() );
 	for ( NameSet::Iter res = resolved; res.lte(); res++ )
-		error((*res)->loc) << "  -> " << **res << endl;
+		error((*res)->loc) << L"  -> " << **res << endl;
 }
 
 
@@ -695,8 +695,8 @@ NameInst *ParseData::resolveStateRef( const NameRef &nameRef, InputLoc &loc, Act
 				nameInst = resolved[0];
 				if ( resolved.length() > 1 ) {
 					/* Complain about the multiple references. */
-					error(loc) << "state reference " << nameRef << 
-							" resolves to multiple entry points" << endl;
+					error(loc) << L"state reference " << nameRef << 
+							L" resolves to multiple entry points" << endl;
 					errorStateLabels( resolved );
 				}
 			}
@@ -714,8 +714,8 @@ NameInst *ParseData::resolveStateRef( const NameRef &nameRef, InputLoc &loc, Act
 			nameInst = resolved[0];
 			if ( resolved.length() > 1 ) {
 				/* Complain about the multiple references. */
-				error(loc) << "state reference " << nameRef << 
-						" resolves to multiple entry points" << endl;
+				error(loc) << L"state reference " << nameRef << 
+						L" resolves to multiple entry points" << endl;
 				errorStateLabels( resolved );
 			}
 		}
@@ -723,7 +723,7 @@ NameInst *ParseData::resolveStateRef( const NameRef &nameRef, InputLoc &loc, Act
 
 	if ( nameInst == 0 ) {
 		/* If not found then complain. */
-		error(loc) << "could not resolve state reference " << nameRef << endl;
+		error(loc) << L"could not resolve state reference " << nameRef << endl;
 	}
 	return nameInst;
 }
@@ -743,8 +743,8 @@ void ParseData::resolveNameRefs( InlineList *inlineList, Action *action )
 					NameInst *search = target->parent;
 					while ( search != 0 ) {
 						if ( search->isLongestMatch ) {
-							error(item->loc) << "cannot enter inside a longest "
-									"match construction as an entry point" << endl;
+							error(item->loc) << L"cannot enter inside a longest "
+									L"match construction as an entry point" << endl;
 							break;
 						}
 						search = search->parent;
@@ -825,7 +825,7 @@ void ParseData::makeNameTree( GraphDictEl *dictEl )
 }
 
 
-void ParseData::createBuiltin( const char *name, BuiltinMachine builtin )
+void ParseData::createBuiltin( const wchar_t *name, BuiltinMachine builtin )
 {
 	Expression *expression = new Expression( builtin );
 	Join *join = new Join( expression );
@@ -838,27 +838,27 @@ void ParseData::createBuiltin( const char *name, BuiltinMachine builtin )
 /* Initialize the graph dict with builtin types. */
 void ParseData::initGraphDict( )
 {
-	createBuiltin( "any", BT_Any );
-	createBuiltin( "ascii", BT_Ascii );
-	createBuiltin( "extend", BT_Extend );
-	createBuiltin( "alpha", BT_Alpha );
-	createBuiltin( "digit", BT_Digit );
-	createBuiltin( "alnum", BT_Alnum );
-	createBuiltin( "lower", BT_Lower );
-	createBuiltin( "upper", BT_Upper );
-	createBuiltin( "cntrl", BT_Cntrl );
-	createBuiltin( "graph", BT_Graph );
-	createBuiltin( "print", BT_Print );
-	createBuiltin( "punct", BT_Punct );
-	createBuiltin( "space", BT_Space );
-	createBuiltin( "xdigit", BT_Xdigit );
-	createBuiltin( "null", BT_Lambda );
-	createBuiltin( "zlen", BT_Lambda );
-	createBuiltin( "empty", BT_Empty );
+	createBuiltin( L"any", BT_Any );
+	createBuiltin( L"ascii", BT_Ascii );
+	createBuiltin( L"extend", BT_Extend );
+	createBuiltin( L"alpha", BT_Alpha );
+	createBuiltin( L"digit", BT_Digit );
+	createBuiltin( L"alnum", BT_Alnum );
+	createBuiltin( L"lower", BT_Lower );
+	createBuiltin( L"upper", BT_Upper );
+	createBuiltin( L"cntrl", BT_Cntrl );
+	createBuiltin( L"graph", BT_Graph );
+	createBuiltin( L"print", BT_Print );
+	createBuiltin( L"punct", BT_Punct );
+	createBuiltin( L"space", BT_Space );
+	createBuiltin( L"xdigit", BT_Xdigit );
+	createBuiltin( L"null", BT_Lambda );
+	createBuiltin( L"zlen", BT_Lambda );
+	createBuiltin( L"empty", BT_Empty );
 }
 
 /* Set the alphabet type. If the types are not valid returns false. */
-bool ParseData::setAlphType( const InputLoc &loc, char *s1, char *s2 )
+bool ParseData::setAlphType( const InputLoc &loc, wchar_t *s1, wchar_t *s2 )
 {
 	alphTypeLoc = loc;
 	userAlphType = findAlphType( s1, s2 );
@@ -867,7 +867,7 @@ bool ParseData::setAlphType( const InputLoc &loc, char *s1, char *s2 )
 }
 
 /* Set the alphabet type. If the types are not valid returns false. */
-bool ParseData::setAlphType( const InputLoc &loc, char *s1 )
+bool ParseData::setAlphType( const InputLoc &loc, wchar_t *s1 )
 {
 	alphTypeLoc = loc;
 	userAlphType = findAlphType( s1 );
@@ -875,29 +875,29 @@ bool ParseData::setAlphType( const InputLoc &loc, char *s1 )
 	return userAlphType != 0;
 }
 
-bool ParseData::setVariable( char *var, InlineList *inlineList )
+bool ParseData::setVariable( wchar_t *var, InlineList *inlineList )
 {
 	bool set = true;
 
-	if ( strcmp( var, "p" ) == 0 )
+	if ( wcscmp( var, L"p" ) == 0 )
 		pExpr = inlineList;
-	else if ( strcmp( var, "pe" ) == 0 )
+	else if ( wcscmp( var, L"pe" ) == 0 )
 		peExpr = inlineList;
-	else if ( strcmp( var, "eof" ) == 0 )
+	else if ( wcscmp( var, L"eof" ) == 0 )
 		eofExpr = inlineList;
-	else if ( strcmp( var, "cs" ) == 0 )
+	else if ( wcscmp( var, L"cs" ) == 0 )
 		csExpr = inlineList;
-	else if ( strcmp( var, "data" ) == 0 )
+	else if ( wcscmp( var, L"data" ) == 0 )
 		dataExpr = inlineList;
-	else if ( strcmp( var, "top" ) == 0 )
+	else if ( wcscmp( var, L"top" ) == 0 )
 		topExpr = inlineList;
-	else if ( strcmp( var, "stack" ) == 0 )
+	else if ( wcscmp( var, L"stack" ) == 0 )
 		stackExpr = inlineList;
-	else if ( strcmp( var, "act" ) == 0 )
+	else if ( wcscmp( var, L"act" ) == 0 )
 		actExpr = inlineList;
-	else if ( strcmp( var, "ts" ) == 0 )
+	else if ( wcscmp( var, L"ts" ) == 0 )
 		tokstartExpr = inlineList;
-	else if ( strcmp( var, "te" ) == 0 )
+	else if ( wcscmp( var, L"te" ) == 0 )
 		tokendExpr = inlineList;
 	else
 		set = false;
@@ -925,11 +925,11 @@ void ParseData::initKeyOps( )
 void ParseData::printNameInst( NameInst *nameInst, int level )
 {
 	for ( int i = 0; i < level; i++ )
-		cerr << "  ";
-	cerr << (nameInst->name != 0 ? nameInst->name : "<ANON>") << 
-			"  id: " << nameInst->id << 
-			"  refs: " << nameInst->numRefs <<
-			"  uses: " << nameInst->numUses << endl;
+		wcerr << L"  ";
+	wcerr << (nameInst->name != 0 ? nameInst->name : L"<ANON>") << 
+			L"  id: " << nameInst->id << 
+			L"  refs: " << nameInst->numRefs <<
+			L"  uses: " << nameInst->numUses << endl;
 	for ( NameVect::Iter name = nameInst->childVect; name.lte(); name++ )
 		printNameInst( *name, level+1 );
 }
@@ -966,12 +966,12 @@ void ParseData::removeActionDups( FsmAp *graph )
 	}
 }
 
-Action *ParseData::newAction( const char *name, InlineList *inlineList )
+Action *ParseData::newAction( const wchar_t *name, InlineList *inlineList )
 {
 	InputLoc loc;
 	loc.line = 1;
 	loc.col = 1;
-	loc.fileName = "NONE";
+	loc.fileName = L"NONE";
 
 	Action *action = new Action( loc, name, inlineList, nextCondId++ );
 	action->actionRefs.append( rootName );
@@ -985,25 +985,25 @@ void ParseData::initLongestMatchData()
 		/* The initTokStart action resets the token start. */
 		InlineList *il1 = new InlineList;
 		il1->append( new InlineItem( InputLoc(), InlineItem::LmInitTokStart ) );
-		initTokStart = newAction( "initts", il1 );
+		initTokStart = newAction( L"initts", il1 );
 		initTokStart->isLmAction = true;
 
 		/* The initActId action gives act a default value. */
 		InlineList *il4 = new InlineList;
 		il4->append( new InlineItem( InputLoc(), InlineItem::LmInitAct ) );
-		initActId = newAction( "initact", il4 );
+		initActId = newAction( L"initact", il4 );
 		initActId->isLmAction = true;
 
 		/* The setTokStart action sets tokstart. */
 		InlineList *il5 = new InlineList;
 		il5->append( new InlineItem( InputLoc(), InlineItem::LmSetTokStart ) );
-		setTokStart = newAction( "ts", il5 );
+		setTokStart = newAction( L"ts", il5 );
 		setTokStart->isLmAction = true;
 
 		/* The setTokEnd action sets tokend. */
 		InlineList *il3 = new InlineList;
 		il3->append( new InlineItem( InputLoc(), InlineItem::LmSetTokEnd ) );
-		setTokEnd = newAction( "te", il3 );
+		setTokEnd = newAction( L"te", il3 );
 		setTokEnd->isLmAction = true;
 
 		/* The action will also need an ordering: ahead of all user action
@@ -1124,12 +1124,12 @@ void ParseData::printNameTree()
 	for ( NameVect::Iter name = rootName->childVect; name.lte(); name++ )
 		printNameInst( *name, 0 );
 	
-	cerr << "name index:" << endl;
+	wcerr << L"name index:" << endl;
 	/* Show that the name index is correct. */
 	for ( int ni = 0; ni < nextNameId; ni++ ) {
-		cerr << ni << ": ";
-		const char *name = nameIndex[ni]->name;
-		cerr << ( name != 0 ? name : "<ANON>" ) << endl;
+		wcerr << ni << L": ";
+		const wchar_t *name = nameIndex[ni]->name;
+		wcerr << ( name != 0 ? name : L"<ANON>" ) << endl;
 	}
 }
 
@@ -1184,7 +1184,7 @@ FsmAp *ParseData::makeAll()
 	/* Make all the instantiations, we know that main exists in this list. */
 	initNameWalk();
 	for ( GraphList::Iter glel = instanceList; glel.lte();  glel++ ) {
-		if ( strcmp( glel->key, mainMachine ) == 0 ) {
+		if ( wcscmp( glel->key, mainMachine ) == 0 ) {
 			/* Main graph is always instantiated. */
 			mainGraph = makeInstance( glel );
 		}
@@ -1267,8 +1267,8 @@ void ParseData::checkAction( Action *action )
 			NameInst *check = *ar;
 			while ( check != 0 ) {
 				if ( check->isLongestMatch ) {
-					error(action->loc) << "within a scanner, fcall is permitted"
-						" only in pattern actions" << endl;
+					error(action->loc) << L"within a scanner, fcall is permitted"
+						L" only in pattern actions" << endl;
 					break;
 				}
 				check = check->parent;
@@ -1347,8 +1347,8 @@ void ParseData::makeExports()
 
 			/* Build the graph from a walk of the parse tree. */
 			if ( !graph->checkSingleCharMachine() ) {
-				error(gdel->loc) << "bad export machine, must define "
-						"a single character" << endl;
+				error(gdel->loc) << L"bad export machine, must define "
+						L"a single character" << endl;
 			}
 			else {
 				/* Safe to extract the key and declare the export. */
@@ -1372,12 +1372,12 @@ void ParseData::prepareMachineGen( GraphDictEl *graphDictEl )
 		switch ( fail.reason ) {
 			case FsmConstructFail::CondNoKeySpace: {
 				InputLoc &loc = alphTypeSet ? alphTypeLoc : sectionLoc;
-				error(loc) << "sorry, no more characters are "
-						"available in the alphabet space" << endl;
-				error(loc) << "  for conditions, please use a "
-						"smaller alphtype or reduce" << endl;
-				error(loc) << "  the span of characters on which "
-						"conditions are embedded" << endl;
+				error(loc) << L"sorry, no more characters are "
+						L"available in the alphabet space" << endl;
+				error(loc) << L"  for conditions, please use a "
+						L"smaller alphtype or reduce" << endl;
+				error(loc) << L"  the span of characters on which "
+						L"conditions are embedded" << endl;
 				break;
 			}
 		}
@@ -1441,13 +1441,13 @@ void ParseData::generateReduced( InputData &inputData )
 	backendGen.makeBackend();
 
 	if ( printStatistics ) {
-		cerr << "fsm name  : " << sectionName << endl;
-		cerr << "num states: " << sectionGraph->stateList.length() << endl;
-		cerr << endl;
+		wcerr << L"fsm name  : " << sectionName << endl;
+		wcerr << L"num states: " << sectionGraph->stateList.length() << endl;
+		wcerr << endl;
 	}
 }
 
-void ParseData::generateXML( ostream &out )
+void ParseData::generateXML( wostream &out )
 {
 	beginProcessing();
 
@@ -1458,9 +1458,9 @@ void ParseData::generateXML( ostream &out )
 	codeGen.writeXML();
 
 	if ( printStatistics ) {
-		cerr << "fsm name  : " << sectionName << endl;
-		cerr << "num states: " << sectionGraph->stateList.length() << endl;
-		cerr << endl;
+		wcerr << L"fsm name  : " << sectionName << endl;
+		wcerr << L"num states: " << sectionGraph->stateList.length() << endl;
+		wcerr << endl;
 	}
 }
 

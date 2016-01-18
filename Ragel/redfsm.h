@@ -45,7 +45,7 @@
 #define STATE_ERR_STATE   0
 #define FUNC_NO_FUNC      0
 
-using std::string;
+using std::wstring;
 
 struct RedStateAp;
 struct GenInlineList;
@@ -70,7 +70,7 @@ struct GenInlineItem
 		type(type) { }
 	
 	InputLoc loc;
-	char *data;
+	wchar_t *data;
 	int targId;
 	RedStateAp *targState;
 	int lmId;
@@ -85,7 +85,7 @@ struct GenInlineItem
  * ptreetypes, which should be just typedef forwards. */
 struct GenInlineList : public DList<GenInlineItem> { };
 
-/* Element in list of actions. Contains the string for the code to exectute. */
+/* Element in list of actions. Contains the wstring for the code to exectute. */
 struct GenAction 
 :
 	public DListEl<GenAction>
@@ -104,11 +104,11 @@ struct GenAction
 
 	/* Data collected during parse. */
 	InputLoc loc;
-	const char *name;
+	const wchar_t *name;
 	GenInlineList *inlineList;
 	int actionId;
 
-	string nameOrLoc();
+	wstring nameOrLoc();
 
 	/* Number of references in the final machine. */
 	int numRefs() 
@@ -279,7 +279,7 @@ typedef MergeSort<RedSpanMapEl, CmpRedSpanMapEl> RedSpanMapSort;
 
 /* Set of entry ids that go into this state. */
 typedef Vector<int> EntryIdVect;
-typedef Vector<char*> EntryNameVect;
+typedef Vector<wchar_t*> EntryNameVect;
 
 typedef Vector< GenAction* > GenCondSet;
 

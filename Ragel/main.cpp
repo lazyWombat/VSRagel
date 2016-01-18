@@ -24,9 +24,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 #include <sstream>
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -55,30 +53,36 @@
 #include "version.h"
 #include "common.h"
 #include "inputdata.h"
+#include <locale>
+#include <codecvt>
 
-using std::istream;
-using std::ostream;
-using std::ifstream;
+using std::wistream;
+using std::wostream;
+using std::wifstream;
 using std::ofstream;
-using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcin;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 using std::ios;
 using std::streamsize;
+using std::locale;
+using std::codecvt_utf8;
 
 /* Controls minimization. */
 MinimizeLevel minimizeLevel = MinimizePartition2;
 MinimizeOpt minimizeOpt = MinimizeMostOps;
 
 /* Graphviz dot file generation. */
-const char *machineSpec = 0, *machineName = 0;
+const wchar_t *machineSpec = 0, *machineName = 0;
 bool machineSpecFound = false;
 bool wantDupsRemoved = true;
 
 bool printStatistics = false;
 bool generateXML = false;
 bool generateDot = false;
+bool useStandardOutput = false;
+bool useStandardInput = false;
 
 /* Target language and output style. */
 CodeStyle codeStyle = GenTables;
@@ -94,52 +98,52 @@ RubyImplEnum rubyImpl = MRI;
 /* Print a summary of the options. */
 void usage()
 {
-	cout <<
-"usage: ragel [options] file\n"
-"general:\n"
-"   -h, -H, -?, --help   Print this usage and exit\n"
-"   -v, --version        Print version information and exit\n"
-"   -o <file>            Write output to <file>\n"
-"   -s                   Print some statistics on stderr\n"
-"   -d                   Do not remove duplicates from action lists\n"
-"   -I <dir>             Add <dir> to the list of directories to search\n"
-"                        for included an imported files\n"
-"error reporting format:\n"
-"   --error-format=gnu   file:line:column: message (default)\n"
-"   --error-format=msvc  file(line,column): message\n"
-"fsm minimization:\n"
-"   -n                   Do not perform minimization\n"
-"   -m                   Minimize at the end of the compilation\n"
-"   -l                   Minimize after most operations (default)\n"
-"   -e                   Minimize after every operation\n"
-"visualization:\n"
-"   -x                   Run the frontend only: emit XML intermediate format\n"
-"   -V                   Generate a dot file for Graphviz\n"
-"   -p                   Display printable characters on labels\n"
-"   -S <spec>            FSM specification to output (for graphviz output)\n"
-"   -M <machine>         Machine definition/instantiation to output (for graphviz output)\n"
-"host language:\n"
-"   -C                   The host language is C, C++, Obj-C or Obj-C++ (default)\n"
-"   -D                   The host language is D\n"
-"   -Z                   The host language is Go\n"
-"   -J                   The host language is Java\n"
-"   -R                   The host language is Ruby\n"
-"   -A                   The host language is C#\n"
-"   -O                   The host language is OCaml\n"
-"line directives: (C/D/Ruby/C#/OCaml)\n"
-"   -L                   Inhibit writing of #line directives\n"
-"code style: (C/D/Java/Ruby/C#/OCaml)\n"
-"   -T0                  Table driven FSM (default)\n"
-"code style: (C/D/Ruby/C#/OCaml)\n"
-"   -T1                  Faster table driven FSM\n"
-"   -F0                  Flat table driven FSM\n"
-"   -F1                  Faster flat table-driven FSM\n"
-"code style: (C/D/C#/OCaml)\n"
-"   -G0                  Goto-driven FSM\n"
-"   -G1                  Faster goto-driven FSM\n"
-"code style: (C/D)\n"
-"   -G2                  Really fast goto-driven FSM\n"
-"   -P<N>                N-Way Split really fast goto-driven FSM\n"
+	wcout <<
+L"usage: ragel [options] file\n"
+L"general:\n"
+L"   -h, -H, -?, --help   Print this usage and exit\n"
+L"   -v, --version        Print version information and exit\n"
+L"   -o <file>            Write output to <file>\n"
+L"   -s                   Print some statistics on stderr\n"
+L"   -d                   Do not remove duplicates from action lists\n"
+L"   -I <dir>             Add <dir> to the list of directories to search\n"
+L"                        for included an imported files\n"
+L"error reporting format:\n"
+L"   --error-format=gnu   file:line:column: message (default)\n"
+L"   --error-format=msvc  file(line,column): message\n"
+L"fsm minimization:\n"
+L"   -n                   Do not perform minimization\n"
+L"   -m                   Minimize at the end of the compilation\n"
+L"   -l                   Minimize after most operations (default)\n"
+L"   -e                   Minimize after every operation\n"
+L"visualization:\n"
+L"   -x                   Run the frontend only: emit XML intermediate format\n"
+L"   -V                   Generate a dot file for Graphviz\n"
+L"   -p                   Display printable characters on labels\n"
+L"   -S <spec>            FSM specification to output (for graphviz output)\n"
+L"   -M <machine>         Machine definition/instantiation to output (for graphviz output)\n"
+L"host language:\n"
+L"   -C                   The host language is C, C++, Obj-C or Obj-C++ (default)\n"
+L"   -D                   The host language is D\n"
+L"   -Z                   The host language is Go\n"
+L"   -J                   The host language is Java\n"
+L"   -R                   The host language is Ruby\n"
+L"   -A                   The host language is C#\n"
+L"   -O                   The host language is OCaml\n"
+L"line directives: (C/D/Ruby/C#/OCaml)\n"
+L"   -L                   Inhibit writing of #line directives\n"
+L"code style: (C/D/Java/Ruby/C#/OCaml)\n"
+L"   -T0                  Table driven FSM (default)\n"
+L"code style: (C/D/Ruby/C#/OCaml)\n"
+L"   -T1                  Faster table driven FSM\n"
+L"   -F0                  Flat table driven FSM\n"
+L"   -F1                  Faster flat table-driven FSM\n"
+L"code style: (C/D/C#/OCaml)\n"
+L"   -G0                  Goto-driven FSM\n"
+L"   -G1                  Faster goto-driven FSM\n"
+L"code style: (C/D)\n"
+L"   -G2                  Really fast goto-driven FSM\n"
+L"   -P<N>                N-Way Split really fast goto-driven FSM\n"
 	;	
 
 	exit(0);
@@ -148,35 +152,35 @@ void usage()
 /* Print version information and exit. */
 void version()
 {
-	cout << "Ragel State Machine Compiler version " VERSION << " " PUBDATE << endl <<
-			"Copyright (c) 2001-2009 by Adrian Thurston" << endl;
+	wcout << L"Ragel State Machine Compiler version " VERSION << L" " PUBDATE << endl <<
+			L"Copyright (c) 2001-2009 by Adrian Thurston" << endl;
 	exit(0);
 }
 
 /* Error reporting format. */
 ErrorFormat errorFormat = ErrorFormatGNU;
 
-InputLoc makeInputLoc( const char *fileName, int line, int col)
+InputLoc makeInputLoc( const wchar_t *fileName, int line, int col)
 {
 	InputLoc loc = { fileName, line, col };
 	return loc;
 }
 
-ostream &operator<<( ostream &out, const InputLoc &loc )
+wostream &operator<<( wostream &out, const InputLoc &loc )
 {
 	assert( loc.fileName != 0 );
 	switch ( errorFormat ) {
 	case ErrorFormatMSVC:
-		out << loc.fileName << "(" << loc.line;
+		out << loc.fileName << L"(" << loc.line;
 		if ( loc.col )
-			out << "," << loc.col;
-		out << ")";
+			out << L"," << loc.col;
+		out << L")";
 		break;
 
 	default:
-		out << loc.fileName << ":" << loc.line;
+		out << loc.fileName << L":" << loc.line;
 		if ( loc.col )
-			out << ":" << loc.col;
+			out << L":" << loc.col;
 		break;
 	}
 	return out;
@@ -185,41 +189,41 @@ ostream &operator<<( ostream &out, const InputLoc &loc )
 /* Total error count. */
 int gblErrorCount = 0;
 
-/* Print the opening to a warning in the input, then return the error ostream. */
-ostream &warning( const InputLoc &loc )
+/* Print the opening to a warning in the input, then return the error wostream. */
+wostream &warning( const InputLoc &loc )
 {
-	cerr << loc << ": warning: ";
-	return cerr;
+	wcerr << loc << L": warning: ";
+	return wcerr;
 }
 
 /* Print the opening to a program error, then return the error stream. */
-ostream &error()
+wostream &error()
 {
 	gblErrorCount += 1;
-	cerr << PROGNAME ": ";
-	return cerr;
+	wcerr << PROGNAME L": ";
+	return wcerr;
 }
 
-ostream &error( const InputLoc &loc )
+wostream &error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
-	cerr << loc << ": ";
-	return cerr;
+	wcerr << loc << L": ";
+	return wcerr;
 }
 
-void escapeLineDirectivePath( std::ostream &out, char *path )
+void escapeLineDirectivePath( std::wostream &out, wchar_t *path )
 {
-	for ( char *pc = path; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			out << "\\\\";
+	for ( wchar_t *pc = path; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			out << L"\\\\";
 		else
 			out << *pc;
 	}
 }
 
-void processArgs( int argc, const char **argv, InputData &id )
+void processArgs( int argc, const wchar_t **argv, InputData &id )
 {
-	ParamCheck pc("xo:dnmleabjkS:M:I:CDEJZRAOvHh?-:sT:F:G:P:LpV", argc, argv);
+	ParamCheck pc(L"xo:dnmleabjkS:M:I:CDEJZRAOvHh?-:sT:F:G:P:LpVci", argc, argv);
 
 	/* FIXME: Need to check code styles VS langauge. */
 
@@ -227,20 +231,25 @@ void processArgs( int argc, const char **argv, InputData &id )
 		switch ( pc.state ) {
 		case ParamCheck::match:
 			switch ( pc.parameter ) {
-			case 'V':
+			case L'V':
 				generateDot = true;
 				break;
-
-			case 'x':
+			case L'c':
+				useStandardOutput = true;
+				break;
+			case L'i':
+				useStandardInput = true;
+				break;
+			case L'x':
 				generateXML = true;
 				break;
 
 			/* Output. */
-			case 'o':
+			case L'o':
 				if ( *pc.paramArg == 0 )
-					error() << "a zero length output file name was given" << endl;
+					error() << L"a zero length output file name was given" << endl;
 				else if ( id.outputFileName != 0 )
-					error() << "more than one output file name was given" << endl;
+					error() << L"more than one output file name was given" << endl;
 				else {
 					/* Ok, remember the output file name. */
 					id.outputFileName = pc.paramArg;
@@ -248,42 +257,42 @@ void processArgs( int argc, const char **argv, InputData &id )
 				break;
 
 			/* Flag for turning off duplicate action removal. */
-			case 'd':
+			case L'd':
 				wantDupsRemoved = false;
 				break;
 
 			/* Minimization, mostly hidden options. */
-			case 'n':
+			case L'n':
 				minimizeOpt = MinimizeNone;
 				break;
-			case 'm':
+			case L'm':
 				minimizeOpt = MinimizeEnd;
 				break;
-			case 'l':
+			case L'l':
 				minimizeOpt = MinimizeMostOps;
 				break;
-			case 'e':
+			case L'e':
 				minimizeOpt = MinimizeEveryOp;
 				break;
-			case 'a':
+			case L'a':
 				minimizeLevel = MinimizeApprox;
 				break;
-			case 'b':
+			case L'b':
 				minimizeLevel = MinimizeStable;
 				break;
-			case 'j':
+			case L'j':
 				minimizeLevel = MinimizePartition1;
 				break;
-			case 'k':
+			case L'k':
 				minimizeLevel = MinimizePartition2;
 				break;
 
 			/* Machine spec. */
-			case 'S':
+			case L'S':
 				if ( *pc.paramArg == 0 )
-					error() << "please specify an argument to -S" << endl;
+					error() << L"please specify an argument to -S" << endl;
 				else if ( machineSpec != 0 )
-					error() << "more than one -S argument was given" << endl;
+					error() << L"more than one -S argument was given" << endl;
 				else {
 					/* Ok, remember the path to the machine to generate. */
 					machineSpec = pc.paramArg;
@@ -291,153 +300,153 @@ void processArgs( int argc, const char **argv, InputData &id )
 				break;
 
 			/* Machine path. */
-			case 'M':
+			case L'M':
 				if ( *pc.paramArg == 0 )
-					error() << "please specify an argument to -M" << endl;
+					error() << L"please specify an argument to -M" << endl;
 				else if ( machineName != 0 )
-					error() << "more than one -M argument was given" << endl;
+					error() << L"more than one -M argument was given" << endl;
 				else {
 					/* Ok, remember the machine name to generate. */
 					machineName = pc.paramArg;
 				}
 				break;
 
-			case 'I':
+			case L'I':
 				if ( *pc.paramArg == 0 )
-					error() << "please specify an argument to -I" << endl;
+					error() << L"please specify an argument to -I" << endl;
 				else {
 					id.includePaths.append( pc.paramArg );
 				}
 				break;
 
 			/* Host language types. */
-			case 'C':
+			case L'C':
 				hostLang = &hostLangC;
 				break;
-			case 'D':
+			case L'D':
 				hostLang = &hostLangD;
 				break;
-			case 'E':
+			case L'E':
 				hostLang = &hostLangD2;
 				break;
-			case 'Z':
+			case L'Z':
 				hostLang = &hostLangGo;
 				break;
-			case 'J':
+			case L'J':
 				hostLang = &hostLangJava;
 				break;
-			case 'R':
+			case L'R':
 				hostLang = &hostLangRuby;
 				break;
-			case 'A':
+			case L'A':
 				hostLang = &hostLangCSharp;
 				break;
-			case 'O':
+			case L'O':
 				hostLang = &hostLangOCaml;
 				break;
 
 			/* Version and help. */
-			case 'v':
+			case L'v':
 				version();
 				break;
-			case 'H': case 'h': case '?':
+			case L'H': case L'h': case L'?':
 				usage();
 				break;
-			case 's':
+			case L's':
 				printStatistics = true;
 				break;
-			case '-': {
-				char *arg = strdup( pc.paramArg );
-				char *eq = strchr( arg, '=' );
+			case L'-': {
+				wchar_t *arg = _wcsdup( pc.paramArg );
+				wchar_t *eq = wcschr( arg, L'=' );
 
 				if ( eq != 0 )
 					*eq++ = 0;
 
-				if ( strcmp( arg, "help" ) == 0 )
+				if ( wcscmp( arg, L"help" ) == 0 )
 					usage();
-				else if ( strcmp( arg, "version" ) == 0 )
+				else if ( wcscmp( arg, L"version" ) == 0 )
 					version();
-				else if ( strcmp( arg, "error-format" ) == 0 ) {
+				else if ( wcscmp( arg, L"error-format" ) == 0 ) {
 					if ( eq == 0 )
-						error() << "expecting '=value' for error-format" << endl;
-					else if ( strcmp( eq, "gnu" ) == 0 )
+						error() << L"expecting '=value' for error-format" << endl;
+					else if ( wcscmp( eq, L"gnu" ) == 0 )
 						errorFormat = ErrorFormatGNU;
-					else if ( strcmp( eq, "msvc" ) == 0 )
+					else if ( wcscmp( eq, L"msvc" ) == 0 )
 						errorFormat = ErrorFormatMSVC;
 					else
-						error() << "invalid value for error-format" << endl;
+						error() << L"invalid value for error-format" << endl;
 				}
-				else if ( strcmp( arg, "rbx" ) == 0 )
+				else if ( wcscmp( arg, L"rbx" ) == 0 )
 					rubyImpl = Rubinius;
 				else {
-					error() << "--" << pc.paramArg << 
-							" is an invalid argument" << endl;
+					error() << L"--" << pc.paramArg << 
+							L" is an invalid argument" << endl;
 				}
 				free( arg );
 				break;
 			}
 
 			/* Passthrough args. */
-			case 'T': 
-				if ( pc.paramArg[0] == '0' )
+			case L'T': 
+				if ( pc.paramArg[0] == L'0' )
 					codeStyle = GenTables;
-				else if ( pc.paramArg[0] == '1' )
+				else if ( pc.paramArg[0] == L'1' )
 					codeStyle = GenFTables;
 				else {
-					error() << "-T" << pc.paramArg[0] << 
-							" is an invalid argument" << endl;
+					error() << L"-T" << pc.paramArg[0] << 
+							L" is an invalid argument" << endl;
 					exit(1);
 				}
 				break;
-			case 'F': 
-				if ( pc.paramArg[0] == '0' )
+			case L'F': 
+				if ( pc.paramArg[0] == L'0' )
 					codeStyle = GenFlat;
-				else if ( pc.paramArg[0] == '1' )
+				else if ( pc.paramArg[0] == L'1' )
 					codeStyle = GenFFlat;
 				else {
-					error() << "-F" << pc.paramArg[0] << 
-							" is an invalid argument" << endl;
+					error() << L"-F" << pc.paramArg[0] << 
+							L" is an invalid argument" << endl;
 					exit(1);
 				}
 				break;
-			case 'G': 
-				if ( pc.paramArg[0] == '0' )
+			case L'G': 
+				if ( pc.paramArg[0] == L'0' )
 					codeStyle = GenGoto;
-				else if ( pc.paramArg[0] == '1' )
+				else if ( pc.paramArg[0] == L'1' )
 					codeStyle = GenFGoto;
-				else if ( pc.paramArg[0] == '2' )
+				else if ( pc.paramArg[0] == L'2' )
 					codeStyle = GenIpGoto;
 				else {
-					error() << "-G" << pc.paramArg[0] << 
-							" is an invalid argument" << endl;
+					error() << L"-G" << pc.paramArg[0] << 
+							L" is an invalid argument" << endl;
 					exit(1);
 				}
 				break;
-			case 'P':
+			case L'P':
 				codeStyle = GenSplit;
-				numSplitPartitions = atoi( pc.paramArg );
+				numSplitPartitions = _wtoi( pc.paramArg );
 				break;
 
-			case 'p':
+			case L'p':
 				displayPrintables = true;
 				break;
 
-			case 'L':
+			case L'L':
 				noLineDirectives = true;
 				break;
 			}
 			break;
 
 		case ParamCheck::invalid:
-			error() << "-" << pc.parameter << " is an invalid argument" << endl;
+			error() << L"-" << pc.parameter << L" is an invalid argument" << endl;
 			break;
 
 		case ParamCheck::noparam:
 			/* It is interpreted as an input file. */
 			if ( *pc.curArg == 0 )
-				error() << "a zero length input file name was given" << endl;
+				error() << L"a zero length input file name was given" << endl;
 			else if ( id.inputFileName != 0 )
-				error() << "more than one input file name was given" << endl;
+				error() << L"more than one input file name was given" << endl;
 			else {
 				/* OK, Remember the filename. */
 				id.inputFileName = pc.curArg;
@@ -451,12 +460,26 @@ void process( InputData &id )
 {
 	/* Open the input file for reading. */
 	assert( id.inputFileName != 0 );
-	ifstream *inFile = new ifstream( id.inputFileName );
-	if ( ! inFile->is_open() )
-		error() << "could not open " << id.inputFileName << " for reading" << endp;
 
+	wistream * input;
+	wifstream *inFile = NULL;
+
+	if (useStandardInput)
+	{
+		input = &wcin;
+	}
+	else
+	{
+		inFile = new wifstream(id.inputFileName);
+		if (!inFile->is_open())
+			error() << L"could not open " << id.inputFileName << L" for reading" << endp;
+
+		inFile->imbue(locale(inFile->getloc(), new codecvt_utf8<wchar_t, 0x10ffff, std::consume_header>));
+
+		input = inFile;
+	}
 	/* Used for just a few things. */
-	std::ostringstream hostData;
+	std::wostringstream hostData;
 
 	/* Make the first input item. */
 	InputItem *firstInputItem = new InputItem;
@@ -466,7 +489,7 @@ void process( InputData &id )
 	firstInputItem->loc.col = 1;
 	id.inputItems.append( firstInputItem );
 
-	Scanner scanner( id, id.inputFileName, *inFile, 0, 0, 0, false );
+	Scanner scanner( id, id.inputFileName, *input, 0, 0, 0, false );
 	scanner.do_scan();
 
 	/* Finished, final check for errors.. */
@@ -509,9 +532,12 @@ void process( InputData &id )
 	id.writeOutput();
 
 	/* Close the input and the intermediate file. */
-	delete inFile;
+	if (inFile != NULL)
+	{
+		delete inFile;
+	}
 
-	/* If writing to a file, delete the ostream, causing it to flush.
+	/* If writing to a file, delete the wostream, causing it to flush.
 	 * Standard out is flushed automatically. */
 	if ( id.outputFileName != 0 ) {
 		delete id.outStream;
@@ -521,35 +547,38 @@ void process( InputData &id )
 	assert( gblErrorCount == 0 );
 }
 
-char *makeIntermedTemplate( const char *baseFileName )
+wchar_t *makeIntermedTemplate( const wchar_t *baseFileName )
 {
-	char *result = 0;
-	const char *templ = "ragel-XXXXXX.xml";
-	const char *lastSlash = strrchr( baseFileName, '/' );
+	wchar_t *result = 0;
+	const wchar_t *templ = L"ragel-XXXXXX.xml";
+	const wchar_t *lastSlash = wcsrchr( baseFileName, L'/' );
 	if ( lastSlash == 0 ) {
-		result = new char[strlen(templ)+1];
-		strcpy( result, templ );
+		result = new wchar_t[wcslen(templ)+1];
+		wcscpy_s( result, wcslen(templ) + 1, templ );
 	}
 	else {
 		int baseLen = lastSlash - baseFileName + 1;
-		result = new char[baseLen + strlen(templ) + 1];
+		result = new wchar_t[baseLen + wcslen(templ) + 1];
 		memcpy( result, baseFileName, baseLen );
-		strcpy( result+baseLen, templ );
+		wcscpy_s( result+baseLen, wcslen(templ) + 1, templ );
 	}
 	return result;
 };
 
 /* Main, process args and call yyparse to start scanning input. */
-int main( int argc, const char **argv )
+int wmain( int argc, const wchar_t **argv )
 {
 	InputData id;
+	
+	_setmode(_fileno(stdin), _O_U8TEXT);
+	_setmode(_fileno(stdout), _O_U8TEXT);
 
 	processArgs( argc, argv, id );
 
 	/* Require an input file. If we use standard in then we won't have a file
 	 * name on which to base the output. */
 	if ( id.inputFileName == 0 )
-		error() << "no input file given" << endl;
+		error() << L"no input file given" << endl;
 
 	/* Bail on argument processing errors. */
 	if ( gblErrorCount > 0 )
@@ -557,10 +586,10 @@ int main( int argc, const char **argv )
 
 	/* Make sure we are not writing to the same file as the input file. */
 	if ( id.inputFileName != 0 && id.outputFileName != 0 && 
-			strcmp( id.inputFileName, id.outputFileName  ) == 0 )
+			wcscmp( id.inputFileName, id.outputFileName  ) == 0 )
 	{
-		error() << "output file \"" << id.outputFileName  << 
-				"\" is the same as the input file" << endp;
+		error() << L"output file \"" << id.outputFileName  << 
+				L"\" is the same as the input file" << endp;
 	}
 
 	process( id );

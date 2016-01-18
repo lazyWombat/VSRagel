@@ -128,9 +128,9 @@ template< class T, class Compare>
 	void MergeSort<T,Compare>::sort(T *data, long len)
 {
 	/* Allocate the tmp space needed by merge sort, sort and free. */
-	T *tmpStor = (T*) new char[sizeof(T) * len];
+	T *tmpStor = (T*) new wchar_t[sizeof(T) * len];
 	doSort( tmpStor, data, len );
-	delete[] (char*) tmpStor;
+	delete[] (wchar_t*) tmpStor;
 }
 
 #ifdef AAPL_NAMESPACE

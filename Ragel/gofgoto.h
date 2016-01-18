@@ -35,14 +35,14 @@ class GoFGotoCodeGen
 	: public GoGotoCodeGen
 {
 public:
-	GoFGotoCodeGen( ostream &out )
+	GoFGotoCodeGen( wostream &out )
 			: GoGotoCodeGen(out) {}
 
-	std::ostream &EXEC_ACTIONS();
-	std::ostream &TO_STATE_ACTION_SWITCH( int level );
-	std::ostream &FROM_STATE_ACTION_SWITCH( int level );
-	std::ostream &FINISH_CASES();
-	std::ostream &EOF_ACTION_SWITCH( int level );
+	std::wostream &EXEC_ACTIONS();
+	std::wostream &TO_STATE_ACTION_SWITCH( int level );
+	std::wostream &FROM_STATE_ACTION_SWITCH( int level );
+	std::wostream &FINISH_CASES();
+	std::wostream &EOF_ACTION_SWITCH( int level );
 	unsigned int TO_STATE_ACTION( RedStateAp *state );
 	unsigned int FROM_STATE_ACTION( RedStateAp *state );
 	unsigned int EOF_ACTION( RedStateAp *state );

@@ -34,89 +34,89 @@ bool IpGotoCodeGen::useAgainLabel()
 			redFsm->anyRegNextStmt();
 }
 
-void IpGotoCodeGen::GOTO( ostream &ret, int gotoDest, bool inFinish )
+void IpGotoCodeGen::GOTO( wostream &ret, int gotoDest, bool inFinish )
 {
-	ret << "{" << CTRL_FLOW() << "goto st" << gotoDest << ";}";
+	ret << L"{" << CTRL_FLOW() << L"goto st" << gotoDest << L";}";
 }
 
-void IpGotoCodeGen::CALL( ostream &ret, int callDest, int targState, bool inFinish )
+void IpGotoCodeGen::CALL( wostream &ret, int callDest, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, prePushExpr, 0, false, false );
 	}
 
-	ret << "{" << STACK() << "[" << TOP() << "++] = " << targState << 
-			"; " << CTRL_FLOW() << "goto st" << callDest << ";}";
+	ret << L"{" << STACK() << L"[" << TOP() << L"++] = " << targState << 
+			L"; " << CTRL_FLOW() << L"goto st" << callDest << L";}";
 
 	if ( prePushExpr != 0 )
-		ret << "}";
+		ret << L"}";
 }
 
-void IpGotoCodeGen::CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
+void IpGotoCodeGen::CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, prePushExpr, 0, false, false );
 	}
 
-	ret << "{" << STACK() << "[" << TOP() << "++] = " << targState << "; " << vCS() << " = (";
+	ret << L"{" << STACK() << L"[" << TOP() << L"++] = " << targState << L"; " << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish, false );
-	ret << "); " << CTRL_FLOW() << "goto _again;}";
+	ret << L"); " << CTRL_FLOW() << L"goto _again;}";
 
 	if ( prePushExpr != 0 )
-		ret << "}";
+		ret << L"}";
 }
 
-void IpGotoCodeGen::RET( ostream &ret, bool inFinish )
+void IpGotoCodeGen::RET( wostream &ret, bool inFinish )
 {
-	ret << "{" << vCS() << " = " << STACK() << "[--" << TOP() << "];";
+	ret << L"{" << vCS() << L" = " << STACK() << L"[--" << TOP() << L"];";
 
 	if ( postPopExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, postPopExpr, 0, false, false );
-		ret << "}";
+		ret << L"}";
 	}
 
-	ret << CTRL_FLOW() << "goto _again;}";
+	ret << CTRL_FLOW() << L"goto _again;}";
 }
 
-void IpGotoCodeGen::GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void IpGotoCodeGen::GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << "{" << vCS() << " = (";
+	ret << L"{" << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish, false );
-	ret << "); " << CTRL_FLOW() << "goto _again;}";
+	ret << L"); " << CTRL_FLOW() << L"goto _again;}";
 }
 
-void IpGotoCodeGen::NEXT( ostream &ret, int nextDest, bool inFinish )
+void IpGotoCodeGen::NEXT( wostream &ret, int nextDest, bool inFinish )
 {
-	ret << vCS() << " = " << nextDest << ";";
+	ret << vCS() << L" = " << nextDest << L";";
 }
 
-void IpGotoCodeGen::NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void IpGotoCodeGen::NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << vCS() << " = (";
+	ret << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish, false );
-	ret << ");";
+	ret << L");";
 }
 
-void IpGotoCodeGen::CURS( ostream &ret, bool inFinish )
+void IpGotoCodeGen::CURS( wostream &ret, bool inFinish )
 {
-	ret << "(_ps)";
+	ret << L"(_ps)";
 }
 
-void IpGotoCodeGen::TARGS( ostream &ret, bool inFinish, int targState )
+void IpGotoCodeGen::TARGS( wostream &ret, bool inFinish, int targState )
 {
 	ret << targState;
 }
 
-void IpGotoCodeGen::BREAK( ostream &ret, int targState, bool csForced )
+void IpGotoCodeGen::BREAK( wostream &ret, int targState, bool csForced )
 {
 	outLabelUsed = true;
-	ret << "{" << P() << "++; ";
+	ret << L"{" << P() << L"++; ";
 	if ( !csForced ) 
-		ret << vCS() << " = " << targState << "; ";
-	ret << CTRL_FLOW() << "goto _out;}";
+		ret << vCS() << L" = " << targState << L"; ";
+	ret << CTRL_FLOW() << L"goto _out;}";
 }
 
 bool IpGotoCodeGen::IN_TRANS_ACTIONS( RedStateAp *state )
@@ -132,12 +132,12 @@ bool IpGotoCodeGen::IN_TRANS_ACTIONS( RedStateAp *state )
 			anyWritten = true;
 
 			/* Write the label for the transition so it can be jumped to. */
-			out << "tr" << trans->id << ":\n";
+			out << L"tr" << trans->id << L":\n";
 
 			/* If the action contains a next, then we must preload the current
 			 * state since the action may or may not set it. */
 			if ( trans->action->anyNextStmt() )
-				out << "	" << vCS() << " = " << trans->targ->id << ";\n";
+				out << L"	" << vCS() << L" = " << trans->targ->id << L";\n";
 
 			/* Write each action in the list. */
 			for ( GenActionTable::Iter item = trans->action->key; item.lte(); item++ ) {
@@ -148,9 +148,9 @@ bool IpGotoCodeGen::IN_TRANS_ACTIONS( RedStateAp *state )
 			/* If the action contains a next then we need to reload, otherwise
 			 * jump directly to the target state. */
 			if ( trans->action->anyNextStmt() )
-				out << "\tgoto _again;\n";
+				out << L"\tgoto _again;\n";
 			else
-				out << "\tgoto st" << trans->targ->id << ";\n";
+				out << L"\tgoto st" << trans->targ->id << L";\n";
 		}
 	}
 
@@ -164,7 +164,7 @@ void IpGotoCodeGen::GOTO_HEADER( RedStateAp *state )
 	bool anyWritten = IN_TRANS_ACTIONS( state );
 
 	if ( state->labelNeeded ) 
-		out << "st" << state->id << ":\n";
+		out << L"st" << state->id << L":\n";
 
 	if ( state->toStateAction != 0 ) {
 		/* Remember that we wrote an action. Write every action in the list. */
@@ -179,17 +179,17 @@ void IpGotoCodeGen::GOTO_HEADER( RedStateAp *state )
 	if ( state->labelNeeded ) {
 		if ( !noEnd ) {
 			out <<
-				"	if ( ++" << P() << " == " << PE() << " )\n"
-				"		goto _test_eof" << state->id << ";\n";
+				L"	if ( ++" << P() << L" == " << PE() << L" )\n"
+				L"		goto _test_eof" << state->id << L";\n";
 		}
 		else {
 			out << 
-				"	" << P() << " += 1;\n";
+				L"	" << P() << L" += 1;\n";
 		}
 	}
 
 	/* Give the state a switch case. */
-	out << "case " << state->id << ":\n";
+	out << L"case " << state->id << L":\n";
 
 	if ( state->fromStateAction != 0 ) {
 		/* Remember that we wrote an action. Write every action in the list. */
@@ -205,7 +205,7 @@ void IpGotoCodeGen::GOTO_HEADER( RedStateAp *state )
 
 	/* Record the prev state if necessary. */
 	if ( state->anyRegCurStateRef() )
-		out << "	_ps = " << state->id << ";\n";
+		out << L"	_ps = " << state->id << L";\n";
 }
 
 void IpGotoCodeGen::STATE_GOTO_ERROR()
@@ -220,51 +220,51 @@ void IpGotoCodeGen::STATE_GOTO_ERROR()
 		genLineDirective( out );
 
 	if ( state->labelNeeded ) 
-		out << "st" << state->id << ":\n";
+		out << L"st" << state->id << L":\n";
 
 	/* Break out here. */
 	outLabelUsed = true;
-	out << vCS() << " = " << state->id << ";\n";
-	out << "	goto _out;\n";
+	out << vCS() << L" = " << state->id << L";\n";
+	out << L"	goto _out;\n";
 }
 
 
 /* Emit the goto to take for a given transition. */
-std::ostream &IpGotoCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
+std::wostream &IpGotoCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
 {
 	if ( trans->action != 0 ) {
 		/* Go to the transition which will go to the state. */
-		out << TABS(level) << "goto tr" << trans->id << ";";
+		out << TABS(level) << L"goto tr" << trans->id << L";";
 	}
 	else {
 		/* Go directly to the target state. */
-		out << TABS(level) << "goto st" << trans->targ->id << ";";
+		out << TABS(level) << L"goto st" << trans->targ->id << L";";
 	}
 	return out;
 }
 
-std::ostream &IpGotoCodeGen::EXIT_STATES()
+std::wostream &IpGotoCodeGen::EXIT_STATES()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->outNeeded ) {
 			testEofUsed = true;
-			out << "	_test_eof" << st->id << ": " << vCS() << " = " << 
-					st->id << "; goto _test_eof; \n";
+			out << L"	_test_eof" << st->id << L": " << vCS() << L" = " << 
+					st->id << L"; goto _test_eof; \n";
 		}
 	}
 	return out;
 }
 
-std::ostream &IpGotoCodeGen::AGAIN_CASES()
+std::wostream &IpGotoCodeGen::AGAIN_CASES()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		out << 
-			"		case " << st->id << ": goto st" << st->id << ";\n";
+			L"		case " << st->id << L": goto st" << st->id << L";\n";
 	}
 	return out;
 }
 
-std::ostream &IpGotoCodeGen::FINISH_CASES()
+std::wostream &IpGotoCodeGen::FINISH_CASES()
 {
 	bool anyWritten = false;
 
@@ -278,13 +278,13 @@ std::ostream &IpGotoCodeGen::FINISH_CASES()
 
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->eofTrans != 0 )
-			out << "	case " << st->id << ": goto tr" << st->eofTrans->id << ";\n";
+			out << L"	case " << st->id << L": goto tr" << st->eofTrans->id << L";\n";
 	}
 
 	for ( GenActionTableMap::Iter act = redFsm->actionMap; act.lte(); act++ ) {
 		if ( act->eofRefs != 0 ) {
 			for ( IntSet::Iter pst = *act->eofRefs; pst.lte(); pst++ )
-				out << "	case " << *pst << ": \n";
+				out << L"	case " << *pst << L": \n";
 
 			/* Remember that we wrote a trans so we know to write the
 			 * line directive for going back to the output. */
@@ -293,7 +293,7 @@ std::ostream &IpGotoCodeGen::FINISH_CASES()
 			/* Write each action in the eof action list. */
 			for ( GenActionTable::Iter item = act->key; item.lte(); item++ )
 				ACTION( out, item->value, STATE_ERR_STATE, true, false );
-			out << "\tbreak;\n";
+			out << L"\tbreak;\n";
 		}
 	}
 
@@ -373,72 +373,72 @@ void IpGotoCodeGen::writeExec()
 	testEofUsed = false;
 	outLabelUsed = false;
 
-	out << "	{\n";
+	out << L"	{\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	int _ps = 0;\n";
+		out << L"	int _ps = 0;\n";
 
 	if ( redFsm->anyConditions() )
-		out << "	" << WIDE_ALPH_TYPE() << " _widec;\n";
+		out << L"	" << WIDE_ALPH_TYPE() << L" _widec;\n";
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out << 
-			"	if ( " << P() << " == " << PE() << " )\n"
-			"		goto _test_eof;\n";
+			L"	if ( " << P() << L" == " << PE() << L" )\n"
+			L"		goto _test_eof;\n";
 	}
 
 	if ( useAgainLabel() ) {
 		out << 
-			"	goto _resume;\n"
-			"\n"
-			"_again:\n"
-			"	switch ( " << vCS() << " ) {\n";
+			L"	goto _resume;\n"
+			L"\n"
+			L"_again:\n"
+			L"	switch ( " << vCS() << L" ) {\n";
 			AGAIN_CASES() <<
-			"	default: break;\n"
-			"	}\n"
-			"\n";
+			L"	default: break;\n"
+			L"	}\n"
+			L"\n";
 
 		if ( !noEnd ) {
 			testEofUsed = true;
 			out << 
-				"	if ( ++" << P() << " == " << PE() << " )\n"
-				"		goto _test_eof;\n";
+				L"	if ( ++" << P() << L" == " << PE() << L" )\n"
+				L"		goto _test_eof;\n";
 		}
 		else {
 			out << 
-				"	" << P() << " += 1;\n";
+				L"	" << P() << L" += 1;\n";
 		}
 
-		out << "_resume:\n";
+		out << L"_resume:\n";
 	}
 
 	out << 
-		"	switch ( " << vCS() << " )\n	{\n";
+		L"	switch ( " << vCS() << L" )\n	{\n";
 		STATE_GOTOS();
 		SWITCH_DEFAULT() <<
-		"	}\n";
+		L"	}\n";
 		EXIT_STATES() << 
-		"\n";
+		L"\n";
 
 	if ( testEofUsed ) 
-		out << "	_test_eof: {}\n";
+		out << L"	_test_eof: {}\n";
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if ( " << P() << " == " << vEOF() << " )\n"
-			"	{\n"
-			"	switch ( " << vCS() << " ) {\n";
+			L"	if ( " << P() << L" == " << vEOF() << L" )\n"
+			L"	{\n"
+			L"	switch ( " << vCS() << L" ) {\n";
 			FINISH_CASES();
 			SWITCH_DEFAULT() <<
-			"	}\n"
-			"	}\n"
-			"\n";
+			L"	}\n"
+			L"	}\n"
+			L"\n";
 	}
 
 	if ( outLabelUsed ) 
-		out << "	_out: {}\n";
+		out << L"	_out: {}\n";
 
 	out <<
-		"	}\n";
+		L"	}\n";
 }

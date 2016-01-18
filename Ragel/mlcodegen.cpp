@@ -30,46 +30,46 @@
 #include <string>
 #include <assert.h>
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
 
-using std::istream;
-using std::ifstream;
-using std::ostream;
+using std::wistream;
+using std::wifstream;
+using std::wostream;
 using std::ios;
 using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
-void ocamlLineDirective( ostream &out, const char *fileName, int line )
+void ocamlLineDirective( wostream &out, const wchar_t *fileName, int line )
 {
 	if ( noLineDirectives )
 		return;
 
 	/* Write the line info for to the input file. */
-	out << "# " << line << " \"";
-	for ( const char *pc = fileName; *pc != 0; pc++ ) {
-		if ( *pc == '\\' || *pc == '"' )
-			out << "\\";
+	out << L"# " << line << L" \"";
+	for ( const wchar_t *pc = fileName; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' || *pc == L'"' )
+			out << L"\\";
   	out << *pc;
 	}
-	out << "\"\n";
+	out << L"\"\n";
 }
 
-void OCamlCodeGen::genLineDirective( ostream &out )
+void OCamlCodeGen::genLineDirective( wostream &out )
 {
-	std::streambuf *sbuf = out.rdbuf();
+	std::wstreambuf *sbuf = out.rdbuf();
 	output_filter *filter = static_cast<output_filter*>(sbuf);
 	ocamlLineDirective( out, filter->fileName, filter->line + 1 );
 }
 
 
 /* Init code gen with in parameters. */
-OCamlCodeGen::OCamlCodeGen( ostream &out )
+OCamlCodeGen::OCamlCodeGen( wostream &out )
 :
 	CodeGenData(out)
 {
@@ -83,12 +83,12 @@ unsigned int OCamlCodeGen::arrayTypeSize( unsigned long maxVal )
 	return arrayType->size;
 }
 
-string OCamlCodeGen::ARRAY_TYPE( unsigned long maxVal )
+wstring OCamlCodeGen::ARRAY_TYPE( unsigned long maxVal )
 {
 	return ARRAY_TYPE( maxVal, false );
 }
 
-string OCamlCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
+wstring OCamlCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
 {
 	long long maxValLL = (long long) maxVal;
 	HostType *arrayType;
@@ -98,39 +98,39 @@ string OCamlCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
 		arrayType = keyOps->typeSubsumes( maxValLL );
 	assert( arrayType != 0 );
 
-	string ret = arrayType->data1;
+	wstring ret = arrayType->data1;
 	if ( arrayType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += arrayType->data2;
 	}
 	return ret;
 }
 
 /* Write out the fsm name. */
-string OCamlCodeGen::FSM_NAME()
+wstring OCamlCodeGen::FSM_NAME()
 {
 	return fsmName;
 }
 
 /* Emit the offset of the start state as a decimal integer. */
-string OCamlCodeGen::START_STATE_ID()
+wstring OCamlCodeGen::START_STATE_ID()
 {
-	ostringstream ret;
+	wostringstream ret;
 	ret << redFsm->startState->id;
 	return ret.str();
 };
 
 /* Write out the array of actions. */
-std::ostream &OCamlCodeGen::ACTIONS_ARRAY()
+std::wostream &OCamlCodeGen::ACTIONS_ARRAY()
 {
-	out << "\t0; ";
+	out << L"\t0; ";
 	int totalActions = 1;
 	for ( GenActionTableMap::Iter act = redFsm->actionMap; act.lte(); act++ ) {
 		/* Write out the length, which will never be the last character. */
 		out << act->key.length() << ARR_SEP();
 		/* Put in a line break every 8 */
 		if ( totalActions++ % 8 == 7 )
-			out << "\n\t";
+			out << L"\n\t";
 
 		for ( GenActionTable::Iter item = act->key; item.lte(); item++ ) {
 			out << item->value->actionId;
@@ -139,27 +139,27 @@ std::ostream &OCamlCodeGen::ACTIONS_ARRAY()
 
 			/* Put in a line break every 8 */
 			if ( totalActions++ % 8 == 7 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
 
 /*
-string OCamlCodeGen::ACCESS()
+wstring OCamlCodeGen::ACCESS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( accessExpr != 0 )
 		INLINE_LIST( ret, accessExpr, 0, false );
 	return ret.str();
 }
 */
 
-string OCamlCodeGen::make_access(char const* name, GenInlineList* x, bool prefix = true)
+wstring OCamlCodeGen::make_access(wchar_t const* name, GenInlineList* x, bool prefix = true)
 { 
-	ostringstream ret;
+	wostringstream ret;
 	if ( x == 0 )
   {
     if (prefix && accessExpr != 0)
@@ -168,168 +168,168 @@ string OCamlCodeGen::make_access(char const* name, GenInlineList* x, bool prefix
       ret << name;
     }
     else
-      ret << name << ".contents"; // ref cell
+      ret << name << L".contents"; // ref cell
   }
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, x, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string OCamlCodeGen::P() { return make_access("p", pExpr, false); }
-string OCamlCodeGen::PE() { return make_access("pe", peExpr, false); }
-string OCamlCodeGen::vEOF() { return make_access("eof", eofExpr, false); }
-string OCamlCodeGen::vCS() { return make_access("cs", csExpr); }
-string OCamlCodeGen::TOP() { return make_access("top", topExpr); }
-string OCamlCodeGen::STACK() { return make_access("stack", stackExpr); }
-string OCamlCodeGen::ACT() { return make_access("act", actExpr); }
-string OCamlCodeGen::TOKSTART() { return make_access("ts", tokstartExpr); }
-string OCamlCodeGen::TOKEND() { return make_access("te", tokendExpr); }
+wstring OCamlCodeGen::P() { return make_access(L"p", pExpr, false); }
+wstring OCamlCodeGen::PE() { return make_access(L"pe", peExpr, false); }
+wstring OCamlCodeGen::vEOF() { return make_access(L"eof", eofExpr, false); }
+wstring OCamlCodeGen::vCS() { return make_access(L"cs", csExpr); }
+wstring OCamlCodeGen::TOP() { return make_access(L"top", topExpr); }
+wstring OCamlCodeGen::STACK() { return make_access(L"stack", stackExpr); }
+wstring OCamlCodeGen::ACT() { return make_access(L"act", actExpr); }
+wstring OCamlCodeGen::TOKSTART() { return make_access(L"ts", tokstartExpr); }
+wstring OCamlCodeGen::TOKEND() { return make_access(L"te", tokendExpr); }
 
-string OCamlCodeGen::GET_WIDE_KEY()
+wstring OCamlCodeGen::GET_WIDE_KEY()
 {
 	if ( redFsm->anyConditions() ) 
-		return "_widec";
+		return L"_widec";
 	else
-    { ostringstream ret; ret << "Char.code " << GET_KEY(); return ret.str(); }
+    { wostringstream ret; ret << L"Char.code " << GET_KEY(); return ret.str(); }
 }
 
-string OCamlCodeGen::GET_WIDE_KEY( RedStateAp *state )
+wstring OCamlCodeGen::GET_WIDE_KEY( RedStateAp *state )
 {
 	if ( state->stateCondList.length() > 0 )
-		return "_widec";
+		return L"_widec";
 	else
-    { ostringstream ret; ret << "Char.code " << GET_KEY(); return ret.str(); }
+    { wostringstream ret; ret << L"Char.code " << GET_KEY(); return ret.str(); }
 }
 
 /* Write out level number of tabs. Makes the nested binary search nice
  * looking. */
-string OCamlCodeGen::TABS( int level )
+wstring OCamlCodeGen::TABS( int level )
 {
-	string result;
+	wstring result;
 	while ( level-- > 0 )
-		result += "\t";
+		result += L"\t";
 	return result;
 }
 
 /* Write out a key from the fsm code gen. Depends on wether or not the key is
  * signed. */
-string OCamlCodeGen::KEY( Key key )
+wstring OCamlCodeGen::KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( keyOps->isSigned || !hostLang->explicitUnsigned )
 		ret << key.getVal();
 	else
-		ret << (unsigned long) key.getVal() << 'u';
+		ret << (unsigned long) key.getVal() << L'u';
 	return ret.str();
 }
 
-string OCamlCodeGen::ALPHA_KEY( Key key )
+wstring OCamlCodeGen::ALPHA_KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
   ret << key.getVal();
   /*
 	if (key.getVal() > 0xFFFF) {
 		ret << key.getVal();
 	} else {
-		ret << "'\\u" << std::hex << std::setw(4) << std::setfill('0') << 
-			key.getVal() << "'";
+		ret << L"'\\u" << std::hex << std::setw(4) << std::setfill(L'0') << 
+			key.getVal() << L"'";
 	}
   */
-	//ret << "(char) " << key.getVal();
+	//ret << L"(char) " << key.getVal();
 	return ret.str();
 }
 
-void OCamlCodeGen::EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish )
+void OCamlCodeGen::EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish )
 {
 // The parser gives fexec two children.
-	ret << "begin " << P() << " <- ";
+	ret << L"begin " << P() << L" <- ";
 	INLINE_LIST( ret, item->children, targState, inFinish );
-	ret << " - 1 end; ";
+	ret << L" - 1 end; ";
 }
 
-void OCamlCodeGen::LM_SWITCH( ostream &ret, GenInlineItem *item, 
+void OCamlCodeGen::LM_SWITCH( wostream &ret, GenInlineItem *item, 
 		int targState, int inFinish )
 {
 	bool catch_all = false;
 	ret << 
-		"	begin match " << ACT() << " with\n";
+		L"	begin match " << ACT() << L" with\n";
 
 	for ( GenInlineList::Iter lma = *item->children; lma.lte(); lma++ ) {
 		/* Write the case label, the action and the case break. */
 		if ( lma->lmId < 0 )
 		{
 			catch_all = true;
-			ret << "	| _ ->\n";
+			ret << L"	| _ ->\n";
 		}
 		else
-			ret << "	| " << lma->lmId << " ->\n";
+			ret << L"	| " << lma->lmId << L" ->\n";
 
 		/* Write the block and close it off. */
-		ret << "	begin ";
+		ret << L"	begin ";
 		INLINE_LIST( ret, lma->children, targState, inFinish );
-		ret << " end\n";
+		ret << L" end\n";
 	}
 
 	if (!catch_all)
-		ret << "  | _ -> assert false\n";
+		ret << L"  | _ -> assert false\n";
 
 	ret << 
-		"	end;\n"
-		"\t";
+		L"	end;\n"
+		L"\t";
 }
 
-void OCamlCodeGen::SET_ACT( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::SET_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " <- " << item->lmId << "; ";
+	ret << ACT() << L" <- " << item->lmId << L"; ";
 }
 
-void OCamlCodeGen::SET_TOKEND( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::SET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	/* The tokend action sets tokend. */
-	ret << TOKEND() << " <- " << P();
+	ret << TOKEND() << L" <- " << P();
 	if ( item->offset != 0 ) 
-		out << "+" << item->offset;
-	out << "; ";
+		out << L"+" << item->offset;
+	out << L"; ";
 }
 
-void OCamlCodeGen::GET_TOKEND( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::GET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	ret << TOKEND();
 }
 
-void OCamlCodeGen::INIT_TOKSTART( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::INIT_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " <- " << NULL_ITEM() << "; ";
+	ret << TOKSTART() << L" <- " << NULL_ITEM() << L"; ";
 }
 
-void OCamlCodeGen::INIT_ACT( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::INIT_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " <- 0;";
+	ret << ACT() << L" <- 0;";
 }
 
-void OCamlCodeGen::SET_TOKSTART( ostream &ret, GenInlineItem *item )
+void OCamlCodeGen::SET_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " <- " << P() << "; ";
+	ret << TOKSTART() << L" <- " << P() << L"; ";
 }
 
-void OCamlCodeGen::SUB_ACTION( ostream &ret, GenInlineItem *item, 
+void OCamlCodeGen::SUB_ACTION( wostream &ret, GenInlineItem *item, 
 		int targState, bool inFinish )
 {
 	if ( item->children->length() > 0 ) {
 		/* Write the block and close it off. */
-		ret << "begin ";
+		ret << L"begin ";
 		INLINE_LIST( ret, item->children, targState, inFinish );
-		ret << " end";
+		ret << L" end";
 	}
 }
 
 
 /* Write out an inline tree structure. Walks the list and possibly calls out
  * to virtual functions than handle language specific items in the tree. */
-void OCamlCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList, 
+void OCamlCodeGen::INLINE_LIST( wostream &ret, GenInlineList *inlineList, 
 		int targState, bool inFinish )
 {
 	for ( GenInlineList::Iter item = *inlineList; item.lte(); item++ ) {
@@ -356,7 +356,7 @@ void OCamlCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 			ret << GET_KEY();
 			break;
 		case GenInlineItem::Hold:
-			ret << P() << " <- " << P() << " - 1; ";
+			ret << P() << L" <- " << P() << L" - 1; ";
 			break;
 		case GenInlineItem::Exec:
 			EXEC( ret, item, targState, inFinish );
@@ -410,49 +410,49 @@ void OCamlCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 	}
 }
 /* Write out paths in line directives. Escapes any special characters. */
-string OCamlCodeGen::LDIR_PATH( char *path )
+wstring OCamlCodeGen::LDIR_PATH( wchar_t *path )
 {
-	ostringstream ret;
-	for ( char *pc = path; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			ret << "\\\\";
+	wostringstream ret;
+	for ( wchar_t *pc = path; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			ret << L"\\\\";
 		else
 			ret << *pc;
 	}
 	return ret.str();
 }
 
-void OCamlCodeGen::ACTION( ostream &ret, GenAction *action, int targState, bool inFinish )
+void OCamlCodeGen::ACTION( wostream &ret, GenAction *action, int targState, bool inFinish )
 {
 	/* Write the preprocessor line info for going into the source file. */
 	ocamlLineDirective( ret, action->loc.fileName, action->loc.line );
 
 	/* Write the block and close it off. */
-	ret << "\t\tbegin ";
+	ret << L"\t\tbegin ";
 	INLINE_LIST( ret, action->inlineList, targState, inFinish );
-	ret << " end;\n";
+	ret << L" end;\n";
 }
 
-void OCamlCodeGen::CONDITION( ostream &ret, GenAction *condition )
+void OCamlCodeGen::CONDITION( wostream &ret, GenAction *condition )
 {
-	ret << "\n";
+	ret << L"\n";
 	ocamlLineDirective( ret, condition->loc.fileName, condition->loc.line );
 	INLINE_LIST( ret, condition->inlineList, 0, false );
 }
 
-string OCamlCodeGen::ERROR_STATE()
+wstring OCamlCodeGen::ERROR_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->errState != 0 )
 		ret << redFsm->errState->id;
 	else
-		ret << "-1";
+		ret << L"-1";
 	return ret.str();
 }
 
-string OCamlCodeGen::FIRST_FINAL_STATE()
+wstring OCamlCodeGen::FIRST_FINAL_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->firstFinState != 0 )
 		ret << redFsm->firstFinState->id;
 	else
@@ -462,80 +462,80 @@ string OCamlCodeGen::FIRST_FINAL_STATE()
 
 void OCamlCodeGen::writeInit()
 {
-	out << "	begin\n";
+	out << L"	begin\n";
 
 	if ( !noCS )
-		out << "\t" << vCS() << " <- " << START() << ";\n";
+		out << L"\t" << vCS() << L" <- " << START() << L";\n";
 	
 	/* If there are any calls, then the stack top needs initialization. */
 	if ( redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "\t" << TOP() << " <- 0;\n";
+		out << L"\t" << TOP() << L" <- 0;\n";
 
 	if ( hasLongestMatch ) {
 		out << 
-			"	" << TOKSTART() << " <- " << NULL_ITEM() << ";\n"
-			"	" << TOKEND() << " <- " << NULL_ITEM() << ";\n"
-			"	" << ACT() << " <- 0;\n";
+			L"	" << TOKSTART() << L" <- " << NULL_ITEM() << L";\n"
+			L"	" << TOKEND() << L" <- " << NULL_ITEM() << L";\n"
+			L"	" << ACT() << L" <- 0;\n";
 	}
-	out << "	end;\n";
+	out << L"	end;\n";
 }
 
-string OCamlCodeGen::PRE_INCR(string val)
+wstring OCamlCodeGen::PRE_INCR(wstring val)
 {
-  ostringstream ret;
-  ret << "(" << val << " <- " << val << " + 1; " << val << ")";
+  wostringstream ret;
+  ret << L"(" << val << L" <- " << val << L" + 1; " << val << L")";
   return ret.str();
 }
 
-string OCamlCodeGen::POST_INCR(string val)
+wstring OCamlCodeGen::POST_INCR(wstring val)
 {
-  ostringstream ret;
-  ret << "(let temp = " << val << " in " << val << " <- " << val << " + 1; temp)";
+  wostringstream ret;
+  ret << L"(let temp = " << val << L" in " << val << L" <- " << val << L" + 1; temp)";
   return ret.str();
 }
 
-string OCamlCodeGen::PRE_DECR(string val)
+wstring OCamlCodeGen::PRE_DECR(wstring val)
 {
-  ostringstream ret;
-  ret << "(" << val << " <- " << val << " - 1; " << val << ")";
+  wostringstream ret;
+  ret << L"(" << val << L" <- " << val << L" - 1; " << val << L")";
   return ret.str();
 }
 
-string OCamlCodeGen::POST_DECR(string val)
+wstring OCamlCodeGen::POST_DECR(wstring val)
 {
-  ostringstream ret;
-  ret << "(let temp = " << val << " in " << val << " <- " << val << " - 1; temp)";
+  wostringstream ret;
+  ret << L"(let temp = " << val << L" in " << val << L" <- " << val << L" - 1; temp)";
   return ret.str();
 }
 
-string OCamlCodeGen::DATA_PREFIX()
+wstring OCamlCodeGen::DATA_PREFIX()
 {
   if ( data_prefix.empty() ) // init
   {
-    data_prefix = string(fsmName) + "_";
+    data_prefix = wstring(fsmName) + L"_";
     if (data_prefix.size() > 0)
       data_prefix[0] = ::tolower(data_prefix[0]); // uncapitalize
   }
 	if ( !noPrefix )
 		return data_prefix;
-	return "";
+	return L"";
 }
 
 /* Emit the alphabet data type. */
-string OCamlCodeGen::ALPH_TYPE()
+wstring OCamlCodeGen::ALPH_TYPE()
 {
-	string ret = keyOps->alphType->data1;
+	wstring ret = keyOps->alphType->data1;
 	if ( keyOps->alphType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += + keyOps->alphType->data2;
 	}
 	return ret;
 }
 
 /* Emit the alphabet data type. */
-string OCamlCodeGen::WIDE_ALPH_TYPE()
+wstring OCamlCodeGen::WIDE_ALPH_TYPE()
 {
-	string ret;
+	wstring ret;
 	if ( redFsm->maxKey <= keyOps->maxKey )
 		ret = ALPH_TYPE();
 	else {
@@ -545,7 +545,7 @@ string OCamlCodeGen::WIDE_ALPH_TYPE()
 
 		ret = wideType->data1;
 		if ( wideType->data2 != 0 ) {
-			ret += " ";
+			ret += L" ";
 			ret += wideType->data2;
 		}
 	}
@@ -555,22 +555,22 @@ string OCamlCodeGen::WIDE_ALPH_TYPE()
 void OCamlCodeGen::STATE_IDS()
 {
 	if ( redFsm->startState != 0 )
-		STATIC_VAR( "int", START() ) << " = " << START_STATE_ID() << TOP_SEP ();
+		STATIC_VAR( L"int", START() ) << L" = " << START_STATE_ID() << TOP_SEP ();
 
 	if ( !noFinal )
-		STATIC_VAR( "int" , FIRST_FINAL() ) << " = " << FIRST_FINAL_STATE() << TOP_SEP();
+		STATIC_VAR( L"int" , FIRST_FINAL() ) << L" = " << FIRST_FINAL_STATE() << TOP_SEP();
 
 	if ( !noError )
-		STATIC_VAR( "int", ERROR() ) << " = " << ERROR_STATE() << TOP_SEP();
+		STATIC_VAR( L"int", ERROR() ) << L" = " << ERROR_STATE() << TOP_SEP();
 
-	out << "\n";
+	out << L"\n";
 
 	if ( entryPointNames.length() > 0 ) {
 		for ( EntryNameVect::Iter en = entryPointNames; en.lte(); en++ ) {
-			STATIC_VAR( "int", DATA_PREFIX() + "en_" + *en ) << 
-					" = " << entryPointIds[en.pos()] << TOP_SEP();
+			STATIC_VAR( L"int", DATA_PREFIX() + L"en_" + *en ) << 
+					L" = " << entryPointIds[en.pos()] << TOP_SEP();
 		}
-		out << "\n";
+		out << L"\n";
 	}
 }
 
@@ -590,98 +590,98 @@ void OCamlCodeGen::writeError()
 	out << ERROR_STATE();
 }
 
-string OCamlCodeGen::GET_KEY()
+wstring OCamlCodeGen::GET_KEY()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( getKeyExpr != 0 ) { 
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, getKeyExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	else {
 		/* Expression for retrieving the key, use simple dereference. */
-		ret << "data.[" << P() << "]";
+		ret << L"data.[" << P() << L"]";
 	}
 	return ret.str();
 }
-string OCamlCodeGen::NULL_ITEM()
+wstring OCamlCodeGen::NULL_ITEM()
 {
-	return "-1";
+	return L"-1";
 }
 
-string OCamlCodeGen::POINTER()
+wstring OCamlCodeGen::POINTER()
 {
 	// XXX C# has no pointers
 	// multiple items seperated by commas can also be pointer types.
-	return " ";
+	return L" ";
 }
 
-string OCamlCodeGen::PTR_CONST()
+wstring OCamlCodeGen::PTR_CONST()
 {
-	return "";
+	return L"";
 }
 
-std::ostream &OCamlCodeGen::OPEN_ARRAY( string type, string name )
+std::wostream &OCamlCodeGen::OPEN_ARRAY( wstring type, wstring name )
 {
-	out << "let " << name << " : " << type << " array = [|" << endl;
+	out << L"let " << name << L" : " << type << L" array = [|" << endl;
 	return out;
 }
 
-std::ostream &OCamlCodeGen::CLOSE_ARRAY()
+std::wostream &OCamlCodeGen::CLOSE_ARRAY()
 {
-	return out << "|]" << TOP_SEP();
+	return out << L"|]" << TOP_SEP();
 }
 
-string OCamlCodeGen::TOP_SEP()
+wstring OCamlCodeGen::TOP_SEP()
 {
-  return "\n"; // original syntax
+  return L"\n"; // original syntax
 }
 
-string OCamlCodeGen::ARR_SEP()
+wstring OCamlCodeGen::ARR_SEP()
 {
-  return "; ";
+  return L"; ";
 }
 
-string OCamlCodeGen::AT(const string& array, const string& index)
+wstring OCamlCodeGen::AT(const wstring& array, const wstring& index)
 {
-  ostringstream ret;
-  ret << array << ".(" << index << ")";
+  wostringstream ret;
+  ret << array << L".(" << index << L")";
   return ret.str();
 }
 
-std::ostream &OCamlCodeGen::STATIC_VAR( string type, string name )
+std::wostream &OCamlCodeGen::STATIC_VAR( wstring type, wstring name )
 {
-	out << "let " << name << " : " << type;
+	out << L"let " << name << L" : " << type;
 	return out;
 }
 
-string OCamlCodeGen::ARR_OFF( string ptr, string offset )
+wstring OCamlCodeGen::ARR_OFF( wstring ptr, wstring offset )
 {
 	// XXX C# can't do pointer arithmetic
-	return "&" + ptr + "[" + offset + "]";
+	return L"&" + ptr + L"[" + offset + L"]";
 }
 
-string OCamlCodeGen::CAST( string type )
+wstring OCamlCodeGen::CAST( wstring type )
 {
-  return "";
-//	return "(" + type + ")";
+  return L"";
+//	return L"(" + type + L")";
 }
 
-string OCamlCodeGen::UINT( )
+wstring OCamlCodeGen::UINT( )
 {
-	return "uint";
+	return L"uint";
 }
 
-std::ostream &OCamlCodeGen::SWITCH_DEFAULT()
+std::wostream &OCamlCodeGen::SWITCH_DEFAULT()
 {
-	out << "		| _ -> ()\n";
+	out << L"		| _ -> ()\n";
 	return out;
 }
 
-string OCamlCodeGen::CTRL_FLOW()
+wstring OCamlCodeGen::CTRL_FLOW()
 {
-	return "if true then ";
+	return L"if true then ";
 }
 
 void OCamlCodeGen::finishRagelDef()
@@ -728,17 +728,17 @@ void OCamlCodeGen::finishRagelDef()
 	calcIndexSize();
 }
 
-ostream &OCamlCodeGen::source_warning( const InputLoc &loc )
+wostream &OCamlCodeGen::source_warning( const InputLoc &loc )
 {
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": warning: ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return wcerr;
 }
 
-ostream &OCamlCodeGen::source_error( const InputLoc &loc )
+wostream &OCamlCodeGen::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return wcerr;
 }
 

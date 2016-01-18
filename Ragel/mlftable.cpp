@@ -54,7 +54,7 @@ void OCamlFTabCodeGen::calcIndexSize()
 	useIndicies = sizeWithInds < sizeWithoutInds;
 }
 
-std::ostream &OCamlFTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
+std::wostream &OCamlFTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->toStateAction != 0 )
@@ -63,7 +63,7 @@ std::ostream &OCamlFTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &OCamlFTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
+std::wostream &OCamlFTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->fromStateAction != 0 )
@@ -72,7 +72,7 @@ std::ostream &OCamlFTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &OCamlFTabCodeGen::EOF_ACTION( RedStateAp *state )
+std::wostream &OCamlFTabCodeGen::EOF_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->eofAction != 0 )
@@ -83,7 +83,7 @@ std::ostream &OCamlFTabCodeGen::EOF_ACTION( RedStateAp *state )
 
 
 /* Write out the function for a transition. */
-std::ostream &OCamlFTabCodeGen::TRANS_ACTION( RedTransAp *trans )
+std::wostream &OCamlFTabCodeGen::TRANS_ACTION( RedTransAp *trans )
 {
 	int action = 0;
 	if ( trans->action != 0 )
@@ -94,19 +94,19 @@ std::ostream &OCamlFTabCodeGen::TRANS_ACTION( RedTransAp *trans )
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &OCamlFTabCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &OCamlFTabCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numToStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\t| " << redAct->actListId+1 << " ->\n";
+			out << L"\t| " << redAct->actListId+1 << L" ->\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -116,19 +116,19 @@ std::ostream &OCamlFTabCodeGen::TO_STATE_ACTION_SWITCH()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &OCamlFTabCodeGen::FROM_STATE_ACTION_SWITCH()
+std::wostream &OCamlFTabCodeGen::FROM_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numFromStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\t| " << redAct->actListId+1 << " ->\n";
+			out << L"\t| " << redAct->actListId+1 << L" ->\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -136,19 +136,19 @@ std::ostream &OCamlFTabCodeGen::FROM_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &OCamlFTabCodeGen::EOF_ACTION_SWITCH()
+std::wostream &OCamlFTabCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numEofRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\t| " << redAct->actListId+1 << " ->\n";
+			out << L"\t| " << redAct->actListId+1 << L" ->\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, true );
 
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -158,19 +158,19 @@ std::ostream &OCamlFTabCodeGen::EOF_ACTION_SWITCH()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &OCamlFTabCodeGen::ACTION_SWITCH()
+std::wostream &OCamlFTabCodeGen::ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\t| " << redAct->actListId+1 << " ->\n";
+			out << L"\t| " << redAct->actListId+1 << L" ->\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\t()\n";
+			out << L"\t()\n";
 		}
 	}
 
@@ -184,78 +184,78 @@ void OCamlFTabCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondOffset), CO() );
 		COND_OFFSETS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondLen), CL() );
 		COND_LENS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( WIDE_ALPH_TYPE(), CK() );
 		COND_KEYS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxCondSpaceId), C() );
 		COND_SPACES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxKeyOffset), KO() );
 	KEY_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( WIDE_ALPH_TYPE(), K() );
 	KEYS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxSingleLen), SL() );
 	SINGLE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxRangeLen), RL() );
 	RANGE_LENS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset), IO() );
 	INDEX_OFFSETS();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	if ( useIndicies ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndex), I() );
 		INDICIES();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS_WI();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), TA() );
 			TRANS_ACTIONS_WI();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 	else {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxState), TT() );
 		TRANS_TARGS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 
 		if ( redFsm->anyActions() ) {
 			OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), TA() );
 			TRANS_ACTIONS();
 			CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 		}
 	}
 
@@ -263,38 +263,38 @@ void OCamlFTabCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActListId), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofTrans() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxIndexOffset+1), ET() );
 		EOF_TRANS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	STATE_IDS();
 
-  out << "type " << TYPE_STATE() << " = { mutable keys : int; mutable trans : int; }"
+  out << L"type " << TYPE_STATE() << L" = { mutable keys : int; mutable trans : int; }"
     << TOP_SEP();
 
-  out << "exception Goto_match" << TOP_SEP();
-  out << "exception Goto_again" << TOP_SEP();
-  out << "exception Goto_eof_trans" << TOP_SEP();
+  out << L"exception Goto_match" << TOP_SEP();
+  out << L"exception Goto_again" << TOP_SEP();
+  out << L"exception Goto_eof_trans" << TOP_SEP();
 }
 
 void OCamlFTabCodeGen::writeExec()
@@ -304,159 +304,159 @@ void OCamlFTabCodeGen::writeExec()
 	initVarTypes();
 
 	out << 
-		"	begin\n";
+		L"	begin\n";
 
 //	if ( redFsm->anyRegCurStateRef() )
-//		out << klenType ", _ps";
+//		out << klenType L", _ps";
 
   out <<
-    "	let state = { keys = 0; trans = 0; } in\n"
-    "	let rec do_start () =\n";
+    L"	let state = { keys = 0; trans = 0; } in\n"
+    L"	let rec do_start () =\n";
 
 //	if ( redFsm->anyConditions() )
-//		out << "	" << WIDE_ALPH_TYPE() << " _widec;\n";
+//		out << L"	" << WIDE_ALPH_TYPE() << L" _widec;\n";
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out << 
-			"	if " << P() << " = " << PE() << " then\n"
-			"		do_test_eof ()\n"
-      "\telse\n";
+			L"	if " << P() << L" = " << PE() << L" then\n"
+			L"		do_test_eof ()\n"
+      L"\telse\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if " << vCS() << " = " << redFsm->errState->id << " then\n"
-			"		do_out ()\n"
-      "\telse\n";
+			L"	if " << vCS() << L" = " << redFsm->errState->id << L" then\n"
+			L"		do_out ()\n"
+      L"\telse\n";
 	}
-  out << "\tdo_resume ()\n";
+  out << L"\tdo_resume ()\n";
 
-	out << "and do_resume () =\n";
+	out << L"and do_resume () =\n";
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	begin match " << AT( FSA(), vCS() ) << " with\n";
+			L"	begin match " << AT( FSA(), vCS() ) << L" with\n";
 			FROM_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"	end;\n"
-			"\n";
+			L"	end;\n"
+			L"\n";
 	}
 
 	if ( redFsm->anyConditions() )
 		COND_TRANSLATE();
 
-  out << "\tbegin try\n";
+  out << L"\tbegin try\n";
 	LOCATE_TRANS();
-  out << "\twith Goto_match -> () end;\n";
+  out << L"\twith Goto_match -> () end;\n";
 
   out << 
-    "\tdo_match ()\n";
+    L"\tdo_match ()\n";
 
-	out << "and do_match () =\n";
+	out << L"and do_match () =\n";
 
 	if ( useIndicies )
-		out << "	state.trans <- " << CAST(transType) << AT( I(), "state.trans" ) << ";\n";
+		out << L"	state.trans <- " << CAST(transType) << AT( I(), L"state.trans" ) << L";\n";
 
-  out << "\tdo_eof_trans ()\n";
+  out << L"\tdo_eof_trans ()\n";
 	
 //	if ( redFsm->anyEofTrans() )
-  out << "and do_eof_trans () =\n";
+  out << L"and do_eof_trans () =\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	let ps = " << vCS() << " in\n";
+		out << L"	let ps = " << vCS() << L" in\n";
 
 	out <<
-		"	" << vCS() << " <- " << AT( TT() ,"state.trans" ) << ";\n"
-		"\n";
+		L"	" << vCS() << L" <- " << AT( TT() ,L"state.trans" ) << L";\n"
+		L"\n";
 
 	if ( redFsm->anyRegActions() ) {
 		out << 
-			"	begin try if " << AT( TA() , "state.trans" ) << " = 0 then\n"
-			"		raise Goto_again;\n"
-			"\n"
-			"	match " << AT( TA(), "state.trans" ) << " with\n";
+			L"	begin try if " << AT( TA() , L"state.trans" ) << L" = 0 then\n"
+			L"		raise Goto_again;\n"
+			L"\n"
+			L"	match " << AT( TA(), L"state.trans" ) << L" with\n";
 			ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"	with Goto_again -> () end;\n"
-			"\n";
+			L"	with Goto_again -> () end;\n"
+			L"\n";
 	}
-  out << "\tdo_again ()\n";
+  out << L"\tdo_again ()\n";
 
 //	if ( redFsm->anyRegActions() || redFsm->anyActionGotos() || 
 //			redFsm->anyActionCalls() || redFsm->anyActionRets() )
-  out << "\tand do_again () =\n";
+  out << L"\tand do_again () =\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	begin match " << AT( TSA(), vCS() ) << " with\n";
+			L"	begin match " << AT( TSA(), vCS() ) << L" with\n";
 			TO_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"	end;\n"
-			"\n";
+			L"	end;\n"
+			L"\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	match " << vCS() << " with\n"
-      "\t| " << redFsm->errState->id << " -> do_out ()\n"
-      "\t| _ ->\n";
+			L"	match " << vCS() << L" with\n"
+      L"\t| " << redFsm->errState->id << L" -> do_out ()\n"
+      L"\t| _ ->\n";
 	}
 
-  out << "\t" << P() << " <- " << P() << " + 1;\n";
+  out << L"\t" << P() << L" <- " << P() << L" + 1;\n";
 
 	if ( !noEnd ) {
 		out << 
-			"	if " << P() << " <> " << PE() << " then\n"
-			"		do_resume ()\n"
-      "\telse do_test_eof ()\n";
+			L"	if " << P() << L" <> " << PE() << L" then\n"
+			L"		do_resume ()\n"
+      L"\telse do_test_eof ()\n";
 	}
 	else {
 		out << 
-			"	do_resume ()\n";
+			L"	do_resume ()\n";
 	}
 
 //	if ( testEofUsed )
-	out << "and do_test_eof () =\n";
+	out << L"and do_test_eof () =\n";
 	
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out << 
-			"	if " << P() << " = " << vEOF() << " then\n"
-			"	begin try\n";
+			L"	if " << P() << L" = " << vEOF() << L" then\n"
+			L"	begin try\n";
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"	if " << AT( ET(), vCS() ) << " > 0 then\n"
-				"	begin\n"
-        "   state.trans <- " << CAST(transType) << "(" << AT( ET(), vCS() ) << " - 1);\n"
-				"		raise Goto_eof_trans;\n"
-				"	end;\n";
+				L"	if " << AT( ET(), vCS() ) << L" > 0 then\n"
+				L"	begin\n"
+        L"   state.trans <- " << CAST(transType) << L"(" << AT( ET(), vCS() ) << L" - 1);\n"
+				L"		raise Goto_eof_trans;\n"
+				L"	end;\n";
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"	begin match " << AT( EA(), vCS() ) << " with\n";
+				L"	begin match " << AT( EA(), vCS() ) << L" with\n";
 				EOF_ACTION_SWITCH();
 				SWITCH_DEFAULT() <<
-				"	end\n";
+				L"	end\n";
 		}
 
 		out << 
-			"	with Goto_again -> do_again ()\n"
-			"	| Goto_eof_trans -> do_eof_trans () end\n"
-			"\n";
+			L"	with Goto_again -> do_again ()\n"
+			L"	| Goto_eof_trans -> do_eof_trans () end\n"
+			L"\n";
 	}
   else
   {
-    out << "\t()\n";
+    out << L"\t()\n";
   }
 
 	if ( outLabelUsed )
-		out << "	and do_out () = ()\n";
+		out << L"	and do_out () = ()\n";
 
-  out << "\tin do_start ()\n";
-	out << "	end;\n";
+  out << L"\tin do_start ()\n";
+	out << L"	end;\n";
 }
 

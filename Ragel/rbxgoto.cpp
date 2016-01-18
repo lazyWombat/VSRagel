@@ -29,41 +29,41 @@
 #include "bstmap.h"
 #include "gendata.h"
 
-using std::ostream;
-using std::string;
+using std::wostream;
+using std::wstring;
 
-inline string label(string a, int i)
+inline wstring label(wstring a, int i)
 {
 	return a + itoa(i);
 }
 
-ostream &RbxGotoCodeGen::rbxLabel(ostream &out, string label)
+wostream &RbxGotoCodeGen::rbxLabel(wostream &out, wstring label)
 {
-	out << "Rubinius.asm { @labels[:_" << FSM_NAME() << "_" << label << "].set! }\n";
+	out << L"Rubinius.asm { @labels[:_" << FSM_NAME() << L"_" << label << L"].set! }\n";
 	return out;
 }
 
-ostream &RbxGotoCodeGen::rbxGoto(ostream &out, string label)
+wostream &RbxGotoCodeGen::rbxGoto(wostream &out, wstring label)
 {
-	out << "Rubinius.asm { goto @labels[:_" << FSM_NAME() << "_" << label << "] }\n";
+	out << L"Rubinius.asm { goto @labels[:_" << FSM_NAME() << L"_" << label << L"] }\n";
 	return out;
 }
 
 /* Emit the goto to take for a given transition. */
-std::ostream &RbxGotoCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
+std::wostream &RbxGotoCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
 {
 	out << TABS(level);
-	return rbxGoto(out, label("tr",trans->id));
+	return rbxGoto(out, label(L"tr",trans->id));
 }
 
-std::ostream &RbxGotoCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &RbxGotoCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numToStateRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "\twhen " << act->actionId << " then\n";
+			out << L"\twhen " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -72,14 +72,14 @@ std::ostream &RbxGotoCodeGen::TO_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::FROM_STATE_ACTION_SWITCH()
+std::wostream &RbxGotoCodeGen::FROM_STATE_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numFromStateRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "\twhen " << act->actionId << " then\n";
+			out << L"\twhen " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -88,14 +88,14 @@ std::ostream &RbxGotoCodeGen::FROM_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::EOF_ACTION_SWITCH()
+std::wostream &RbxGotoCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numEofRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "\twhen " << act->actionId << " then\n";
+			out << L"\twhen " << act->actionId << L" then\n";
 			ACTION( out, act, 0, true );
 		}
 	}
@@ -104,14 +104,14 @@ std::ostream &RbxGotoCodeGen::EOF_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::ACTION_SWITCH()
+std::wostream &RbxGotoCodeGen::ACTION_SWITCH()
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numTransRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << "\twhen " << act->actionId << " then\n";
+			out << L"\twhen " << act->actionId << L" then\n";
 			ACTION( out, act, 0, false );
 		}
 	}
@@ -123,7 +123,7 @@ std::ostream &RbxGotoCodeGen::ACTION_SWITCH()
 void RbxGotoCodeGen::GOTO_HEADER( RedStateAp *state )
 {
 	/* Label the state. */
-	out << "when " << state->id << " then\n";
+	out << L"when " << state->id << L" then\n";
 }
 
 
@@ -135,26 +135,26 @@ void RbxGotoCodeGen::emitSingleSwitch( RedStateAp *state )
 
 	if ( numSingles == 1 ) {
 		/* If there is a single single key then write it out as an if. */
-		out << "\tif " << GET_WIDE_KEY(state) << " == " << 
-			KEY(data[0].lowKey) << " \n\t\t"; 
+		out << L"\tif " << GET_WIDE_KEY(state) << L" == " << 
+			KEY(data[0].lowKey) << L" \n\t\t"; 
 
 		/* Virtual function for writing the target of the transition. */
-		TRANS_GOTO(data[0].value, 0) << "\n";
+		TRANS_GOTO(data[0].value, 0) << L"\n";
 
-		out << "end\n";
+		out << L"end\n";
 	}
 	else if ( numSingles > 1 ) {
 		/* Write out single keys in a switch if there is more than one. */
-		out << "\tcase  " << GET_WIDE_KEY(state) << "\n";
+		out << L"\tcase  " << GET_WIDE_KEY(state) << L"\n";
 
 		/* Write out the single indicies. */
 		for ( int j = 0; j < numSingles; j++ ) {
-			out << "\t\twhen " << KEY(data[j].lowKey) << " then\n";
-			TRANS_GOTO(data[j].value, 0) << "\n";
+			out << L"\t\twhen " << KEY(data[j].lowKey) << L" then\n";
+			TRANS_GOTO(data[j].value, 0) << L"\n";
 		}
 		
 		/* Close off the transition switch. */
-		out << "\tend\n";
+		out << L"\tend\n";
 	}
 }
 
@@ -174,79 +174,79 @@ void RbxGotoCodeGen::emitRangeBSearch( RedStateAp *state, int level, int low, in
 
 	if ( anyLower && anyHigher ) {
 		/* Can go lower and higher than mid. */
-		out << TABS(level) << "if " << GET_WIDE_KEY(state) << " < " << 
-			KEY(data[mid].lowKey) << " \n";
+		out << TABS(level) << L"if " << GET_WIDE_KEY(state) << L" < " << 
+			KEY(data[mid].lowKey) << L" \n";
 		emitRangeBSearch( state, level+1, low, mid-1 );
-		out << TABS(level) << "elsif " << GET_WIDE_KEY(state) << " > " << 
-			KEY(data[mid].highKey) << " \n";
+		out << TABS(level) << L"elsif " << GET_WIDE_KEY(state) << L" > " << 
+			KEY(data[mid].highKey) << L" \n";
 		emitRangeBSearch( state, level+1, mid+1, high );
-		out << TABS(level) << "else\n";
-		TRANS_GOTO(data[mid].value, level+1) << "\n";
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"else\n";
+		TRANS_GOTO(data[mid].value, level+1) << L"\n";
+		out << TABS(level) << L"end\n";
 	}
 	else if ( anyLower && !anyHigher ) {
 		/* Can go lower than mid but not higher. */
-		out << TABS(level) << "if " << GET_WIDE_KEY(state) << " < " << 
-			KEY(data[mid].lowKey) << " then\n";
+		out << TABS(level) << L"if " << GET_WIDE_KEY(state) << L" < " << 
+			KEY(data[mid].lowKey) << L" then\n";
 		emitRangeBSearch( state, level+1, low, mid-1 );
 
 		/* if the higher is the highest in the alphabet then there is no
 		 * sense testing it. */
 		if ( limitHigh ) {
-			out << TABS(level) << "else\n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
+			out << TABS(level) << L"else\n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
 		}
 		else {
-			out << TABS(level) << "elsif" << GET_WIDE_KEY(state) << " <= " << 
-				KEY(data[mid].highKey) << " )\n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
+			out << TABS(level) << L"elsif" << GET_WIDE_KEY(state) << L" <= " << 
+				KEY(data[mid].highKey) << L" )\n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
 		}
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"end\n";
 	}
 	else if ( !anyLower && anyHigher ) {
 		/* Can go higher than mid but not lower. */
-		out << TABS(level) << "if " << GET_WIDE_KEY(state) << " > " << 
-			KEY(data[mid].highKey) << " \n";
+		out << TABS(level) << L"if " << GET_WIDE_KEY(state) << L" > " << 
+			KEY(data[mid].highKey) << L" \n";
 		emitRangeBSearch( state, level+1, mid+1, high );
 
 		/* If the lower end is the lowest in the alphabet then there is no
 		 * sense testing it. */
 		if ( limitLow ) {
-			out << TABS(level) << "else\n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
+			out << TABS(level) << L"else\n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
 		}
 		else {
-			out << TABS(level) << "elsif " << GET_WIDE_KEY(state) << " >= " << 
-				KEY(data[mid].lowKey) << " then\n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
+			out << TABS(level) << L"elsif " << GET_WIDE_KEY(state) << L" >= " << 
+				KEY(data[mid].lowKey) << L" then\n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
 		}
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"end\n";
 	}
 	else {
 		/* Cannot go higher or lower than mid. It's mid or bust. What
 		 * tests to do depends on limits of alphabet. */
 		if ( !limitLow && !limitHigh ) {
-			out << TABS(level) << "if " << KEY(data[mid].lowKey) << " <= " << 
-				GET_WIDE_KEY(state) << " && " << GET_WIDE_KEY(state) << " <= " << 
-				KEY(data[mid].highKey) << " \n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"if " << KEY(data[mid].lowKey) << L" <= " << 
+				GET_WIDE_KEY(state) << L" && " << GET_WIDE_KEY(state) << L" <= " << 
+				KEY(data[mid].highKey) << L" \n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
+			out << TABS(level) << L"end\n";
 		}
 		else if ( limitLow && !limitHigh ) {
-			out << TABS(level) << "if " << GET_WIDE_KEY(state) << " <= " << 
-				KEY(data[mid].highKey) << " \n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"if " << GET_WIDE_KEY(state) << L" <= " << 
+				KEY(data[mid].highKey) << L" \n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
+			out << TABS(level) << L"end\n";
 		}
 		else if ( !limitLow && limitHigh ) {
-			out << TABS(level) << "if " << KEY(data[mid].lowKey) << " <= " << 
-				GET_WIDE_KEY(state) << " \n";
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"if " << KEY(data[mid].lowKey) << L" <= " << 
+				GET_WIDE_KEY(state) << L" \n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
+			out << TABS(level) << L"end\n";
 		}
 		else {
 			/* Both high and low are at the limit. No tests to do. */
-			TRANS_GOTO(data[mid].value, level+1) << "\n";
+			TRANS_GOTO(data[mid].value, level+1) << L"\n";
 		}
 	}
 }
@@ -256,22 +256,22 @@ void RbxGotoCodeGen::STATE_GOTO_ERROR()
 	/* Label the state and bail immediately. */
 	outLabelUsed = true;
 	RedStateAp *state = redFsm->errState;
-	out << "when " << state->id << " then\n";
-	rbxGoto(out << "	", "_out") << "\n";
+	out << L"when " << state->id << L" then\n";
+	rbxGoto(out << L"	", L"_out") << L"\n";
 }
 
 void RbxGotoCodeGen::COND_TRANSLATE( GenStateCond *stateCond, int level )
 {
 	GenCondSpace *condSpace = stateCond->condSpace;
-	out << TABS(level) << "_widec = " <<
-		KEY(condSpace->baseKey) << " + (" << GET_KEY() << 
-		" - " << KEY(keyOps->minKey) << ");\n";
+	out << TABS(level) << L"_widec = " <<
+		KEY(condSpace->baseKey) << L" + (" << GET_KEY() << 
+		L" - " << KEY(keyOps->minKey) << L");\n";
 
 	for ( GenCondSet::Iter csi = condSpace->condSet; csi.lte(); csi++ ) {
-		out << TABS(level) << "if ";
+		out << TABS(level) << L"if ";
 		CONDITION( out, *csi );
 		Size condValOffset = ((1 << csi.pos()) * keyOps->alphSize());
-		out << "\n _widec += " << condValOffset << ";\n end";
+		out << L"\n _widec += " << condValOffset << L";\n end";
 	}
 }
 
@@ -291,76 +291,76 @@ void RbxGotoCodeGen::emitCondBSearch( RedStateAp *state, int level, int low, int
 
 	if ( anyLower && anyHigher ) {
 		/* Can go lower and higher than mid. */
-		out << TABS(level) << "if " << GET_KEY() << " < " << 
-			KEY(data[mid]->lowKey) << " \n";
+		out << TABS(level) << L"if " << GET_KEY() << L" < " << 
+			KEY(data[mid]->lowKey) << L" \n";
 		emitCondBSearch( state, level+1, low, mid-1 );
-		out << TABS(level) << "elsif " << GET_KEY() << " > " << 
-			KEY(data[mid]->highKey) << " \n";
+		out << TABS(level) << L"elsif " << GET_KEY() << L" > " << 
+			KEY(data[mid]->highKey) << L" \n";
 		emitCondBSearch( state, level+1, mid+1, high );
-		out << TABS(level) << "else\n";
+		out << TABS(level) << L"else\n";
 		COND_TRANSLATE(data[mid], level+1);
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"end\n";
 	}
 	else if ( anyLower && !anyHigher ) {
 		/* Can go lower than mid but not higher. */
-		out << TABS(level) << "if " << GET_KEY() << " < " << 
-			KEY(data[mid]->lowKey) << " \n";
+		out << TABS(level) << L"if " << GET_KEY() << L" < " << 
+			KEY(data[mid]->lowKey) << L" \n";
 		emitCondBSearch( state, level+1, low, mid-1 );
 
 		/* if the higher is the highest in the alphabet then there is no
 		 * sense testing it. */
 		if ( limitHigh ) {
-			out << TABS(level) << "else\n";
+			out << TABS(level) << L"else\n";
 			COND_TRANSLATE(data[mid], level+1);
 		}
 		else {
-			out << TABS(level) << "elsif " << GET_KEY() << " <= " << 
-				KEY(data[mid]->highKey) << " then\n";
+			out << TABS(level) << L"elsif " << GET_KEY() << L" <= " << 
+				KEY(data[mid]->highKey) << L" then\n";
 			COND_TRANSLATE(data[mid], level+1);
 		}
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"end\n";
 
 	}
 	else if ( !anyLower && anyHigher ) {
 		/* Can go higher than mid but not lower. */
-		out << TABS(level) << "if " << GET_KEY() << " > " << 
-			KEY(data[mid]->highKey) << " \n";
+		out << TABS(level) << L"if " << GET_KEY() << L" > " << 
+			KEY(data[mid]->highKey) << L" \n";
 		emitCondBSearch( state, level+1, mid+1, high );
 
 		/* If the lower end is the lowest in the alphabet then there is no
 		 * sense testing it. */
 		if ( limitLow ) {
-			out << TABS(level) << "else\n";
+			out << TABS(level) << L"else\n";
 			COND_TRANSLATE(data[mid], level+1);
 		}
 		else {
-			out << TABS(level) << "elsif " << GET_KEY() << " >= " << 
-				KEY(data[mid]->lowKey) << " then\n";
+			out << TABS(level) << L"elsif " << GET_KEY() << L" >= " << 
+				KEY(data[mid]->lowKey) << L" then\n";
 			COND_TRANSLATE(data[mid], level+1);
 		}
-		out << TABS(level) << "end\n";
+		out << TABS(level) << L"end\n";
 	}
 	else {
 		/* Cannot go higher or lower than mid. It's mid or bust. What
 		 * tests to do depends on limits of alphabet. */
 		if ( !limitLow && !limitHigh ) {
-			out << TABS(level) << "if " << KEY(data[mid]->lowKey) << " <= " << 
-				GET_KEY() << " && " << GET_KEY() << " <= " << 
-				KEY(data[mid]->highKey) << " then\n";
+			out << TABS(level) << L"if " << KEY(data[mid]->lowKey) << L" <= " << 
+				GET_KEY() << L" && " << GET_KEY() << L" <= " << 
+				KEY(data[mid]->highKey) << L" then\n";
 			COND_TRANSLATE(data[mid], level+1);
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"end\n";
 		}
 		else if ( limitLow && !limitHigh ) {
-			out << TABS(level) << "if " << GET_KEY() << " <= " << 
-				KEY(data[mid]->highKey) << " then\n";
+			out << TABS(level) << L"if " << GET_KEY() << L" <= " << 
+				KEY(data[mid]->highKey) << L" then\n";
 			COND_TRANSLATE(data[mid], level+1);
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"end\n";
 		}
 		else if ( !limitLow && limitHigh ) {
-			out << TABS(level) << "if " << KEY(data[mid]->lowKey) << " <= " << 
-				GET_KEY() << " then\n";
+			out << TABS(level) << L"if " << KEY(data[mid]->lowKey) << L" <= " << 
+				GET_KEY() << L" then\n";
 			COND_TRANSLATE(data[mid], level+1);
-			out << TABS(level) << "end\n";
+			out << TABS(level) << L"end\n";
 		}
 		else {
 			/* Both high and low are at the limit. No tests to do. */
@@ -369,7 +369,7 @@ void RbxGotoCodeGen::emitCondBSearch( RedStateAp *state, int level, int low, int
 	}
 }
 
-std::ostream &RbxGotoCodeGen::STATE_GOTOS()
+std::wostream &RbxGotoCodeGen::STATE_GOTOS()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st == redFsm->errState )
@@ -379,7 +379,7 @@ std::ostream &RbxGotoCodeGen::STATE_GOTOS()
 			GOTO_HEADER( st );
 
 			if ( st->stateCondVect.length() > 0 ) {
-				out << "	_widec = " << GET_KEY() << ";\n";
+				out << L"	_widec = " << GET_KEY() << L";\n";
 				emitCondBSearch( st, 1, 0, st->stateCondVect.length() - 1 );
 			}
 
@@ -392,61 +392,61 @@ std::ostream &RbxGotoCodeGen::STATE_GOTOS()
 				emitRangeBSearch( st, 1, 0, st->outRange.length() - 1 );
 
 			/* Write the default transition. */
-			TRANS_GOTO( st->defTrans, 1 ) << "\n";
+			TRANS_GOTO( st->defTrans, 1 ) << L"\n";
 		}
 	}
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::TRANSITIONS()
+std::wostream &RbxGotoCodeGen::TRANSITIONS()
 {
 	/* Emit any transitions that have functions and that go to 
 	 * this state. */
 	for ( TransApSet::Iter trans = redFsm->transSet; trans.lte(); trans++ ) {
 		/* Write the label for the transition so it can be jumped to. */
-		rbxLabel(out << "	", label("tr", trans->id)) << "\n";
+		rbxLabel(out << L"	", label(L"tr", trans->id)) << L"\n";
 
 		/* Destination state. */
 		if ( trans->action != 0 && trans->action->anyCurStateRef() )
-			out << "_ps = " << vCS() << "'n";
-		out << vCS() << " = " << trans->targ->id << "\n";
+			out << L"_ps = " << vCS() << L"'n";
+		out << vCS() << L" = " << trans->targ->id << L"\n";
 
 		if ( trans->action != 0 ) {
 			/* Write out the transition func. */
-			rbxGoto(out, label("f", trans->action->actListId)) << "\n";
+			rbxGoto(out, label(L"f", trans->action->actListId)) << L"\n";
 		}
 		else {
 			/* No code to execute, just loop around. */
-			rbxGoto(out, "_again") << "\n";
+			rbxGoto(out, L"_again") << L"\n";
 		}
 	}
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::EXEC_FUNCS()
+std::wostream &RbxGotoCodeGen::EXEC_FUNCS()
 {
 	/* Make labels that set acts and jump to execFuncs. Loop func indicies. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
-			rbxLabel(out, label("f", redAct->actListId)) << "\n" <<
-				"_acts = " << itoa( redAct->location+1 ) << "\n";
-			rbxGoto(out, "execFuncs") << "\n";
+			rbxLabel(out, label(L"f", redAct->actListId)) << L"\n" <<
+				L"_acts = " << itoa( redAct->location+1 ) << L"\n";
+			rbxGoto(out, L"execFuncs") << L"\n";
 		}
 	}
 
-	rbxLabel(out, "execFuncs") <<
-		"\n"
-		"	_nacts = " << A() << "[_acts]\n"
-		"	_acts += 1\n"
-		"	while ( _nacts > 0 ) \n"
-		"		_nacts -= 1\n"
-		"		_acts += 1\n"
-		"		case ( "<< A() << "[_acts-1] ) \n";
+	rbxLabel(out, L"execFuncs") <<
+		L"\n"
+		L"	_nacts = " << A() << L"[_acts]\n"
+		L"	_acts += 1\n"
+		L"	while ( _nacts > 0 ) \n"
+		L"		_nacts -= 1\n"
+		L"		_acts += 1\n"
+		L"		case ( "<< A() << L"[_acts-1] ) \n";
 	ACTION_SWITCH();
 	out <<
-		"		end\n"
-		"	end \n";
-	rbxGoto(out, "_again");
+		L"		end\n"
+		L"	end \n";
+	rbxGoto(out, L"_again");
 	return out;
 }
 
@@ -474,7 +474,7 @@ int RbxGotoCodeGen::EOF_ACTION( RedStateAp *state )
 	return act;
 }
 
-std::ostream &RbxGotoCodeGen::TO_STATE_ACTIONS()
+std::wostream &RbxGotoCodeGen::TO_STATE_ACTIONS()
 {
 	/* Take one off for the psuedo start state. */
 	int numStates = redFsm->stateList.length();
@@ -484,22 +484,22 @@ std::ostream &RbxGotoCodeGen::TO_STATE_ACTIONS()
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
 		vals[st->id] = TO_STATE_ACTION(st);
 
-	out << "\t";
+	out << L"\t";
 	for ( int st = 0; st < redFsm->nextStateId; st++ ) {
 		/* Write any eof action. */
 		out << vals[st];
 		if ( st < numStates-1 ) {
-			out << ", ";
+			out << L", ";
 			if ( (st+1) % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	delete[] vals;
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::FROM_STATE_ACTIONS()
+std::wostream &RbxGotoCodeGen::FROM_STATE_ACTIONS()
 {
 	/* Take one off for the psuedo start state. */
 	int numStates = redFsm->stateList.length();
@@ -509,22 +509,22 @@ std::ostream &RbxGotoCodeGen::FROM_STATE_ACTIONS()
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
 		vals[st->id] = FROM_STATE_ACTION(st);
 
-	out << "\t";
+	out << L"\t";
 	for ( int st = 0; st < redFsm->nextStateId; st++ ) {
 		/* Write any eof action. */
 		out << vals[st];
 		if ( st < numStates-1 ) {
-			out << ", ";
+			out << L", ";
 			if ( (st+1) % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	delete[] vals;
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::EOF_ACTIONS()
+std::wostream &RbxGotoCodeGen::EOF_ACTIONS()
 {
 	/* Take one off for the psuedo start state. */
 	int numStates = redFsm->stateList.length();
@@ -534,132 +534,132 @@ std::ostream &RbxGotoCodeGen::EOF_ACTIONS()
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
 		vals[st->id] = EOF_ACTION(st);
 
-	out << "\t";
+	out << L"\t";
 	for ( int st = 0; st < redFsm->nextStateId; st++ ) {
 		/* Write any eof action. */
 		out << vals[st];
 		if ( st < numStates-1 ) {
-			out << ", ";
+			out << L", ";
 			if ( (st+1) % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	delete[] vals;
 	return out;
 }
 
-std::ostream &RbxGotoCodeGen::FINISH_CASES()
+std::wostream &RbxGotoCodeGen::FINISH_CASES()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* States that are final and have an out action need a case. */
 		if ( st->eofAction != 0 ) {
 			/* Write the case label. */
-			out << "\t\twhen " << st->id << " then\n";
+			out << L"\t\twhen " << st->id << L" then\n";
 
 			/* Write the goto func. */
-			rbxGoto(out, label("f", st->eofAction->actListId)) << "\n";
+			rbxGoto(out, label(L"f", st->eofAction->actListId)) << L"\n";
 		}
 	}
 	
 	return out;
 }
 
-void RbxGotoCodeGen::GOTO( ostream &ret, int gotoDest, bool inFinish )
+void RbxGotoCodeGen::GOTO( wostream &ret, int gotoDest, bool inFinish )
 {
-	ret << "begin\n" << vCS() << " = " << gotoDest << " ";
-	rbxGoto(ret, "_again") << 
-		"\nend\n";
+	ret << L"begin\n" << vCS() << L" = " << gotoDest << L" ";
+	rbxGoto(ret, L"_again") << 
+		L"\nend\n";
 }
 
-void RbxGotoCodeGen::GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void RbxGotoCodeGen::GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << "begin\n" << vCS() << " = (";
+	ret << L"begin\n" << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish );
-	ret << ")";
-	rbxGoto(ret, "_again") << 
-		"\nend\n";
+	ret << L")";
+	rbxGoto(ret, L"_again") << 
+		L"\nend\n";
 }
 
-void RbxGotoCodeGen::CURS( ostream &ret, bool inFinish )
+void RbxGotoCodeGen::CURS( wostream &ret, bool inFinish )
 {
-	ret << "(_ps)";
+	ret << L"(_ps)";
 }
 
-void RbxGotoCodeGen::TARGS( ostream &ret, bool inFinish, int targState )
+void RbxGotoCodeGen::TARGS( wostream &ret, bool inFinish, int targState )
 {
-	ret << "(" << vCS() << ")";
+	ret << L"(" << vCS() << L")";
 }
 
-void RbxGotoCodeGen::NEXT( ostream &ret, int nextDest, bool inFinish )
+void RbxGotoCodeGen::NEXT( wostream &ret, int nextDest, bool inFinish )
 {
-	ret << vCS() << " = " << nextDest << ";";
+	ret << vCS() << L" = " << nextDest << L";";
 }
 
-void RbxGotoCodeGen::NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void RbxGotoCodeGen::NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-	ret << vCS() << " = (";
+	ret << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, 0, inFinish );
-	ret << ");";
+	ret << L");";
 }
 
-void RbxGotoCodeGen::CALL( ostream &ret, int callDest, int targState, bool inFinish )
+void RbxGotoCodeGen::CALL( wostream &ret, int callDest, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, prePushExpr, 0, false );
 	}
 
-	ret << "begin\n" 
-	    << STACK() << "[" << TOP() << "++] = " << vCS() << "; " << vCS() << " = " << 
-		callDest << "; ";
-	rbxGoto(ret, "_again") << 
-		"\nend\n";
+	ret << L"begin\n" 
+	    << STACK() << L"[" << TOP() << L"++] = " << vCS() << L"; " << vCS() << L" = " << 
+		callDest << L"; ";
+	rbxGoto(ret, L"_again") << 
+		L"\nend\n";
 
 	if ( prePushExpr != 0 )
-		ret << "}";
+		ret << L"}";
 }
 
-void RbxGotoCodeGen::CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
+void RbxGotoCodeGen::CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
 {
 	if ( prePushExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, prePushExpr, 0, false );
 	}
 
-	ret << "begin\n" << STACK() << "[" << TOP() << "++] = " << vCS() << "; " << vCS() << " = (";
+	ret << L"begin\n" << STACK() << L"[" << TOP() << L"++] = " << vCS() << L"; " << vCS() << L" = (";
 	INLINE_LIST( ret, ilItem->children, targState, inFinish );
-	ret << "); ";
-	rbxGoto(ret, "_again") << 
-		"\nend\n";
+	ret << L"); ";
+	rbxGoto(ret, L"_again") << 
+		L"\nend\n";
 
 	if ( prePushExpr != 0 )
-		ret << "}";
+		ret << L"}";
 }
 
-void RbxGotoCodeGen::RET( ostream &ret, bool inFinish )
+void RbxGotoCodeGen::RET( wostream &ret, bool inFinish )
 {
-	ret << "begin\n" << vCS() << " = " << STACK() << "[--" << TOP() << "]; " ;
+	ret << L"begin\n" << vCS() << L" = " << STACK() << L"[--" << TOP() << L"]; " ;
 
 	if ( postPopExpr != 0 ) {
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, postPopExpr, 0, false );
-		ret << "}";
+		ret << L"}";
 	}
 
-	rbxGoto(ret, "_again") << 
-		"\nend\n";
+	rbxGoto(ret, L"_again") << 
+		L"\nend\n";
 }
 
-void RbxGotoCodeGen::BREAK( ostream &ret, int targState )
+void RbxGotoCodeGen::BREAK( wostream &ret, int targState )
 {
 	outLabelUsed = true;
 
 	out <<
-		"	begin\n"
-		"		" << P() << " += 1\n"
-		"		" << rbxGoto(ret, "_out") << "\n" 
-		"	end\n";
+		L"	begin\n"
+		L"		" << P() << L" += 1\n"
+		//L"		" << rbxGoto(ret, L"_out") << L"\n" 
+		L"	end\n";
 }
 
 void RbxGotoCodeGen::writeData()
@@ -668,28 +668,28 @@ void RbxGotoCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActArrItem), A() );
 		ACTIONS_ARRAY();
 		CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 	}
 
 	if ( redFsm->anyToStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-			"\n";
+			L"\n";
 	}
 
 	STATE_IDS();
@@ -699,126 +699,126 @@ void RbxGotoCodeGen::writeExec()
 {
 	outLabelUsed = false;
 
-	out << "	begin\n";
+	out << L"	begin\n";
 
-	out << "	Rubinius.asm { @labels = Hash.new { |h,k| h[k] = new_label } }\n";
+	out << L"	Rubinius.asm { @labels = Hash.new { |h,k| h[k] = new_label } }\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	_ps = 0;\n";
+		out << L"	_ps = 0;\n";
 
 	if ( redFsm->anyToStateActions() || redFsm->anyRegActions() 
 	     || redFsm->anyFromStateActions() )
 	{
-                out <<  " _acts, _nacts = nil\n";
+                out <<  L" _acts, _nacts = nil\n";
 	}
 
 	if ( redFsm->anyConditions() )
-		out << "        _widec = nil\n";
+		out << L"        _widec = nil\n";
 
-	out << "\n";
+	out << L"\n";
 
 	if ( !noEnd ) {
 		outLabelUsed = true;
 		out << 
-			"	if ( " << P() << " == " << PE() << " )\n";
-		rbxGoto(out << "		", "_out") << "\n" <<
-			"	end\n";
+			L"	if ( " << P() << L" == " << PE() << L" )\n";
+		rbxGoto(out << L"		", L"_out") << L"\n" <<
+			L"	end\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if ( " << vCS() << " == " << redFsm->errState->id << " )\n";
-		rbxGoto(out << "		", "_out") << "\n" <<
-			"	end\n";
+			L"	if ( " << vCS() << L" == " << redFsm->errState->id << L" )\n";
+		rbxGoto(out << L"		", L"_out") << L"\n" <<
+			L"	end\n";
 	}
 
-	rbxLabel(out, "_resume") << "\n";
+	rbxLabel(out, L"_resume") << L"\n";
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
 
-			"	_acts = " << ARR_OFF( A(), FSA() + "[" + vCS() + "]" ) << ";\n"
-			"	_nacts = " << " *_acts++;\n"
-			"	while ( _nacts-- > 0 ) {\n"
-			"		switch ( *_acts++ ) {\n";
+			L"	_acts = " << ARR_OFF( A(), FSA() + L"[" + vCS() + L"]" ) << L";\n"
+			L"	_nacts = " << L" *_acts++;\n"
+			L"	while ( _nacts-- > 0 ) {\n"
+			L"		switch ( *_acts++ ) {\n";
 		FROM_STATE_ACTION_SWITCH();
 		out <<
-			"		}\n"
-			"	}\n"
-			"\n";
+			L"		}\n"
+			L"	}\n"
+			L"\n";
 	}
 
 	out <<
-		"	case ( " << vCS() << " )\n";
+		L"	case ( " << vCS() << L" )\n";
 	STATE_GOTOS();
 	out <<
-		"	end # case\n"
-		"\n";
+		L"	end # case\n"
+		L"\n";
 	TRANSITIONS() <<
-		"\n";
+		L"\n";
 
 	if ( redFsm->anyRegActions() )
-		EXEC_FUNCS() << "\n";
+		EXEC_FUNCS() << L"\n";
 
 
-	rbxLabel(out, "_again") << "\n";
+	rbxLabel(out, L"_again") << L"\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	_acts = " << ARR_OFF( A(), TSA() + "[" + vCS() + "]" ) << ";\n"
-			"	_nacts = " << " *_acts++;\n"
-			"	while ( _nacts-- > 0 ) {\n"
-			"		switch ( *_acts++ ) {\n";
+			L"	_acts = " << ARR_OFF( A(), TSA() + L"[" + vCS() + L"]" ) << L";\n"
+			L"	_nacts = " << L" *_acts++;\n"
+			L"	while ( _nacts-- > 0 ) {\n"
+			L"		switch ( *_acts++ ) {\n";
 		TO_STATE_ACTION_SWITCH();
 		out <<
-			"		}\n"
-			"	}\n"
-			"\n";
+			L"		}\n"
+			L"	}\n"
+			L"\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if ( " << vCS() << " == " << redFsm->errState->id << " )\n";
-		rbxGoto(out << "		", "_out") << "\n" <<
-			"	end" << "\n";
+			L"	if ( " << vCS() << L" == " << redFsm->errState->id << L" )\n";
+		rbxGoto(out << L"		", L"_out") << L"\n" <<
+			L"	end" << L"\n";
 	}
 
 	if ( !noEnd ) {
-		out <<  "	"  << P() << " += 1\n"
-			"	if ( " << P() << " != " << PE() << " )\n";
-		rbxGoto(out << "		", "_resume") << "\n" <<
-			"	end" << "\n";
+		out <<  L"	"  << P() << L" += 1\n"
+			L"	if ( " << P() << L" != " << PE() << L" )\n";
+		rbxGoto(out << L"		", L"_resume") << L"\n" <<
+			L"	end" << L"\n";
 	}
 	else {
 		out << 
-			"	" << P() << " += 1;\n";
-		rbxGoto(out << "	", "_resume") << "\n";
+			L"	" << P() << L" += 1;\n";
+		rbxGoto(out << L"	", L"_resume") << L"\n";
 	}
 
 	if ( outLabelUsed )
-		rbxLabel(out, "_out") << "\n";
+		rbxLabel(out, L"_out") << L"\n";
 
-	out << "	end\n";
+	out << L"	end\n";
 }
 
 void RbxGotoCodeGen::writeEOF()
 {
 	if ( redFsm->anyEofActions() ) {
 		out << 
-			"	{\n"
-			"	 _acts = " << 
-			ARR_OFF( A(), EA() + "[" + vCS() + "]" ) << ";\n"
-			"	" << " _nacts = " << " *_acts++;\n"
-			"	while ( _nacts-- > 0 ) {\n"
-			"		switch ( *_acts++ ) {\n";
+			L"	{\n"
+			L"	 _acts = " << 
+			ARR_OFF( A(), EA() + L"[" + vCS() + L"]" ) << L";\n"
+			L"	" << L" _nacts = " << L" *_acts++;\n"
+			L"	while ( _nacts-- > 0 ) {\n"
+			L"		switch ( *_acts++ ) {\n";
 		EOF_ACTION_SWITCH();
 		out <<
-			"		}\n"
-			"	}\n"
-			"	}\n"
-			"\n";
+			L"		}\n"
+			L"	}\n"
+			L"	}\n"
+			L"\n";
 	}
 }
 
@@ -826,6 +826,6 @@ void RbxGotoCodeGen::writeEOF()
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */

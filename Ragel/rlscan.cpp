@@ -1,5 +1,5 @@
 
-#line 1 "rlscan.rl"
+//#line 1 "rlscan.rl"
 /*
  *  Copyright 2006-2007 Adrian Thurston <thurston@complang.org>
  *  Copyright 2011 Josef Goettgens
@@ -29,15 +29,18 @@
 #include "ragel.h"
 #include "rlscan.h"
 #include "inputdata.h"
-
+#include <locale>
+#include <codecvt>
 //#define LOG_TOKENS
 
-using std::ifstream;
-using std::istream;
-using std::ostream;
-using std::cout;
-using std::cerr;
+using std::wifstream;
+using std::wistream;
+using std::wostream;
+using std::wcout;
+using std::wcerr;
 using std::endl;
+using std::locale;
+using std::codecvt_utf8;
 
 enum InlineBlockType
 {
@@ -46,9 +49,9 @@ enum InlineBlockType
 };
 
 #ifdef _WIN32
-#define PATH_SEP '\\'
+#define PATH_SEP L'\\'
 #else
-#define PATH_SEP '/'
+#define PATH_SEP L'/'
 #endif
 
 
@@ -57,11 +60,11 @@ enum InlineBlockType
  */
 
 
-#line 125 "rlscan.rl"
+//#line 125 "rlscan.rl"
 
 
 
-#line 65 "rlscan.cpp"
+//#line 65 "rlscan.cpp"
 static const int inline_token_scan_start = 2;
 static const int inline_token_scan_first_final = 2;
 static const int inline_token_scan_error = -1;
@@ -69,7 +72,7 @@ static const int inline_token_scan_error = -1;
 static const int inline_token_scan_en_main = 2;
 
 
-#line 128 "rlscan.rl"
+//#line 128 "rlscan.rl"
 
 void Scanner::flushImport()
 {
@@ -78,7 +81,7 @@ void Scanner::flushImport()
 	int *eof = 0;
 
 	
-#line 82 "rlscan.cpp"
+//#line 82 "rlscan.cpp"
 	{
 	 tok_cs = inline_token_scan_start;
 	 tok_ts = 0;
@@ -86,18 +89,18 @@ void Scanner::flushImport()
 	 tok_act = 0;
 	}
 
-#line 90 "rlscan.cpp"
+//#line 90 "rlscan.cpp"
 	{
 	if ( p == pe )
 		goto _test_eof;
 	switch (  tok_cs )
 	{
 tr0:
-#line 123 "rlscan.rl"
+//#line 123 "rlscan.rl"
 	{{p = (( tok_te))-1;}}
 	goto st2;
 tr1:
-#line 109 "rlscan.rl"
+//#line 109 "rlscan.rl"
 	{ tok_te = p+1;{ 
 			int base = tok_ts - token_data;
 			int nameOff = 0;
@@ -105,14 +108,14 @@ tr1:
 
 			directToParser( inclToParser, fileName, line, column, TK_Word, 
 					token_strings[base+nameOff], token_lens[base+nameOff] );
-			directToParser( inclToParser, fileName, line, column, '=', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L'=', 0, 0 );
 			directToParser( inclToParser, fileName, line, column, TK_Literal,
 					token_strings[base+litOff], token_lens[base+litOff] );
-			directToParser( inclToParser, fileName, line, column, ';', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L';', 0, 0 );
 		}}
 	goto st2;
 tr2:
-#line 81 "rlscan.rl"
+//#line 81 "rlscan.rl"
 	{ tok_te = p+1;{ 
 			int base = tok_ts - token_data;
 			int nameOff = 0;
@@ -120,14 +123,14 @@ tr2:
 
 			directToParser( inclToParser, fileName, line, column, TK_Word, 
 					token_strings[base+nameOff], token_lens[base+nameOff] );
-			directToParser( inclToParser, fileName, line, column, '=', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L'=', 0, 0 );
 			directToParser( inclToParser, fileName, line, column, TK_UInt,
 					token_strings[base+numOff], token_lens[base+numOff] );
-			directToParser( inclToParser, fileName, line, column, ';', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L';', 0, 0 );
 		}}
 	goto st2;
 tr3:
-#line 95 "rlscan.rl"
+//#line 95 "rlscan.rl"
 	{ tok_te = p+1;{ 
 			int base = tok_ts - token_data;
 			int nameOff = 1;
@@ -135,14 +138,14 @@ tr3:
 
 			directToParser( inclToParser, fileName, line, column, TK_Word, 
 					token_strings[base+nameOff], token_lens[base+nameOff] );
-			directToParser( inclToParser, fileName, line, column, '=', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L'=', 0, 0 );
 			directToParser( inclToParser, fileName, line, column, TK_Literal,
 					token_strings[base+litOff], token_lens[base+litOff] );
-			directToParser( inclToParser, fileName, line, column, ';', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L';', 0, 0 );
 		}}
 	goto st2;
 tr4:
-#line 67 "rlscan.rl"
+//#line 67 "rlscan.rl"
 	{ tok_te = p+1;{ 
 			int base = tok_ts - token_data;
 			int nameOff = 1;
@@ -150,43 +153,43 @@ tr4:
 
 			directToParser( inclToParser, fileName, line, column, TK_Word, 
 					token_strings[base+nameOff], token_lens[base+nameOff] );
-			directToParser( inclToParser, fileName, line, column, '=', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L'=', 0, 0 );
 			directToParser( inclToParser, fileName, line, column, TK_UInt,
 					token_strings[base+numOff], token_lens[base+numOff] );
-			directToParser( inclToParser, fileName, line, column, ';', 0, 0 );
+			directToParser( inclToParser, fileName, line, column, L';', 0, 0 );
 		}}
 	goto st2;
 tr5:
-#line 123 "rlscan.rl"
+//#line 123 "rlscan.rl"
 	{ tok_te = p+1;}
 	goto st2;
 tr8:
-#line 123 "rlscan.rl"
+//#line 123 "rlscan.rl"
 	{ tok_te = p;p--;}
 	goto st2;
 st2:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ tok_ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof2;
 case 2:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ tok_ts = p;}
-#line 176 "rlscan.cpp"
+//#line 176 "rlscan.cpp"
 	switch( (*p) ) {
 		case 128: goto tr6;
 		case 131: goto tr7;
 	}
 	goto tr5;
 tr6:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ tok_te = p+1;}
 	goto st3;
 st3:
 	if ( ++p == pe )
 		goto _test_eof3;
 case 3:
-#line 190 "rlscan.cpp"
+//#line 190 "rlscan.cpp"
 	if ( (*p) == 61 )
 		goto st0;
 	goto tr8;
@@ -200,14 +203,14 @@ case 0:
 	}
 	goto tr0;
 tr7:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ tok_te = p+1;}
 	goto st4;
 st4:
 	if ( ++p == pe )
 		goto _test_eof4;
 case 4:
-#line 211 "rlscan.cpp"
+//#line 211 "rlscan.cpp"
 	if ( (*p) == 128 )
 		goto st1;
 	goto tr8;
@@ -240,7 +243,7 @@ case 1:
 
 	}
 
-#line 139 "rlscan.rl"
+//#line 139 "rlscan.rl"
 
 
 	if ( tok_ts == 0 )
@@ -254,18 +257,18 @@ case 1:
 	}
 }
 
-void Scanner::directToParser( Parser *toParser, const char *tokFileName, int tokLine, 
-		int tokColumn, int type, char *tokdata, int toklen )
+void Scanner::directToParser( Parser *toParser, const wchar_t *tokFileName, int tokLine, 
+		int tokColumn, int type, wchar_t *tokdata, int toklen )
 {
 	InputLoc loc;
 
 	#ifdef LOG_TOKENS
-	cerr << "scanner:" << tokLine << ":" << tokColumn << 
-			": sending token to the parser " << Parser_lelNames[type];
-	cerr << " " << toklen;
+	wcerr << L"scanner:" << tokLine << L":" << tokColumn << 
+			L": sending token to the parser " << Parser_lelNames[type];
+	wcerr << L" " << toklen;
 	if ( tokdata != 0 )
-		cerr << " " << tokdata;
-	cerr << endl;
+		wcerr << L" " << tokdata;
+	wcerr << endl;
 	#endif
 
 	loc.fileName = tokFileName;
@@ -275,7 +278,7 @@ void Scanner::directToParser( Parser *toParser, const char *tokFileName, int tok
 	toParser->token( loc, type, tokdata, toklen );
 }
 
-void Scanner::importToken( int token, char *start, char *end )
+void Scanner::importToken( int token, wchar_t *start, wchar_t *end )
 {
 	if ( cur_token == max_tokens )
 		flushImport();
@@ -288,14 +291,14 @@ void Scanner::importToken( int token, char *start, char *end )
 	else {
 		int toklen = end-start;
 		token_lens[cur_token] = toklen;
-		token_strings[cur_token] = new char[toklen+1];
+		token_strings[cur_token] = new wchar_t[toklen+1];
 		memcpy( token_strings[cur_token], start, toklen );
 		token_strings[cur_token][toklen] = 0;
 	}
 	cur_token++;
 }
 
-void Scanner::pass( int token, char *start, char *end )
+void Scanner::pass( int token, wchar_t *start, wchar_t *end )
 {
 	if ( importMachines )
 		importToken( token, start, end );
@@ -317,7 +320,7 @@ void Scanner::pass()
  */
 
 
-#line 321 "rlscan.cpp"
+//#line 321 "rlscan.cpp"
 static const int section_parse_start = 10;
 static const int section_parse_first_final = 10;
 static const int section_parse_error = 0;
@@ -325,19 +328,19 @@ static const int section_parse_error = 0;
 static const int section_parse_en_main = 10;
 
 
-#line 218 "rlscan.rl"
+//#line 218 "rlscan.rl"
 
 
 
 void Scanner::init( )
 {
 	
-#line 336 "rlscan.cpp"
+//#line 336 "rlscan.cpp"
 	{
 	cs = section_parse_start;
 	}
 
-#line 224 "rlscan.rl"
+//#line 224 "rlscan.rl"
 }
 
 bool Scanner::active()
@@ -346,8 +349,8 @@ bool Scanner::active()
 		return false;
 
 	if ( parser == 0 && ! parserExistsError ) {
-		scan_error() << "this specification has no name, nor does any previous"
-			" specification" << endl;
+		scan_error() << L"this specification has no name, nor does any previous"
+			L" specification" << endl;
 		parserExistsError = true;
 	}
 
@@ -357,21 +360,21 @@ bool Scanner::active()
 	return true;
 }
 
-ostream &Scanner::scan_error()
+wostream &Scanner::scan_error()
 {
 	/* Maintain the error count. */
 	gblErrorCount += 1;
-	cerr << makeInputLoc( fileName, line, column ) << ": ";
-	return cerr;
+	wcerr << makeInputLoc( fileName, line, column ) << L": ";
+	return wcerr;
 }
 
 /* An approximate check for duplicate includes. Due to aliasing of files it's
  * possible for duplicates to creep in. */
-bool Scanner::duplicateInclude( char *inclFileName, char *inclSectionName )
+bool Scanner::duplicateInclude( wchar_t *inclFileName, wchar_t *inclSectionName )
 {
 	for ( IncludeHistory::Iter hi = parser->includeHistory; hi.lte(); hi++ ) {
-		if ( strcmp( hi->fileName, inclFileName ) == 0 &&
-				strcmp( hi->sectionName, inclSectionName ) == 0 )
+		if ( wcscmp( hi->fileName, inclFileName ) == 0 &&
+				wcscmp( hi->sectionName, inclSectionName ) == 0 )
 		{
 			return true;
 		}
@@ -381,10 +384,10 @@ bool Scanner::duplicateInclude( char *inclFileName, char *inclSectionName )
 
 void Scanner::updateCol()
 {
-	char *from = lastnl;
+	wchar_t *from = lastnl;
 	if ( from == 0 )
 		from = ts;
-	//cerr << "adding " << te - from << " to column" << endl;
+	//wcerr << L"adding " << te - from << L" to column" << endl;
 	column += te - from;
 	lastnl = 0;
 }
@@ -392,7 +395,7 @@ void Scanner::updateCol()
 void Scanner::handleMachine()
 {
 	/* Assign a name to the machine. */
-	char *machine = word;
+	wchar_t *machine = word;
 
 	if ( !importMachines && inclSectionTarg == 0 ) {
 		ignoreSection = false;
@@ -408,7 +411,7 @@ void Scanner::handleMachine()
 
 		parser = pdEl->value;
 	}
-	else if ( !importMachines && strcmp( inclSectionTarg, machine ) == 0 ) {
+	else if ( !importMachines && wcscmp( inclSectionTarg, machine ) == 0 ) {
 		/* found include target */
 		ignoreSection = false;
 		parser = inclToParser;
@@ -423,8 +426,8 @@ void Scanner::handleMachine()
 void Scanner::handleInclude()
 {
 	if ( active() ) {
-		char *inclSectionName = word;
-		char **includeChecks = 0;
+		wchar_t *inclSectionName = word;
+		wchar_t **includeChecks = 0;
 
 		/* Implement defaults for the input file and section name. */
 		if ( inclSectionName == 0 )
@@ -433,25 +436,25 @@ void Scanner::handleInclude()
 		if ( lit != 0 )
 			includeChecks = makeIncludePathChecks( fileName, lit, lit_len );
 		else {
-			char *test = new char[strlen(fileName)+1];
-			strcpy( test, fileName );
+			wchar_t *test = new wchar_t[wcslen(fileName)+1];
+			wcscpy_s( test, wcslen(fileName) + 1, fileName);
 
-			includeChecks = new char*[2];
+			includeChecks = new wchar_t*[2];
 
 			includeChecks[0] = test;
 			includeChecks[1] = 0;
 		}
 
 		long found = 0;
-		ifstream *inFile = tryOpenInclude( includeChecks, found );
+		wifstream *inFile = tryOpenInclude( includeChecks, found );
 		if ( inFile == 0 ) {
-			scan_error() << "include: failed to locate file" << endl;
-			char **tried = includeChecks;
+			scan_error() << L"include: failed to locate file" << endl;
+			wchar_t **tried = includeChecks;
 			while ( *tried != 0 )
-				scan_error() << "include: attempted: \"" << *tried++ << '\"' << endl;
+				scan_error() << L"include: attempted: \"" << *tried++ << '\"' << endl;
 		}
 		else {
-			/* Don't include anything that's already been included. */
+			/* DonL't include anything that's already been included. */
 			if ( !duplicateInclude( includeChecks[found], inclSectionName ) ) {
 				parser->includeHistory.append( IncludeHistoryItem( 
 						includeChecks[found], inclSectionName ) );
@@ -468,17 +471,17 @@ void Scanner::handleInclude()
 void Scanner::handleImport()
 {
 	if ( active() ) {
-		char **importChecks = makeIncludePathChecks( fileName, lit, lit_len );
+		wchar_t **importChecks = makeIncludePathChecks( fileName, lit, lit_len );
 
 		/* Open the input file for reading. */
 		long found = 0;
-		ifstream *inFile = tryOpenInclude( importChecks, found );
+		wifstream *inFile = tryOpenInclude( importChecks, found );
 		if ( inFile == 0 ) {
-			scan_error() << "import: could not open import file " <<
-					"for reading" << endl;
-			char **tried = importChecks;
+			scan_error() << L"import: could not open import file " <<
+					L"for reading" << endl;
+			wchar_t **tried = importChecks;
 			while ( *tried != 0 )
-				scan_error() << "import: attempted: \"" << *tried++ << '\"' << endl;
+				scan_error() << L"import: attempted: \"" << *tried++ << '\"' << endl;
 		}
 
 		Scanner scanner( id, importChecks[found], *inFile, parser,
@@ -491,10 +494,10 @@ void Scanner::handleImport()
 }
 
 
-#line 461 "rlscan.rl"
+//#line 461 "rlscan.rl"
 
 
-void Scanner::token( int type, char c )
+void Scanner::token( int type, wchar_t c )
 {
 	token( type, &c, &c + 1 );
 }
@@ -504,21 +507,21 @@ void Scanner::token( int type )
 	token( type, 0, 0 );
 }
 
-void Scanner::token( int type, char *start, char *end )
+void Scanner::token( int type, wchar_t *start, wchar_t *end )
 {
-	char *tokdata = 0;
+	wchar_t *tokdata = 0;
 	int toklen = 0;
 	if ( start != 0 ) {
 		toklen = end-start;
-		tokdata = new char[toklen+1];
-		memcpy( tokdata, start, toklen );
+		tokdata = new wchar_t[toklen+1];
+		wmemcpy( tokdata, start, toklen );
 		tokdata[toklen] = 0;
 	}
 
 	processToken( type, tokdata, toklen );
 }
 
-void Scanner::processToken( int type, char *tokdata, int toklen )
+void Scanner::processToken( int type, wchar_t *tokdata, int toklen )
 {
 	int *p, *pe, *eof;
 
@@ -531,33 +534,33 @@ void Scanner::processToken( int type, char *tokdata, int toklen )
 	}
 
 	
-#line 535 "rlscan.cpp"
+//#line 535 "rlscan.cpp"
 	{
 	if ( p == pe )
 		goto _test_eof;
 	switch ( cs )
 	{
 tr2:
-#line 391 "rlscan.rl"
+//#line 391 "rlscan.rl"
 	{ handleMachine(); }
 	goto st10;
 tr6:
-#line 392 "rlscan.rl"
+//#line 392 "rlscan.rl"
 	{ handleInclude(); }
 	goto st10;
 tr10:
-#line 393 "rlscan.rl"
+//#line 393 "rlscan.rl"
 	{ handleImport(); }
 	goto st10;
 tr13:
-#line 433 "rlscan.rl"
+//#line 433 "rlscan.rl"
 	{
 		if ( active() && machineSpec == 0 && machineName == 0 )
 			id.inputItems.tail->writeArgs.append( 0 );
 	}
 	goto st10;
 tr14:
-#line 444 "rlscan.rl"
+//#line 444 "rlscan.rl"
 	{
 		/* Send the token off to the parser. */
 		if ( active() )
@@ -568,7 +571,7 @@ st10:
 	if ( ++p == pe )
 		goto _test_eof10;
 case 10:
-#line 572 "rlscan.cpp"
+//#line 572 "rlscan.cpp"
 	switch( (*p) ) {
 		case 191: goto st1;
 		case 192: goto st3;
@@ -584,34 +587,34 @@ case 1:
 		goto tr1;
 	goto tr0;
 tr0:
-#line 386 "rlscan.rl"
-	{ scan_error() << "bad machine statement" << endl; }
+//#line 386 "rlscan.rl"
+	{ scan_error() << L"bad machine statement" << endl; }
 	goto st0;
 tr3:
-#line 387 "rlscan.rl"
-	{ scan_error() << "bad include statement" << endl; }
+//#line 387 "rlscan.rl"
+	{ scan_error() << L"bad include statement" << endl; }
 	goto st0;
 tr8:
-#line 388 "rlscan.rl"
-	{ scan_error() << "bad import statement" << endl; }
+//#line 388 "rlscan.rl"
+	{ scan_error() << L"bad import statement" << endl; }
 	goto st0;
 tr11:
-#line 389 "rlscan.rl"
-	{ scan_error() << "bad write statement" << endl; }
+//#line 389 "rlscan.rl"
+	{ scan_error() << L"bad write statement" << endl; }
 	goto st0;
-#line 603 "rlscan.cpp"
+//#line 603 "rlscan.cpp"
 st0:
 cs = 0;
 	goto _out;
 tr1:
-#line 383 "rlscan.rl"
+//#line 383 "rlscan.rl"
 	{ word = tokdata; word_len = toklen; }
 	goto st2;
 st2:
 	if ( ++p == pe )
 		goto _test_eof2;
 case 2:
-#line 615 "rlscan.cpp"
+//#line 615 "rlscan.cpp"
 	if ( (*p) == 59 )
 		goto tr2;
 	goto tr0;
@@ -625,36 +628,36 @@ case 3:
 	}
 	goto tr3;
 tr4:
-#line 382 "rlscan.rl"
+//#line 382 "rlscan.rl"
 	{ word = lit = 0; word_len = lit_len = 0; }
-#line 383 "rlscan.rl"
+//#line 383 "rlscan.rl"
 	{ word = tokdata; word_len = toklen; }
 	goto st4;
 st4:
 	if ( ++p == pe )
 		goto _test_eof4;
 case 4:
-#line 638 "rlscan.cpp"
+//#line 638 "rlscan.cpp"
 	switch( (*p) ) {
 		case 59: goto tr6;
 		case 129: goto tr7;
 	}
 	goto tr3;
 tr5:
-#line 382 "rlscan.rl"
+//#line 382 "rlscan.rl"
 	{ word = lit = 0; word_len = lit_len = 0; }
-#line 384 "rlscan.rl"
+//#line 384 "rlscan.rl"
 	{ lit = tokdata; lit_len = toklen; }
 	goto st5;
 tr7:
-#line 384 "rlscan.rl"
+//#line 384 "rlscan.rl"
 	{ lit = tokdata; lit_len = toklen; }
 	goto st5;
 st5:
 	if ( ++p == pe )
 		goto _test_eof5;
 case 5:
-#line 658 "rlscan.cpp"
+//#line 658 "rlscan.cpp"
 	if ( (*p) == 59 )
 		goto tr6;
 	goto tr3;
@@ -666,19 +669,19 @@ case 6:
 		goto tr9;
 	goto tr8;
 tr9:
-#line 384 "rlscan.rl"
+//#line 384 "rlscan.rl"
 	{ lit = tokdata; lit_len = toklen; }
 	goto st7;
 st7:
 	if ( ++p == pe )
 		goto _test_eof7;
 case 7:
-#line 677 "rlscan.cpp"
+//#line 677 "rlscan.cpp"
 	if ( (*p) == 59 )
 		goto tr10;
 	goto tr8;
 tr18:
-#line 413 "rlscan.rl"
+//#line 413 "rlscan.rl"
 	{
 		if ( active() && machineSpec == 0 && machineName == 0 ) {
 			InputItem *inputItem = new InputItem;
@@ -696,22 +699,22 @@ st8:
 	if ( ++p == pe )
 		goto _test_eof8;
 case 8:
-#line 700 "rlscan.cpp"
+//#line 700 "rlscan.cpp"
 	if ( (*p) == 128 )
 		goto tr12;
 	goto tr11;
 tr12:
-#line 427 "rlscan.rl"
+//#line 427 "rlscan.rl"
 	{
 		if ( active() && machineSpec == 0 && machineName == 0 )
-			id.inputItems.tail->writeArgs.append( strdup(tokdata) );
+			id.inputItems.tail->writeArgs.append( _wcsdup(tokdata) );
 	}
 	goto st9;
 st9:
 	if ( ++p == pe )
 		goto _test_eof9;
 case 9:
-#line 715 "rlscan.cpp"
+//#line 715 "rlscan.cpp"
 	switch( (*p) ) {
 		case 59: goto tr13;
 		case 128: goto tr12;
@@ -735,33 +738,33 @@ case 9:
 	switch ( cs ) {
 	case 1: 
 	case 2: 
-#line 386 "rlscan.rl"
-	{ scan_error() << "bad machine statement" << endl; }
+//#line 386 "rlscan.rl"
+	{ scan_error() << L"bad machine statement" << endl; }
 	break;
 	case 3: 
 	case 4: 
 	case 5: 
-#line 387 "rlscan.rl"
-	{ scan_error() << "bad include statement" << endl; }
+//#line 387 "rlscan.rl"
+	{ scan_error() << L"bad include statement" << endl; }
 	break;
 	case 6: 
 	case 7: 
-#line 388 "rlscan.rl"
-	{ scan_error() << "bad import statement" << endl; }
+//#line 388 "rlscan.rl"
+	{ scan_error() << L"bad import statement" << endl; }
 	break;
 	case 8: 
 	case 9: 
-#line 389 "rlscan.rl"
-	{ scan_error() << "bad write statement" << endl; }
+//#line 389 "rlscan.rl"
+	{ scan_error() << L"bad write statement" << endl; }
 	break;
-#line 758 "rlscan.cpp"
+//#line 758 "rlscan.cpp"
 	}
 	}
 
 	_out: {}
 	}
 
-#line 502 "rlscan.rl"
+//#line 502 "rlscan.rl"
 
 
 	updateCol();
@@ -808,41 +811,41 @@ void Scanner::endSection( )
 	}
 }
 
-bool isAbsolutePath( const char *path )
+bool isAbsolutePath( const wchar_t *path )
 {
 #ifdef _WIN32
-	return isalpha( path[0] ) && path[1] == ':' && path[2] == '\\';
+	return isalpha( path[0] ) && path[1] == L':' && path[2] == L'\\';
 #else
-	return path[0] == '/';
+	return path[0] == L'/';
 #endif
 }
 
-char **Scanner::makeIncludePathChecks( const char *thisFileName, 
-		const char *fileName, int fnlen )
+wchar_t **Scanner::makeIncludePathChecks( const wchar_t *thisFileName, 
+		const wchar_t *fileName, int fnlen )
 {
-	char **checks = 0;
+	wchar_t **checks = 0;
 	long nextCheck = 0;
 	long length = 0;
 	bool caseInsensitive = false;
-	char *data = prepareLitString( InputLoc(), fileName, fnlen, 
+	wchar_t *data = prepareLitString( InputLoc(), fileName, fnlen, 
 			length, caseInsensitive );
 
 	/* Absolute path? */
 	if ( isAbsolutePath( data ) ) {
-		checks = new char*[2];
+		checks = new wchar_t*[2];
 		checks[nextCheck++] = data;
 	}
 	else {
-		checks = new char*[2 + id.includePaths.length()];
+		checks = new wchar_t*[2 + id.includePaths.length()];
 
 		/* Search from the the location of the current file. */
-		const char *lastSlash = strrchr( thisFileName, PATH_SEP );
+		const wchar_t *lastSlash = wcsrchr( thisFileName, PATH_SEP );
 		if ( lastSlash == 0 )
 			checks[nextCheck++] = data;
 		else {
 			long givenPathLen = (lastSlash - thisFileName) + 1;
 			long checklen = givenPathLen + length;
-			char *check = new char[checklen+1];
+			wchar_t *check = new wchar_t[checklen+1];
 			memcpy( check, thisFileName, givenPathLen );
 			memcpy( check+givenPathLen, data, length );
 			check[checklen] = 0;
@@ -851,9 +854,9 @@ char **Scanner::makeIncludePathChecks( const char *thisFileName,
 
 		/* Search from the include paths given on the command line. */
 		for ( ArgsVector::Iter incp = id.includePaths; incp.lte(); incp++ ) {
-			long pathLen = strlen( *incp );
+			long pathLen = wcslen( *incp );
 			long checkLen = pathLen + 1 + length;
-			char *check = new char[checkLen+1];
+			wchar_t *check = new wchar_t[checkLen+1];
 			memcpy( check, *incp, pathLen );
 			check[pathLen] = PATH_SEP;
 			memcpy( check+pathLen+1, data, length );
@@ -866,14 +869,15 @@ char **Scanner::makeIncludePathChecks( const char *thisFileName,
 	return checks;
 }
 
-ifstream *Scanner::tryOpenInclude( char **pathChecks, long &found )
+wifstream *Scanner::tryOpenInclude( wchar_t **pathChecks, long &found )
 {
-	char **check = pathChecks;
-	ifstream *inFile = new ifstream;
+	wchar_t **check = pathChecks;
+	wifstream *inFile = new wifstream;
 	
 	while ( *check != 0 ) {
 		inFile->open( *check );
 		if ( inFile->is_open() ) {
+			inFile->imbue(locale(inFile->getloc(), new codecvt_utf8<wchar_t, 0x10ffff, std::consume_header>));
 			found = check - pathChecks;
 			return inFile;
 		}
@@ -896,11 +900,11 @@ ifstream *Scanner::tryOpenInclude( char **pathChecks, long &found )
 }
 
 
-#line 1173 "rlscan.rl"
+//#line 1173 "rlscan.rl"
 
 
 
-#line 904 "rlscan.cpp"
+//#line 904 "rlscan.cpp"
 static const int rlscan_start = 38;
 static const int rlscan_first_final = 38;
 static const int rlscan_error = 0;
@@ -915,12 +919,12 @@ static const int rlscan_en_main_ruby = 253;
 static const int rlscan_en_main = 38;
 
 
-#line 1176 "rlscan.rl"
+//#line 1176 "rlscan.rl"
 
 void Scanner::do_scan()
 {
 	int bufsize = 8;
-	char *buf = new char[bufsize];
+	wchar_t *buf = new wchar_t[bufsize + 1];
 	int cs, act, have = 0;
 	int top;
 
@@ -936,7 +940,7 @@ void Scanner::do_scan()
 	/* Init the section parser and the character scanner. */
 	init();
 	
-#line 940 "rlscan.cpp"
+//#line 940 "rlscan.cpp"
 	{
 	cs = rlscan_start;
 	top = 0;
@@ -945,7 +949,7 @@ void Scanner::do_scan()
 	act = 0;
 	}
 
-#line 1196 "rlscan.rl"
+//#line 1196 "rlscan.rl"
 
 	/* Set up the start state. FIXME: After 5.20 is released the nocs write
 	 * init option should be used, the main machine eliminated and this statement moved
@@ -956,13 +960,13 @@ void Scanner::do_scan()
 		cs = rlscan_en_main;
 	
 	while ( execute ) {
-		char *p = buf + have;
+		wchar_t *p = buf + have;
 		int space = bufsize - have;
 
 		if ( space == 0 ) {
 			/* We filled up the buffer trying to scan a token. Grow it. */
 			bufsize = bufsize * 2;
-			char *newbuf = new char[bufsize];
+			wchar_t *newbuf = new wchar_t[bufsize + 1];
 
 			/* Recompute p and space. */
 			p = newbuf + have;
@@ -974,24 +978,25 @@ void Scanner::do_scan()
 			te = newbuf + ( te - buf );
 
 			/* Copy the new buffer in. */
-			memcpy( newbuf, buf, have );
+			wmemcpy( newbuf, buf, have );
 			delete[] buf;
 			buf = newbuf;
 		}
 
 		input.read( p, space );
+		p[space] = '\0';
 		int len = input.gcount();
-		char *pe = p + len;
+		wchar_t *pe = p + len;
 
 		/* If we see eof then append the eof var. */
-		char *eof = 0;
+		wchar_t *eof = 0;
 	 	if ( len == 0 ) {
 			eof = pe;
 			execute = false;
 		}
 
 		
-#line 995 "rlscan.cpp"
+//#line 995 "rlscan.cpp"
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -1271,45 +1276,45 @@ _resume:
 	switch ( cs )
 	{
 tr0:
-#line 1171 "rlscan.rl"
+//#line 1171 "rlscan.rl"
 	{{p = ((te))-1;}{ pass( *ts, 0, 0 ); }}
 	goto st38;
 tr3:
-#line 1155 "rlscan.rl"
+//#line 1155 "rlscan.rl"
 	{te = p+1;{ pass( IMP_Literal, ts, te ); }}
 	goto st38;
 tr11:
-#line 1154 "rlscan.rl"
+//#line 1154 "rlscan.rl"
 	{te = p+1;{ pass(); }}
 	goto st38;
 tr13:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 1154 "rlscan.rl"
+//#line 1154 "rlscan.rl"
 	{te = p+1;{ pass(); }}
 	goto st38;
 tr71:
-#line 1171 "rlscan.rl"
+//#line 1171 "rlscan.rl"
 	{te = p+1;{ pass( *ts, 0, 0 ); }}
 	goto st38;
 tr72:
-#line 1170 "rlscan.rl"
+//#line 1170 "rlscan.rl"
 	{te = p+1;}
 	goto st38;
 tr82:
-#line 1169 "rlscan.rl"
+//#line 1169 "rlscan.rl"
 	{te = p;p--;{ pass(); }}
 	goto st38;
 tr83:
-#line 1171 "rlscan.rl"
+//#line 1171 "rlscan.rl"
 	{te = p;p--;{ pass( *ts, 0, 0 ); }}
 	goto st38;
 tr85:
-#line 1163 "rlscan.rl"
+//#line 1163 "rlscan.rl"
 	{te = p;p--;{ 
 			updateCol();
 			singleLineSpec = true;
@@ -1318,7 +1323,7 @@ tr85:
 		}}
 	goto st38;
 tr86:
-#line 1157 "rlscan.rl"
+//#line 1157 "rlscan.rl"
 	{te = p+1;{ 
 			updateCol();
 			singleLineSpec = false;
@@ -1327,11 +1332,11 @@ tr86:
 		}}
 	goto st38;
 tr87:
-#line 1153 "rlscan.rl"
+//#line 1153 "rlscan.rl"
 	{te = p;p--;{ pass( IMP_UInt, ts, te ); }}
 	goto st38;
 tr88:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{	switch( act ) {
 	case 176:
 	{{p = ((te))-1;} pass( IMP_Define, 0, 0 ); }
@@ -1343,18 +1348,18 @@ tr88:
 	}
 	goto st38;
 tr89:
-#line 1152 "rlscan.rl"
+//#line 1152 "rlscan.rl"
 	{te = p;p--;{ pass( IMP_Word, ts, te ); }}
 	goto st38;
 st38:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof38;
 case 38:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 1358 "rlscan.cpp"
+//#line 1358 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr72;
 		case 9: goto st39;
@@ -1377,7 +1382,7 @@ case 38:
 		goto tr80;
 	goto tr71;
 tr74:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1388,7 +1393,7 @@ st39:
 	if ( ++p == pe )
 		goto _test_eof39;
 case 39:
-#line 1392 "rlscan.cpp"
+//#line 1392 "rlscan.cpp"
 	switch( (*p) ) {
 		case 9: goto st39;
 		case 10: goto tr74;
@@ -1396,14 +1401,14 @@ case 39:
 	}
 	goto tr82;
 tr75:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st40;
 st40:
 	if ( ++p == pe )
 		goto _test_eof40;
 case 40:
-#line 1407 "rlscan.cpp"
+//#line 1407 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr2;
 		case 34: goto tr3;
@@ -1411,7 +1416,7 @@ case 40:
 	}
 	goto st1;
 tr2:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1422,7 +1427,7 @@ st1:
 	if ( ++p == pe )
 		goto _test_eof1;
 case 1:
-#line 1426 "rlscan.cpp"
+//#line 1426 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr2;
 		case 34: goto tr3;
@@ -1451,14 +1456,14 @@ case 42:
 		goto tr86;
 	goto tr85;
 tr77:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st43;
 st43:
 	if ( ++p == pe )
 		goto _test_eof43;
 case 43:
-#line 1462 "rlscan.cpp"
+//#line 1462 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr6;
 		case 39: goto tr3;
@@ -1466,7 +1471,7 @@ case 43:
 	}
 	goto st3;
 tr6:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1477,7 +1482,7 @@ st3:
 	if ( ++p == pe )
 		goto _test_eof3;
 case 3:
-#line 1481 "rlscan.cpp"
+//#line 1481 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr6;
 		case 39: goto tr3;
@@ -1492,21 +1497,21 @@ case 4:
 		goto tr6;
 	goto st3;
 tr78:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st44;
 st44:
 	if ( ++p == pe )
 		goto _test_eof44;
 case 44:
-#line 1503 "rlscan.cpp"
+//#line 1503 "rlscan.cpp"
 	switch( (*p) ) {
 		case 42: goto st5;
 		case 47: goto st7;
 	}
 	goto tr83;
 tr9:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1517,7 +1522,7 @@ st5:
 	if ( ++p == pe )
 		goto _test_eof5;
 case 5:
-#line 1521 "rlscan.cpp"
+//#line 1521 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr9;
 		case 42: goto st6;
@@ -1548,22 +1553,22 @@ case 45:
 		goto st45;
 	goto tr87;
 tr80:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 1152 "rlscan.rl"
+//#line 1152 "rlscan.rl"
 	{act = 177;}
 	goto st46;
 tr94:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 1151 "rlscan.rl"
+//#line 1151 "rlscan.rl"
 	{act = 176;}
 	goto st46;
 st46:
 	if ( ++p == pe )
 		goto _test_eof46;
 case 46:
-#line 1567 "rlscan.cpp"
+//#line 1567 "rlscan.cpp"
 	if ( (*p) == 95 )
 		goto tr80;
 	if ( (*p) < 65 ) {
@@ -1661,50 +1666,50 @@ case 51:
 		goto tr80;
 	goto tr89;
 tr14:
-#line 770 "rlscan.rl"
+//#line 770 "rlscan.rl"
 	{{p = ((te))-1;}{ token( IL_Symbol, ts, te ); }}
 	goto st52;
 tr17:
-#line 716 "rlscan.rl"
+//#line 716 "rlscan.rl"
 	{te = p+1;{ token( IL_Literal, ts, te ); }}
 	goto st52;
 tr20:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 723 "rlscan.rl"
+//#line 723 "rlscan.rl"
 	{te = p+1;{ token( IL_Comment, ts, te ); }}
 	goto st52;
 tr27:
-#line 712 "rlscan.rl"
+//#line 712 "rlscan.rl"
 	{{p = ((te))-1;}{ token( TK_UInt, ts, te ); }}
 	goto st52;
 tr95:
-#line 770 "rlscan.rl"
+//#line 770 "rlscan.rl"
 	{te = p+1;{ token( IL_Symbol, ts, te ); }}
 	goto st52;
 tr96:
-#line 765 "rlscan.rl"
+//#line 765 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated code block" << endl;
+			scan_error() << L"unterminated code block" << endl;
 		}}
 	goto st52;
 tr102:
-#line 745 "rlscan.rl"
+//#line 745 "rlscan.rl"
 	{te = p+1;{ token( *ts, ts, te ); }}
 	goto st52;
 tr103:
-#line 740 "rlscan.rl"
+//#line 740 "rlscan.rl"
 	{te = p+1;{ 
 			whitespaceOn = true;
 			token( *ts, ts, te );
 		}}
 	goto st52;
 tr108:
-#line 733 "rlscan.rl"
+//#line 733 "rlscan.rl"
 	{te = p+1;{
 			whitespaceOn = true;
 			token( *ts, ts, te );
@@ -1713,18 +1718,18 @@ tr108:
 		}}
 	goto st52;
 tr111:
-#line 747 "rlscan.rl"
+//#line 747 "rlscan.rl"
 	{te = p+1;{ 
 			token( IL_Symbol, ts, te );
 			curly_count += 1; 
 		}}
 	goto st52;
 tr112:
-#line 752 "rlscan.rl"
+//#line 752 "rlscan.rl"
 	{te = p+1;{ 
 			if ( --curly_count == 0 && inlineBlockType == CurlyDelimited ) {
 				/* Inline code block ends. */
-				token( '}' );
+				token( L'}' );
 				{cs = stack[--top];goto _again;}
 			}
 			else {
@@ -1735,30 +1740,30 @@ tr112:
 		}}
 	goto st52;
 tr113:
-#line 718 "rlscan.rl"
+//#line 718 "rlscan.rl"
 	{te = p;p--;{ 
 			if ( whitespaceOn ) 
 				token( IL_WhiteSpace, ts, te );
 		}}
 	goto st52;
 tr114:
-#line 770 "rlscan.rl"
+//#line 770 "rlscan.rl"
 	{te = p;p--;{ token( IL_Symbol, ts, te ); }}
 	goto st52;
 tr115:
-#line 712 "rlscan.rl"
+//#line 712 "rlscan.rl"
 	{te = p;p--;{ token( TK_UInt, ts, te ); }}
 	goto st52;
 tr117:
-#line 713 "rlscan.rl"
+//#line 713 "rlscan.rl"
 	{te = p;p--;{ token( TK_Hex, ts, te ); }}
 	goto st52;
 tr118:
-#line 725 "rlscan.rl"
+//#line 725 "rlscan.rl"
 	{te = p+1;{ token( TK_NameSep, ts, te ); }}
 	goto st52;
 tr119:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{	switch( act ) {
 	case 1:
 	{{p = ((te))-1;} token( KW_PChar ); }
@@ -1821,22 +1826,22 @@ tr119:
 	}
 	goto st52;
 tr120:
-#line 710 "rlscan.rl"
+//#line 710 "rlscan.rl"
 	{te = p;p--;{ token( TK_Word, ts, te ); }}
 	goto st52;
 tr134:
-#line 675 "rlscan.rl"
+//#line 675 "rlscan.rl"
 	{te = p;p--;{ token( KW_Char ); }}
 	goto st52;
 st52:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof52;
 case 52:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 1840 "rlscan.cpp"
+//#line 1840 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr96;
 		case 9: goto st53;
@@ -1869,7 +1874,7 @@ case 52:
 		goto st59;
 	goto tr95;
 tr98:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1880,7 +1885,7 @@ st53:
 	if ( ++p == pe )
 		goto _test_eof53;
 case 53:
-#line 1884 "rlscan.cpp"
+//#line 1884 "rlscan.cpp"
 	switch( (*p) ) {
 		case 9: goto st53;
 		case 10: goto tr98;
@@ -1888,14 +1893,14 @@ case 53:
 	}
 	goto tr113;
 tr99:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st54;
 st54:
 	if ( ++p == pe )
 		goto _test_eof54;
 case 54:
-#line 1899 "rlscan.cpp"
+//#line 1899 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr16;
 		case 34: goto tr17;
@@ -1903,7 +1908,7 @@ case 54:
 	}
 	goto st8;
 tr16:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1914,7 +1919,7 @@ st8:
 	if ( ++p == pe )
 		goto _test_eof8;
 case 8:
-#line 1918 "rlscan.cpp"
+//#line 1918 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr16;
 		case 34: goto tr17;
@@ -1929,14 +1934,14 @@ case 9:
 		goto tr16;
 	goto st8;
 tr100:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st55;
 st55:
 	if ( ++p == pe )
 		goto _test_eof55;
 case 55:
-#line 1940 "rlscan.cpp"
+//#line 1940 "rlscan.cpp"
 	if ( (*p) == 10 )
 		goto tr20;
 	goto st10;
@@ -1948,14 +1953,14 @@ case 10:
 		goto tr20;
 	goto st10;
 tr101:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st56;
 st56:
 	if ( ++p == pe )
 		goto _test_eof56;
 case 56:
-#line 1959 "rlscan.cpp"
+//#line 1959 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr22;
 		case 39: goto tr17;
@@ -1963,7 +1968,7 @@ case 56:
 	}
 	goto st11;
 tr22:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -1974,7 +1979,7 @@ st11:
 	if ( ++p == pe )
 		goto _test_eof11;
 case 11:
-#line 1978 "rlscan.cpp"
+//#line 1978 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr22;
 		case 39: goto tr17;
@@ -1989,14 +1994,14 @@ case 12:
 		goto tr22;
 	goto st11;
 tr104:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st57;
 st57:
 	if ( ++p == pe )
 		goto _test_eof57;
 case 57:
-#line 2000 "rlscan.cpp"
+//#line 2000 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr25;
 		case 47: goto tr17;
@@ -2004,7 +2009,7 @@ case 57:
 	}
 	goto st13;
 tr25:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -2015,7 +2020,7 @@ st13:
 	if ( ++p == pe )
 		goto _test_eof13;
 case 13:
-#line 2019 "rlscan.cpp"
+//#line 2019 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr25;
 		case 47: goto tr17;
@@ -2030,14 +2035,14 @@ case 14:
 		goto tr25;
 	goto st13;
 tr105:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st58;
 st58:
 	if ( ++p == pe )
 		goto _test_eof58;
 case 58:
-#line 2041 "rlscan.cpp"
+//#line 2041 "rlscan.cpp"
 	if ( (*p) == 120 )
 		goto st15;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -2084,82 +2089,82 @@ case 61:
 		goto tr118;
 	goto tr114;
 tr109:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 710 "rlscan.rl"
+//#line 710 "rlscan.rl"
 	{act = 13;}
 	goto st62;
 tr133:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 705 "rlscan.rl"
+//#line 705 "rlscan.rl"
 	{act = 12;}
 	goto st62;
 tr138:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 697 "rlscan.rl"
+//#line 697 "rlscan.rl"
 	{act = 10;}
 	goto st62;
 tr140:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 676 "rlscan.rl"
+//#line 676 "rlscan.rl"
 	{act = 3;}
 	goto st62;
 tr145:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 678 "rlscan.rl"
+//#line 678 "rlscan.rl"
 	{act = 5;}
 	goto st62;
 tr147:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 688 "rlscan.rl"
+//#line 688 "rlscan.rl"
 	{act = 7;}
 	goto st62;
 tr150:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 689 "rlscan.rl"
+//#line 689 "rlscan.rl"
 	{act = 8;}
 	goto st62;
 tr153:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 684 "rlscan.rl"
+//#line 684 "rlscan.rl"
 	{act = 6;}
 	goto st62;
 tr156:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 693 "rlscan.rl"
+//#line 693 "rlscan.rl"
 	{act = 9;}
 	goto st62;
 tr157:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 674 "rlscan.rl"
+//#line 674 "rlscan.rl"
 	{act = 1;}
 	goto st62;
 tr159:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 701 "rlscan.rl"
+//#line 701 "rlscan.rl"
 	{act = 11;}
 	goto st62;
 tr163:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 677 "rlscan.rl"
+//#line 677 "rlscan.rl"
 	{act = 4;}
 	goto st62;
 st62:
 	if ( ++p == pe )
 		goto _test_eof62;
 case 62:
-#line 2163 "rlscan.cpp"
+//#line 2163 "rlscan.cpp"
 	if ( (*p) == 95 )
 		goto tr109;
 	if ( (*p) < 65 ) {
@@ -2726,54 +2731,54 @@ case 94:
 		goto tr109;
 	goto tr120;
 tr29:
-#line 873 "rlscan.rl"
+//#line 873 "rlscan.rl"
 	{{p = ((te))-1;}{ token( IL_Symbol, ts, te ); }}
 	goto st95;
 tr32:
-#line 819 "rlscan.rl"
+//#line 819 "rlscan.rl"
 	{te = p+1;{ token( IL_Literal, ts, te ); }}
 	goto st95;
 tr40:
-#line 826 "rlscan.rl"
+//#line 826 "rlscan.rl"
 	{te = p+1;{ token( IL_Comment, ts, te ); }}
 	goto st95;
 tr42:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 826 "rlscan.rl"
+//#line 826 "rlscan.rl"
 	{te = p+1;{ token( IL_Comment, ts, te ); }}
 	goto st95;
 tr43:
-#line 815 "rlscan.rl"
+//#line 815 "rlscan.rl"
 	{{p = ((te))-1;}{ token( TK_UInt, ts, te ); }}
 	goto st95;
 tr164:
-#line 873 "rlscan.rl"
+//#line 873 "rlscan.rl"
 	{te = p+1;{ token( IL_Symbol, ts, te ); }}
 	goto st95;
 tr165:
-#line 868 "rlscan.rl"
+//#line 868 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated code block" << endl;
+			scan_error() << L"unterminated code block" << endl;
 		}}
 	goto st95;
 tr170:
-#line 848 "rlscan.rl"
+//#line 848 "rlscan.rl"
 	{te = p+1;{ token( *ts, ts, te ); }}
 	goto st95;
 tr171:
-#line 843 "rlscan.rl"
+//#line 843 "rlscan.rl"
 	{te = p+1;{ 
 			whitespaceOn = true;
 			token( *ts, ts, te );
 		}}
 	goto st95;
 tr176:
-#line 836 "rlscan.rl"
+//#line 836 "rlscan.rl"
 	{te = p+1;{
 			whitespaceOn = true;
 			token( *ts, ts, te );
@@ -2782,18 +2787,18 @@ tr176:
 		}}
 	goto st95;
 tr179:
-#line 850 "rlscan.rl"
+//#line 850 "rlscan.rl"
 	{te = p+1;{ 
 			token( IL_Symbol, ts, te );
 			curly_count += 1; 
 		}}
 	goto st95;
 tr180:
-#line 855 "rlscan.rl"
+//#line 855 "rlscan.rl"
 	{te = p+1;{ 
 			if ( --curly_count == 0 && inlineBlockType == CurlyDelimited ) {
 				/* Inline code block ends. */
-				token( '}' );
+				token( L'}' );
 				{cs = stack[--top];goto _again;}
 			}
 			else {
@@ -2804,30 +2809,30 @@ tr180:
 		}}
 	goto st95;
 tr181:
-#line 821 "rlscan.rl"
+//#line 821 "rlscan.rl"
 	{te = p;p--;{ 
 			if ( whitespaceOn ) 
 				token( IL_WhiteSpace, ts, te );
 		}}
 	goto st95;
 tr182:
-#line 873 "rlscan.rl"
+//#line 873 "rlscan.rl"
 	{te = p;p--;{ token( IL_Symbol, ts, te ); }}
 	goto st95;
 tr183:
-#line 815 "rlscan.rl"
+//#line 815 "rlscan.rl"
 	{te = p;p--;{ token( TK_UInt, ts, te ); }}
 	goto st95;
 tr185:
-#line 816 "rlscan.rl"
+//#line 816 "rlscan.rl"
 	{te = p;p--;{ token( TK_Hex, ts, te ); }}
 	goto st95;
 tr186:
-#line 828 "rlscan.rl"
+//#line 828 "rlscan.rl"
 	{te = p+1;{ token( TK_NameSep, ts, te ); }}
 	goto st95;
 tr187:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{	switch( act ) {
 	case 27:
 	{{p = ((te))-1;} token( KW_PChar ); }
@@ -2890,22 +2895,22 @@ tr187:
 	}
 	goto st95;
 tr188:
-#line 813 "rlscan.rl"
+//#line 813 "rlscan.rl"
 	{te = p;p--;{ token( TK_Word, ts, te ); }}
 	goto st95;
 tr202:
-#line 778 "rlscan.rl"
+//#line 778 "rlscan.rl"
 	{te = p;p--;{ token( KW_Char ); }}
 	goto st95;
 st95:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof95;
 case 95:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 2909 "rlscan.cpp"
+//#line 2909 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr165;
 		case 9: goto st96;
@@ -2937,7 +2942,7 @@ case 95:
 		goto st101;
 	goto tr164;
 tr167:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -2948,7 +2953,7 @@ st96:
 	if ( ++p == pe )
 		goto _test_eof96;
 case 96:
-#line 2952 "rlscan.cpp"
+//#line 2952 "rlscan.cpp"
 	switch( (*p) ) {
 		case 9: goto st96;
 		case 10: goto tr167;
@@ -2956,14 +2961,14 @@ case 96:
 	}
 	goto tr181;
 tr168:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st97;
 st97:
 	if ( ++p == pe )
 		goto _test_eof97;
 case 97:
-#line 2967 "rlscan.cpp"
+//#line 2967 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr31;
 		case 34: goto tr32;
@@ -2971,7 +2976,7 @@ case 97:
 	}
 	goto st16;
 tr31:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -2982,7 +2987,7 @@ st16:
 	if ( ++p == pe )
 		goto _test_eof16;
 case 16:
-#line 2986 "rlscan.cpp"
+//#line 2986 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr31;
 		case 34: goto tr32;
@@ -2997,14 +3002,14 @@ case 17:
 		goto tr31;
 	goto st16;
 tr169:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st98;
 st98:
 	if ( ++p == pe )
 		goto _test_eof98;
 case 98:
-#line 3008 "rlscan.cpp"
+//#line 3008 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr35;
 		case 39: goto tr32;
@@ -3012,7 +3017,7 @@ case 98:
 	}
 	goto st18;
 tr35:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -3023,7 +3028,7 @@ st18:
 	if ( ++p == pe )
 		goto _test_eof18;
 case 18:
-#line 3027 "rlscan.cpp"
+//#line 3027 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr35;
 		case 39: goto tr32;
@@ -3038,21 +3043,21 @@ case 19:
 		goto tr35;
 	goto st18;
 tr172:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st99;
 st99:
 	if ( ++p == pe )
 		goto _test_eof99;
 case 99:
-#line 3049 "rlscan.cpp"
+//#line 3049 "rlscan.cpp"
 	switch( (*p) ) {
 		case 42: goto st20;
 		case 47: goto st22;
 	}
 	goto tr182;
 tr38:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -3063,7 +3068,7 @@ st20:
 	if ( ++p == pe )
 		goto _test_eof20;
 case 20:
-#line 3067 "rlscan.cpp"
+//#line 3067 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr38;
 		case 42: goto st21;
@@ -3087,14 +3092,14 @@ case 22:
 		goto tr42;
 	goto st22;
 tr173:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st100;
 st100:
 	if ( ++p == pe )
 		goto _test_eof100;
 case 100:
-#line 3098 "rlscan.cpp"
+//#line 3098 "rlscan.cpp"
 	if ( (*p) == 120 )
 		goto st23;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -3141,82 +3146,82 @@ case 103:
 		goto tr186;
 	goto tr182;
 tr177:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 813 "rlscan.rl"
+//#line 813 "rlscan.rl"
 	{act = 39;}
 	goto st104;
 tr201:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 808 "rlscan.rl"
+//#line 808 "rlscan.rl"
 	{act = 38;}
 	goto st104;
 tr206:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 800 "rlscan.rl"
+//#line 800 "rlscan.rl"
 	{act = 36;}
 	goto st104;
 tr208:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 779 "rlscan.rl"
+//#line 779 "rlscan.rl"
 	{act = 29;}
 	goto st104;
 tr213:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 781 "rlscan.rl"
+//#line 781 "rlscan.rl"
 	{act = 31;}
 	goto st104;
 tr215:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 791 "rlscan.rl"
+//#line 791 "rlscan.rl"
 	{act = 33;}
 	goto st104;
 tr218:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 792 "rlscan.rl"
+//#line 792 "rlscan.rl"
 	{act = 34;}
 	goto st104;
 tr221:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 787 "rlscan.rl"
+//#line 787 "rlscan.rl"
 	{act = 32;}
 	goto st104;
 tr224:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 796 "rlscan.rl"
+//#line 796 "rlscan.rl"
 	{act = 35;}
 	goto st104;
 tr225:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 777 "rlscan.rl"
+//#line 777 "rlscan.rl"
 	{act = 27;}
 	goto st104;
 tr227:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 804 "rlscan.rl"
+//#line 804 "rlscan.rl"
 	{act = 37;}
 	goto st104;
 tr231:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 780 "rlscan.rl"
+//#line 780 "rlscan.rl"
 	{act = 30;}
 	goto st104;
 st104:
 	if ( ++p == pe )
 		goto _test_eof104;
 case 104:
-#line 3220 "rlscan.cpp"
+//#line 3220 "rlscan.cpp"
 	if ( (*p) == 95 )
 		goto tr177;
 	if ( (*p) < 65 ) {
@@ -3783,76 +3788,76 @@ case 136:
 		goto tr177;
 	goto tr188;
 tr232:
-#line 900 "rlscan.rl"
+//#line 900 "rlscan.rl"
 	{te = p+1;{ token( RE_Char, ts, te ); }}
 	goto st137;
 tr233:
-#line 895 "rlscan.rl"
+//#line 895 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated OR literal" << endl;
+			scan_error() << L"unterminated OR literal" << endl;
 		}}
 	goto st137;
 tr234:
-#line 890 "rlscan.rl"
+//#line 890 "rlscan.rl"
 	{te = p+1;{ token( RE_Dash, 0, 0 ); }}
 	goto st137;
 tr236:
-#line 893 "rlscan.rl"
+//#line 893 "rlscan.rl"
 	{te = p+1;{ token( RE_SqClose ); {cs = stack[--top];goto _again;} }}
 	goto st137;
 tr237:
-#line 900 "rlscan.rl"
+//#line 900 "rlscan.rl"
 	{te = p;p--;{ token( RE_Char, ts, te ); }}
 	goto st137;
 tr238:
-#line 887 "rlscan.rl"
+//#line 887 "rlscan.rl"
 	{te = p+1;{ token( RE_Char, ts+1, te ); }}
 	goto st137;
 tr239:
-#line 886 "rlscan.rl"
+//#line 886 "rlscan.rl"
 	{te = p+1;{ updateCol(); }}
 	goto st137;
 tr240:
-#line 878 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\0' ); }}
+//#line 878 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\0' ); }}
 	goto st137;
 tr241:
-#line 879 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\a' ); }}
+//#line 879 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\a' ); }}
 	goto st137;
 tr242:
-#line 880 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\b' ); }}
+//#line 880 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\b' ); }}
 	goto st137;
 tr243:
-#line 884 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\f' ); }}
+//#line 884 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\f' ); }}
 	goto st137;
 tr244:
-#line 882 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\n' ); }}
+//#line 882 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\n' ); }}
 	goto st137;
 tr245:
-#line 885 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\r' ); }}
+//#line 885 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\r' ); }}
 	goto st137;
 tr246:
-#line 881 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\t' ); }}
+//#line 881 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\t' ); }}
 	goto st137;
 tr247:
-#line 883 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\v' ); }}
+//#line 883 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\v' ); }}
 	goto st137;
 st137:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof137;
 case 137:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 3856 "rlscan.cpp"
+//#line 3856 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr233;
 		case 45: goto tr234;
@@ -3877,98 +3882,98 @@ case 138:
 	}
 	goto tr238;
 tr248:
-#line 935 "rlscan.rl"
+//#line 935 "rlscan.rl"
 	{te = p+1;{ token( RE_Char, ts, te ); }}
 	goto st139;
 tr249:
-#line 930 "rlscan.rl"
+//#line 930 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated regular expression" << endl;
+			scan_error() << L"unterminated regular expression" << endl;
 		}}
 	goto st139;
 tr250:
-#line 925 "rlscan.rl"
+//#line 925 "rlscan.rl"
 	{te = p+1;{ token( RE_Star ); }}
 	goto st139;
 tr251:
-#line 924 "rlscan.rl"
+//#line 924 "rlscan.rl"
 	{te = p+1;{ token( RE_Dot ); }}
 	goto st139;
 tr255:
-#line 918 "rlscan.rl"
+//#line 918 "rlscan.rl"
 	{te = p;p--;{ 
 			token( RE_Slash, ts, te ); 
 			{goto st146;}
 		}}
 	goto st139;
 tr256:
-#line 918 "rlscan.rl"
+//#line 918 "rlscan.rl"
 	{te = p+1;{ 
 			token( RE_Slash, ts, te ); 
 			{goto st146;}
 		}}
 	goto st139;
 tr257:
-#line 927 "rlscan.rl"
+//#line 927 "rlscan.rl"
 	{te = p;p--;{ token( RE_SqOpen ); {stack[top++] = 139; goto st137;} }}
 	goto st139;
 tr258:
-#line 928 "rlscan.rl"
+//#line 928 "rlscan.rl"
 	{te = p+1;{ token( RE_SqOpenNeg ); {stack[top++] = 139; goto st137;} }}
 	goto st139;
 tr259:
-#line 935 "rlscan.rl"
+//#line 935 "rlscan.rl"
 	{te = p;p--;{ token( RE_Char, ts, te ); }}
 	goto st139;
 tr260:
-#line 915 "rlscan.rl"
+//#line 915 "rlscan.rl"
 	{te = p+1;{ token( RE_Char, ts+1, te ); }}
 	goto st139;
 tr261:
-#line 914 "rlscan.rl"
+//#line 914 "rlscan.rl"
 	{te = p+1;{ updateCol(); }}
 	goto st139;
 tr262:
-#line 906 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\0' ); }}
+//#line 906 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\0' ); }}
 	goto st139;
 tr263:
-#line 907 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\a' ); }}
+//#line 907 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\a' ); }}
 	goto st139;
 tr264:
-#line 908 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\b' ); }}
+//#line 908 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\b' ); }}
 	goto st139;
 tr265:
-#line 912 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\f' ); }}
+//#line 912 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\f' ); }}
 	goto st139;
 tr266:
-#line 910 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\n' ); }}
+//#line 910 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\n' ); }}
 	goto st139;
 tr267:
-#line 913 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\r' ); }}
+//#line 913 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\r' ); }}
 	goto st139;
 tr268:
-#line 909 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\t' ); }}
+//#line 909 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\t' ); }}
 	goto st139;
 tr269:
-#line 911 "rlscan.rl"
-	{te = p+1;{ token( RE_Char, '\v' ); }}
+//#line 911 "rlscan.rl"
+	{te = p+1;{ token( RE_Char, L'\v' ); }}
 	goto st139;
 st139:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof139;
 case 139:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 3972 "rlscan.cpp"
+//#line 3972 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr249;
 		case 42: goto tr250;
@@ -4009,32 +4014,32 @@ case 142:
 	}
 	goto tr260;
 tr270:
-#line 944 "rlscan.rl"
+//#line 944 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated write statement" << endl;
+			scan_error() << L"unterminated write statement" << endl;
 		}}
 	goto st143;
 tr273:
-#line 942 "rlscan.rl"
-	{te = p+1;{ token( ';' ); {goto st146;} }}
+//#line 942 "rlscan.rl"
+	{te = p+1;{ token( L';' ); {goto st146;} }}
 	goto st143;
 tr275:
-#line 941 "rlscan.rl"
+//#line 941 "rlscan.rl"
 	{te = p;p--;{ updateCol(); }}
 	goto st143;
 tr276:
-#line 940 "rlscan.rl"
+//#line 940 "rlscan.rl"
 	{te = p;p--;{ token( TK_Word, ts, te ); }}
 	goto st143;
 st143:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof143;
 case 143:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 4038 "rlscan.cpp"
+//#line 4038 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr270;
 		case 32: goto st144;
@@ -4078,25 +4083,25 @@ case 145:
 		goto st145;
 	goto tr276;
 tr45:
-#line 1121 "rlscan.rl"
+//#line 1121 "rlscan.rl"
 	{{p = ((te))-1;}{ token( *ts ); }}
 	goto st146;
 tr51:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 1018 "rlscan.rl"
+//#line 1018 "rlscan.rl"
 	{te = p+1;{ updateCol(); }}
 	goto st146;
 tr55:
-#line 1005 "rlscan.rl"
+//#line 1005 "rlscan.rl"
 	{{p = ((te))-1;}{ token( TK_UInt, ts, te ); }}
 	goto st146;
 tr57:
-#line 1086 "rlscan.rl"
+//#line 1086 "rlscan.rl"
 	{te = p+1;{ 
 			updateCol();
 			endSection();
@@ -4104,23 +4109,23 @@ tr57:
 		}}
 	goto st146;
 tr277:
-#line 1121 "rlscan.rl"
+//#line 1121 "rlscan.rl"
 	{te = p+1;{ token( *ts ); }}
 	goto st146;
 tr278:
-#line 1117 "rlscan.rl"
+//#line 1117 "rlscan.rl"
 	{te = p+1;{
-			scan_error() << "unterminated ragel section" << endl;
+			scan_error() << L"unterminated ragel section" << endl;
 		}}
 	goto st146;
 tr280:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 1095 "rlscan.rl"
+//#line 1095 "rlscan.rl"
 	{te = p+1;{
 			updateCol();
 			if ( singleLineSpec ) {
@@ -4130,16 +4135,16 @@ tr280:
 		}}
 	goto st146;
 tr289:
-#line 1015 "rlscan.rl"
+//#line 1015 "rlscan.rl"
 	{te = p+1;{ token( RE_Slash ); {goto st139;} }}
 	goto st146;
 tr311:
-#line 1103 "rlscan.rl"
+//#line 1103 "rlscan.rl"
 	{te = p+1;{ 
 			if ( lastToken == KW_Export || lastToken == KW_Entry )
-				token( '{' );
+				token( L'{' );
 			else {
-				token( '{' );
+				token( L'{' );
 				curly_count = 1; 
 				inlineBlockType = CurlyDelimited;
 				if ( hostLang->lang == HostLang::Ruby )
@@ -4150,207 +4155,207 @@ tr311:
 		}}
 	goto st146;
 tr314:
-#line 1092 "rlscan.rl"
+//#line 1092 "rlscan.rl"
 	{te = p;p--;{ updateCol(); }}
 	goto st146;
 tr315:
-#line 1121 "rlscan.rl"
+//#line 1121 "rlscan.rl"
 	{te = p;p--;{ token( *ts ); }}
 	goto st146;
 tr316:
-#line 1010 "rlscan.rl"
+//#line 1010 "rlscan.rl"
 	{te = p;p--;{ token( TK_Literal, ts, te ); }}
 	goto st146;
 tr317:
-#line 1010 "rlscan.rl"
+//#line 1010 "rlscan.rl"
 	{te = p+1;{ token( TK_Literal, ts, te ); }}
 	goto st146;
 tr318:
-#line 1048 "rlscan.rl"
+//#line 1048 "rlscan.rl"
 	{te = p+1;{ token( TK_AllGblError ); }}
 	goto st146;
 tr319:
-#line 1032 "rlscan.rl"
+//#line 1032 "rlscan.rl"
 	{te = p+1;{ token( TK_AllFromState ); }}
 	goto st146;
 tr320:
-#line 1040 "rlscan.rl"
+//#line 1040 "rlscan.rl"
 	{te = p+1;{ token( TK_AllEOF ); }}
 	goto st146;
 tr321:
-#line 1067 "rlscan.rl"
+//#line 1067 "rlscan.rl"
 	{te = p+1;{ token( TK_AllCond ); }}
 	goto st146;
 tr322:
-#line 1056 "rlscan.rl"
+//#line 1056 "rlscan.rl"
 	{te = p+1;{ token( TK_AllLocalError ); }}
 	goto st146;
 tr323:
-#line 1024 "rlscan.rl"
+//#line 1024 "rlscan.rl"
 	{te = p+1;{ token( TK_AllToState ); }}
 	goto st146;
 tr324:
-#line 1049 "rlscan.rl"
+//#line 1049 "rlscan.rl"
 	{te = p+1;{ token( TK_FinalGblError ); }}
 	goto st146;
 tr325:
-#line 1033 "rlscan.rl"
+//#line 1033 "rlscan.rl"
 	{te = p+1;{ token( TK_FinalFromState ); }}
 	goto st146;
 tr326:
-#line 1041 "rlscan.rl"
+//#line 1041 "rlscan.rl"
 	{te = p+1;{ token( TK_FinalEOF ); }}
 	goto st146;
 tr327:
-#line 1068 "rlscan.rl"
+//#line 1068 "rlscan.rl"
 	{te = p+1;{ token( TK_LeavingCond ); }}
 	goto st146;
 tr328:
-#line 1057 "rlscan.rl"
+//#line 1057 "rlscan.rl"
 	{te = p+1;{ token( TK_FinalLocalError ); }}
 	goto st146;
 tr329:
-#line 1025 "rlscan.rl"
+//#line 1025 "rlscan.rl"
 	{te = p+1;{ token( TK_FinalToState ); }}
 	goto st146;
 tr330:
-#line 1071 "rlscan.rl"
+//#line 1071 "rlscan.rl"
 	{te = p+1;{ token( TK_StarStar ); }}
 	goto st146;
 tr331:
-#line 1072 "rlscan.rl"
+//#line 1072 "rlscan.rl"
 	{te = p+1;{ token( TK_DashDash ); }}
 	goto st146;
 tr332:
-#line 1073 "rlscan.rl"
+//#line 1073 "rlscan.rl"
 	{te = p+1;{ token( TK_Arrow ); }}
 	goto st146;
 tr333:
-#line 1070 "rlscan.rl"
+//#line 1070 "rlscan.rl"
 	{te = p+1;{ token( TK_DotDot ); }}
 	goto st146;
 tr334:
-#line 1005 "rlscan.rl"
+//#line 1005 "rlscan.rl"
 	{te = p;p--;{ token( TK_UInt, ts, te ); }}
 	goto st146;
 tr336:
-#line 1006 "rlscan.rl"
+//#line 1006 "rlscan.rl"
 	{te = p;p--;{ token( TK_Hex, ts, te ); }}
 	goto st146;
 tr337:
-#line 1084 "rlscan.rl"
+//#line 1084 "rlscan.rl"
 	{te = p+1;{ token( TK_NameSep, ts, te ); }}
 	goto st146;
 tr338:
-#line 1020 "rlscan.rl"
+//#line 1020 "rlscan.rl"
 	{te = p+1;{ token( TK_ColonEquals ); }}
 	goto st146;
 tr340:
-#line 1076 "rlscan.rl"
+//#line 1076 "rlscan.rl"
 	{te = p;p--;{ token( TK_ColonGt ); }}
 	goto st146;
 tr341:
-#line 1077 "rlscan.rl"
+//#line 1077 "rlscan.rl"
 	{te = p+1;{ token( TK_ColonGtGt ); }}
 	goto st146;
 tr342:
-#line 1050 "rlscan.rl"
+//#line 1050 "rlscan.rl"
 	{te = p+1;{ token( TK_NotStartGblError ); }}
 	goto st146;
 tr343:
-#line 1034 "rlscan.rl"
+//#line 1034 "rlscan.rl"
 	{te = p+1;{ token( TK_NotStartFromState ); }}
 	goto st146;
 tr344:
-#line 1042 "rlscan.rl"
+//#line 1042 "rlscan.rl"
 	{te = p+1;{ token( TK_NotStartEOF ); }}
 	goto st146;
 tr345:
-#line 1078 "rlscan.rl"
+//#line 1078 "rlscan.rl"
 	{te = p+1;{ token( TK_LtColon ); }}
 	goto st146;
 tr347:
-#line 1058 "rlscan.rl"
+//#line 1058 "rlscan.rl"
 	{te = p+1;{ token( TK_NotStartLocalError ); }}
 	goto st146;
 tr348:
-#line 1026 "rlscan.rl"
+//#line 1026 "rlscan.rl"
 	{te = p+1;{ token( TK_NotStartToState ); }}
 	goto st146;
 tr349:
-#line 1063 "rlscan.rl"
+//#line 1063 "rlscan.rl"
 	{te = p;p--;{ token( TK_Middle ); }}
 	goto st146;
 tr350:
-#line 1052 "rlscan.rl"
+//#line 1052 "rlscan.rl"
 	{te = p+1;{ token( TK_MiddleGblError ); }}
 	goto st146;
 tr351:
-#line 1036 "rlscan.rl"
+//#line 1036 "rlscan.rl"
 	{te = p+1;{ token( TK_MiddleFromState ); }}
 	goto st146;
 tr352:
-#line 1044 "rlscan.rl"
+//#line 1044 "rlscan.rl"
 	{te = p+1;{ token( TK_MiddleEOF ); }}
 	goto st146;
 tr353:
-#line 1060 "rlscan.rl"
+//#line 1060 "rlscan.rl"
 	{te = p+1;{ token( TK_MiddleLocalError ); }}
 	goto st146;
 tr354:
-#line 1028 "rlscan.rl"
+//#line 1028 "rlscan.rl"
 	{te = p+1;{ token( TK_MiddleToState ); }}
 	goto st146;
 tr355:
-#line 1074 "rlscan.rl"
+//#line 1074 "rlscan.rl"
 	{te = p+1;{ token( TK_DoubleArrow ); }}
 	goto st146;
 tr356:
-#line 1047 "rlscan.rl"
+//#line 1047 "rlscan.rl"
 	{te = p+1;{ token( TK_StartGblError ); }}
 	goto st146;
 tr357:
-#line 1031 "rlscan.rl"
+//#line 1031 "rlscan.rl"
 	{te = p+1;{ token( TK_StartFromState ); }}
 	goto st146;
 tr358:
-#line 1039 "rlscan.rl"
+//#line 1039 "rlscan.rl"
 	{te = p+1;{ token( TK_StartEOF ); }}
 	goto st146;
 tr359:
-#line 1066 "rlscan.rl"
+//#line 1066 "rlscan.rl"
 	{te = p+1;{ token( TK_StartCond ); }}
 	goto st146;
 tr360:
-#line 1055 "rlscan.rl"
+//#line 1055 "rlscan.rl"
 	{te = p+1;{ token( TK_StartLocalError ); }}
 	goto st146;
 tr361:
-#line 1023 "rlscan.rl"
+//#line 1023 "rlscan.rl"
 	{te = p+1;{ token( TK_StartToState ); }}
 	goto st146;
 tr362:
-#line 1051 "rlscan.rl"
+//#line 1051 "rlscan.rl"
 	{te = p+1;{ token( TK_NotFinalGblError ); }}
 	goto st146;
 tr363:
-#line 1035 "rlscan.rl"
+//#line 1035 "rlscan.rl"
 	{te = p+1;{ token( TK_NotFinalFromState ); }}
 	goto st146;
 tr364:
-#line 1043 "rlscan.rl"
+//#line 1043 "rlscan.rl"
 	{te = p+1;{ token( TK_NotFinalEOF ); }}
 	goto st146;
 tr365:
-#line 1059 "rlscan.rl"
+//#line 1059 "rlscan.rl"
 	{te = p+1;{ token( TK_NotFinalLocalError ); }}
 	goto st146;
 tr366:
-#line 1027 "rlscan.rl"
+//#line 1027 "rlscan.rl"
 	{te = p+1;{ token( TK_NotFinalToState ); }}
 	goto st146;
 tr367:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{	switch( act ) {
 	case 88:
 	{{p = ((te))-1;} token( KW_Machine ); }
@@ -4443,30 +4448,30 @@ tr367:
 	}
 	goto st146;
 tr368:
-#line 1012 "rlscan.rl"
+//#line 1012 "rlscan.rl"
 	{te = p;p--;{ token( RE_SqOpen ); {stack[top++] = 146; goto st137;} }}
 	goto st146;
 tr369:
-#line 1013 "rlscan.rl"
+//#line 1013 "rlscan.rl"
 	{te = p+1;{ token( RE_SqOpenNeg ); {stack[top++] = 146; goto st137;} }}
 	goto st146;
 tr370:
-#line 1002 "rlscan.rl"
+//#line 1002 "rlscan.rl"
 	{te = p;p--;{ token( TK_Word, ts, te ); }}
 	goto st146;
 tr461:
-#line 1081 "rlscan.rl"
+//#line 1081 "rlscan.rl"
 	{te = p+1;{ token( TK_BarStar ); }}
 	goto st146;
 st146:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof146;
 case 146:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 4470 "rlscan.cpp"
+//#line 4470 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr278;
 		case 9: goto st147;
@@ -4526,14 +4531,14 @@ case 147:
 	}
 	goto tr314;
 tr281:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st148;
 st148:
 	if ( ++p == pe )
 		goto _test_eof148;
 case 148:
-#line 4537 "rlscan.cpp"
+//#line 4537 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr47;
 		case 34: goto st149;
@@ -4541,7 +4546,7 @@ case 148:
 	}
 	goto st24;
 tr47:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -4552,7 +4557,7 @@ st24:
 	if ( ++p == pe )
 		goto _test_eof24;
 case 24:
-#line 4556 "rlscan.cpp"
+//#line 4556 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr47;
 		case 34: goto st149;
@@ -4574,14 +4579,14 @@ case 25:
 		goto tr47;
 	goto st24;
 tr282:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st150;
 st150:
 	if ( ++p == pe )
 		goto _test_eof150;
 case 150:
-#line 4585 "rlscan.cpp"
+//#line 4585 "rlscan.cpp"
 	if ( (*p) == 10 )
 		goto tr51;
 	goto st26;
@@ -4619,14 +4624,14 @@ case 152:
 	}
 	goto tr315;
 tr285:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st153;
 st153:
 	if ( ++p == pe )
 		goto _test_eof153;
 case 153:
-#line 4630 "rlscan.cpp"
+//#line 4630 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr53;
 		case 39: goto st149;
@@ -4634,7 +4639,7 @@ case 153:
 	}
 	goto st27;
 tr53:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -4645,7 +4650,7 @@ st27:
 	if ( ++p == pe )
 		goto _test_eof27;
 case 27:
-#line 4649 "rlscan.cpp"
+//#line 4649 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr53;
 		case 39: goto st149;
@@ -4683,14 +4688,14 @@ case 156:
 		goto tr333;
 	goto tr315;
 tr290:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st157;
 st157:
 	if ( ++p == pe )
 		goto _test_eof157;
 case 157:
-#line 4694 "rlscan.cpp"
+//#line 4694 "rlscan.cpp"
 	if ( (*p) == 120 )
 		goto st29;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -4805,136 +4810,136 @@ case 166:
 	}
 	goto tr315;
 tr297:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 1002 "rlscan.rl"
+//#line 1002 "rlscan.rl"
 	{act = 108;}
 	goto st167;
 tr377:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 975 "rlscan.rl"
+//#line 975 "rlscan.rl"
 	{act = 97;}
 	goto st167;
 tr380:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 959 "rlscan.rl"
+//#line 959 "rlscan.rl"
 	{act = 92;}
 	goto st167;
 tr386:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 960 "rlscan.rl"
+//#line 960 "rlscan.rl"
 	{act = 93;}
 	goto st167;
 tr390:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 994 "rlscan.rl"
+//#line 994 "rlscan.rl"
 	{act = 102;}
 	goto st167;
 tr391:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 995 "rlscan.rl"
+//#line 995 "rlscan.rl"
 	{act = 103;}
 	goto st167;
 tr395:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 999 "rlscan.rl"
+//#line 999 "rlscan.rl"
 	{act = 107;}
 	goto st167;
 tr398:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 998 "rlscan.rl"
+//#line 998 "rlscan.rl"
 	{act = 106;}
 	goto st167;
 tr403:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 967 "rlscan.rl"
+//#line 967 "rlscan.rl"
 	{act = 96;}
 	goto st167;
 tr409:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 954 "rlscan.rl"
+//#line 954 "rlscan.rl"
 	{act = 90;}
 	goto st167;
 tr415:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 953 "rlscan.rl"
+//#line 953 "rlscan.rl"
 	{act = 89;}
 	goto st167;
 tr418:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 992 "rlscan.rl"
+//#line 992 "rlscan.rl"
 	{act = 100;}
 	goto st167;
 tr421:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 996 "rlscan.rl"
+//#line 996 "rlscan.rl"
 	{act = 104;}
 	goto st167;
 tr427:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 952 "rlscan.rl"
+//#line 952 "rlscan.rl"
 	{act = 88;}
 	goto st167;
 tr433:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 993 "rlscan.rl"
+//#line 993 "rlscan.rl"
 	{act = 101;}
 	goto st167;
 tr440:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 962 "rlscan.rl"
+//#line 962 "rlscan.rl"
 	{act = 95;}
 	goto st167;
 tr445:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 961 "rlscan.rl"
+//#line 961 "rlscan.rl"
 	{act = 94;}
 	goto st167;
 tr446:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 997 "rlscan.rl"
+//#line 997 "rlscan.rl"
 	{act = 105;}
 	goto st167;
 tr453:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 983 "rlscan.rl"
+//#line 983 "rlscan.rl"
 	{act = 98;}
 	goto st167;
 tr457:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 991 "rlscan.rl"
+//#line 991 "rlscan.rl"
 	{act = 99;}
 	goto st167;
 tr460:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
-#line 955 "rlscan.rl"
+//#line 955 "rlscan.rl"
 	{act = 91;}
 	goto st167;
 st167:
 	if ( ++p == pe )
 		goto _test_eof167;
 case 167:
-#line 4938 "rlscan.cpp"
+//#line 4938 "rlscan.cpp"
 	if ( (*p) == 95 )
 		goto tr297;
 	if ( (*p) < 65 ) {
@@ -6363,14 +6368,14 @@ case 251:
 		goto tr461;
 	goto tr315;
 tr313:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st252;
 st252:
 	if ( ++p == pe )
 		goto _test_eof252;
 case 252:
-#line 6374 "rlscan.cpp"
+//#line 6374 "rlscan.cpp"
 	if ( (*p) == 37 )
 		goto st30;
 	goto tr315;
@@ -6382,41 +6387,41 @@ case 30:
 		goto tr57;
 	goto tr45;
 tr58:
-#line 1146 "rlscan.rl"
+//#line 1146 "rlscan.rl"
 	{{p = ((te))-1;}{ pass( *ts, 0, 0 ); }}
 	goto st253;
 tr61:
-#line 1130 "rlscan.rl"
+//#line 1130 "rlscan.rl"
 	{te = p+1;{ pass( IMP_Literal, ts, te ); }}
 	goto st253;
 tr64:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
 		line++;
 	}
-#line 1128 "rlscan.rl"
+//#line 1128 "rlscan.rl"
 	{te = p+1;{ pass(); }}
 	goto st253;
 tr463:
-#line 1146 "rlscan.rl"
+//#line 1146 "rlscan.rl"
 	{te = p+1;{ pass( *ts, 0, 0 ); }}
 	goto st253;
 tr464:
-#line 1145 "rlscan.rl"
+//#line 1145 "rlscan.rl"
 	{te = p+1;}
 	goto st253;
 tr474:
-#line 1144 "rlscan.rl"
+//#line 1144 "rlscan.rl"
 	{te = p;p--;{ pass(); }}
 	goto st253;
 tr475:
-#line 1146 "rlscan.rl"
+//#line 1146 "rlscan.rl"
 	{te = p;p--;{ pass( *ts, 0, 0 ); }}
 	goto st253;
 tr477:
-#line 1138 "rlscan.rl"
+//#line 1138 "rlscan.rl"
 	{te = p;p--;{ 
 			updateCol();
 			singleLineSpec = true;
@@ -6425,7 +6430,7 @@ tr477:
 		}}
 	goto st253;
 tr478:
-#line 1132 "rlscan.rl"
+//#line 1132 "rlscan.rl"
 	{te = p+1;{ 
 			updateCol();
 			singleLineSpec = false;
@@ -6434,22 +6439,22 @@ tr478:
 		}}
 	goto st253;
 tr479:
-#line 1127 "rlscan.rl"
+//#line 1127 "rlscan.rl"
 	{te = p;p--;{ pass( IMP_UInt, ts, te ); }}
 	goto st253;
 tr480:
-#line 1126 "rlscan.rl"
+//#line 1126 "rlscan.rl"
 	{te = p;p--;{ pass( IMP_Word, ts, te ); }}
 	goto st253;
 st253:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof253;
 case 253:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{ts = p;}
-#line 6453 "rlscan.cpp"
+//#line 6453 "rlscan.cpp"
 	switch( (*p) ) {
 		case 0: goto tr464;
 		case 9: goto st254;
@@ -6472,7 +6477,7 @@ case 253:
 		goto st262;
 	goto tr463;
 tr466:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -6483,7 +6488,7 @@ st254:
 	if ( ++p == pe )
 		goto _test_eof254;
 case 254:
-#line 6487 "rlscan.cpp"
+//#line 6487 "rlscan.cpp"
 	switch( (*p) ) {
 		case 9: goto st254;
 		case 10: goto tr466;
@@ -6491,14 +6496,14 @@ case 254:
 	}
 	goto tr474;
 tr467:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st255;
 st255:
 	if ( ++p == pe )
 		goto _test_eof255;
 case 255:
-#line 6502 "rlscan.cpp"
+//#line 6502 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr60;
 		case 34: goto tr61;
@@ -6506,7 +6511,7 @@ case 255:
 	}
 	goto st31;
 tr60:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -6517,7 +6522,7 @@ st31:
 	if ( ++p == pe )
 		goto _test_eof31;
 case 31:
-#line 6521 "rlscan.cpp"
+//#line 6521 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr60;
 		case 34: goto tr61;
@@ -6532,14 +6537,14 @@ case 32:
 		goto tr60;
 	goto st31;
 tr468:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st256;
 st256:
 	if ( ++p == pe )
 		goto _test_eof256;
 case 256:
-#line 6543 "rlscan.cpp"
+//#line 6543 "rlscan.cpp"
 	if ( (*p) == 10 )
 		goto tr64;
 	goto st33;
@@ -6565,14 +6570,14 @@ case 258:
 		goto tr478;
 	goto tr477;
 tr470:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st259;
 st259:
 	if ( ++p == pe )
 		goto _test_eof259;
 case 259:
-#line 6576 "rlscan.cpp"
+//#line 6576 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr66;
 		case 39: goto tr61;
@@ -6580,7 +6585,7 @@ case 259:
 	}
 	goto st34;
 tr66:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -6591,7 +6596,7 @@ st34:
 	if ( ++p == pe )
 		goto _test_eof34;
 case 34:
-#line 6595 "rlscan.cpp"
+//#line 6595 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr66;
 		case 39: goto tr61;
@@ -6606,14 +6611,14 @@ case 35:
 		goto tr66;
 	goto st34;
 tr471:
-#line 1 "NONE"
+//#line 1 "NONE"
 	{te = p+1;}
 	goto st260;
 st260:
 	if ( ++p == pe )
 		goto _test_eof260;
 case 260:
-#line 6617 "rlscan.cpp"
+//#line 6617 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr69;
 		case 47: goto tr61;
@@ -6621,7 +6626,7 @@ case 260:
 	}
 	goto st36;
 tr69:
-#line 641 "rlscan.rl"
+//#line 641 "rlscan.rl"
 	{ 
 		lastnl = p; 
 		column = 0;
@@ -6632,7 +6637,7 @@ st36:
 	if ( ++p == pe )
 		goto _test_eof36;
 case 36:
-#line 6636 "rlscan.cpp"
+//#line 6636 "rlscan.cpp"
 	switch( (*p) ) {
 		case 10: goto tr69;
 		case 47: goto tr61;
@@ -7196,18 +7201,18 @@ case 262:
 	_out: {}
 	}
 
-#line 1241 "rlscan.rl"
+//#line 1241 "rlscan.rl"
 
 		/* Check if we failed. */
 		if ( cs == rlscan_error ) {
 			/* Machine failed before finding a token. I'm not yet sure if this
 			 * is reachable. */
-			scan_error() << "scanner error" << endl;
+			scan_error() << L"scanner error" << endl;
 			exit(1);
 		}
 
 		/* Decide if we need to preserve anything. */
-		char *preserve = ts;
+		wchar_t *preserve = ts;
 
 		/* Now set up the prefix. */
 		if ( preserve == 0 )
@@ -7215,7 +7220,7 @@ case 262:
 		else {
 			/* There is data that needs to be shifted over. */
 			have = pe - preserve;
-			memmove( buf, preserve, have );
+			wmemmove( buf, preserve, have );
 			unsigned int shiftback = preserve - buf;
 			if ( ts != 0 )
 				ts -= shiftback;

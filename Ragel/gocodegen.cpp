@@ -30,32 +30,32 @@
 #include <assert.h>
 
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
-using std::istream;
-using std::ifstream;
-using std::ostream;
+using std::wistream;
+using std::wifstream;
+using std::wostream;
 using std::ios;
 using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
 /*
  * Go Specific
  */
 
-void goLineDirective( ostream &out, const char *fileName, int line )
+void goLineDirective( wostream &out, const wchar_t *fileName, int line )
 {
-	out << "//line " << fileName << ":" << line << endl;
+	out << L"//line " << fileName << L":" << line << endl;
 }
 
-void GoCodeGen::genLineDirective( ostream &out )
+void GoCodeGen::genLineDirective( wostream &out )
 {
-	std::streambuf *sbuf = out.rdbuf();
+	std::wstreambuf *sbuf = out.rdbuf();
 	output_filter *filter = static_cast<output_filter*>(sbuf);
 	goLineDirective( out, filter->fileName, filter->line + 1 );
 }
@@ -68,15 +68,15 @@ unsigned int GoCodeGen::arrayTypeSize( unsigned long maxVal )
 	return arrayType->size;
 }
 
-string GoCodeGen::ARRAY_TYPE( unsigned long maxVal )
+wstring GoCodeGen::ARRAY_TYPE( unsigned long maxVal )
 {
 	long long maxValLL = (long long) maxVal;
 	HostType *arrayType = keyOps->typeSubsumes( maxValLL );
 	assert( arrayType != 0 );
 
-	string ret = arrayType->data1;
+	wstring ret = arrayType->data1;
 	if ( arrayType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += arrayType->data2;
 	}
 	return ret;
@@ -84,35 +84,35 @@ string GoCodeGen::ARRAY_TYPE( unsigned long maxVal )
 
 
 /* Write out the fsm name. */
-string GoCodeGen::FSM_NAME()
+wstring GoCodeGen::FSM_NAME()
 {
 	return fsmName;
 }
 
 /* Emit the offset of the start state as a decimal integer. */
-string GoCodeGen::START_STATE_ID()
+wstring GoCodeGen::START_STATE_ID()
 {
-	ostringstream ret;
+	wostringstream ret;
 	ret << redFsm->startState->id;
 	return ret.str();
 };
 
 /* Write out the array of actions. */
-std::ostream &GoCodeGen::ACTIONS_ARRAY()
+std::wostream &GoCodeGen::ACTIONS_ARRAY()
 {
-	out << "	0, ";
+	out << L"	0, ";
 	int totalActions = 1;
 	for ( GenActionTableMap::Iter act = redFsm->actionMap; act.lte(); act++ ) {
 		/* Write out the length, which will never be the last character. */
-		out << act->key.length() << ", ";
+		out << act->key.length() << L", ";
 		if ( totalActions++ % IALL == 0 )
-			out << endl << "	";
+			out << endl << L"	";
 
 		for ( GenActionTable::Iter item = act->key; item.lte(); item++ ) {
-			out << item->value->actionId << ", ";
+			out << item->value->actionId << L", ";
 			if ( ! (act.last() && item.last()) ) {
 				if ( totalActions++ % IALL == 0 )
-					out << endl << "	";
+					out << endl << L"	";
 			}
 		}
 	}
@@ -121,184 +121,184 @@ std::ostream &GoCodeGen::ACTIONS_ARRAY()
 }
 
 
-string GoCodeGen::ACCESS()
+wstring GoCodeGen::ACCESS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( accessExpr != 0 )
 		INLINE_LIST( ret, accessExpr, 0, false, false );
 	return ret.str();
 }
 
 
-string GoCodeGen::P()
+wstring GoCodeGen::P()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( pExpr == 0 )
-		ret << "p";
+		ret << L"p";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, pExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::PE()
+wstring GoCodeGen::PE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( peExpr == 0 )
-		ret << "pe";
+		ret << L"pe";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, peExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::vEOF()
+wstring GoCodeGen::vEOF()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( eofExpr == 0 )
-		ret << "eof";
+		ret << L"eof";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, eofExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::vCS()
+wstring GoCodeGen::vCS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( csExpr == 0 )
-		ret << ACCESS() << "cs";
+		ret << ACCESS() << L"cs";
 	else {
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, csExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::TOP()
+wstring GoCodeGen::TOP()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( topExpr == 0 )
-		ret << ACCESS() + "top";
+		ret << ACCESS() + L"top";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, topExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::STACK()
+wstring GoCodeGen::STACK()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( stackExpr == 0 )
-		ret << ACCESS() + "stack";
+		ret << ACCESS() + L"stack";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, stackExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::ACT()
+wstring GoCodeGen::ACT()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( actExpr == 0 )
-		ret << ACCESS() + "act";
+		ret << ACCESS() + L"act";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, actExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::TOKSTART()
+wstring GoCodeGen::TOKSTART()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokstartExpr == 0 )
-		ret << ACCESS() + "ts";
+		ret << ACCESS() + L"ts";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, tokstartExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::TOKEND()
+wstring GoCodeGen::TOKEND()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokendExpr == 0 )
-		ret << ACCESS() + "te";
+		ret << ACCESS() + L"te";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, tokendExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::GET_WIDE_KEY()
+wstring GoCodeGen::GET_WIDE_KEY()
 {
 	if ( redFsm->anyConditions() )
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string GoCodeGen::GET_WIDE_KEY( RedStateAp *state )
+wstring GoCodeGen::GET_WIDE_KEY( RedStateAp *state )
 {
 	if ( state->stateCondList.length() > 0 )
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string GoCodeGen::GET_KEY()
+wstring GoCodeGen::GET_KEY()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( getKeyExpr != 0 ) {
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, getKeyExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	else {
 		/* Expression for retrieving the key, use simple dereference. */
-		ret << DATA() << "[" << P() << "]";
+		ret << DATA() << L"[" << P() << L"]";
 	}
 	return ret.str();
 }
 
 /* Write out level number of tabs. Makes the nested binary search nice
  * looking. */
-string GoCodeGen::TABS( int level )
+wstring GoCodeGen::TABS( int level )
 {
-	string result;
+	wstring result;
 	while ( level-- > 0 )
-		result += "\t";
+		result += L"\t";
 	return result;
 }
 
 /* Write out a key from the fsm code gen. Depends on wether or not the key is
  * signed. */
-string GoCodeGen::KEY( Key key )
+wstring GoCodeGen::KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( keyOps->isSigned || !hostLang->explicitUnsigned )
 		ret << key.getVal();
 	else
-		ret << (unsigned long) key.getVal() << 'u';
+		ret << (unsigned long) key.getVal() << L'u';
 	return ret.str();
 }
 
@@ -309,7 +309,7 @@ bool GoCodeGen::isAlphTypeSigned()
 
 bool GoCodeGen::isWideAlphTypeSigned()
 {
-	string ret;
+	wstring ret;
 	if ( redFsm->maxKey <= keyOps->maxKey )
 		return isAlphTypeSigned();
 	else {
@@ -319,14 +319,14 @@ bool GoCodeGen::isWideAlphTypeSigned()
 	}
 }
 
-string GoCodeGen::WIDE_KEY( RedStateAp *state, Key key )
+wstring GoCodeGen::WIDE_KEY( RedStateAp *state, Key key )
 {
 	if ( state->stateCondList.length() > 0 ) {
-		ostringstream ret;
+		wostringstream ret;
 		if ( isWideAlphTypeSigned() )
 			ret << key.getVal();
 		else
-			ret << (unsigned long) key.getVal() << 'u';
+			ret << (unsigned long) key.getVal() << L'u';
 		return ret.str();
 	}
 	else {
@@ -336,90 +336,90 @@ string GoCodeGen::WIDE_KEY( RedStateAp *state, Key key )
 
 
 
-void GoCodeGen::EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish )
+void GoCodeGen::EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish )
 {
 	/* The parser gives fexec two children. The double brackets are for D
 	 * code. If the inline list is a single word it will get interpreted as a
 	 * C-style cast by the D compiler. */
-	ret << P() << " = (";
+	ret << P() << L" = (";
 	INLINE_LIST( ret, item->children, targState, inFinish, false );
-	ret << ") - 1" << endl;
+	ret << L") - 1" << endl;
 }
 
-void GoCodeGen::LM_SWITCH( ostream &ret, GenInlineItem *item,
+void GoCodeGen::LM_SWITCH( wostream &ret, GenInlineItem *item,
 		int targState, int inFinish, bool csForced )
 {
 	ret <<
-		"	switch " << ACT() << " {" << endl;
+		L"	switch " << ACT() << L" {" << endl;
 
 	for ( GenInlineList::Iter lma = *item->children; lma.lte(); lma++ ) {
 		/* Write the case label, the action and the case break. */
 		if ( lma->lmId < 0 ) {
-			ret << "	default:" << endl;
+			ret << L"	default:" << endl;
 		}
 		else
-			ret << "	case " << lma->lmId << ":" << endl;
+			ret << L"	case " << lma->lmId << L":" << endl;
 
 		/* Write the block and close it off. */
-		ret << "	{";
+		ret << L"	{";
 		INLINE_LIST( ret, lma->children, targState, inFinish, csForced );
-		ret << "}" << endl;
+		ret << L"}" << endl;
 	}
 
 	ret <<
-		"	}" << endl <<
-		"	";
+		L"	}" << endl <<
+		L"	";
 }
 
-void GoCodeGen::SET_ACT( ostream &ret, GenInlineItem *item )
+void GoCodeGen::SET_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = " << item->lmId << ";";
+	ret << ACT() << L" = " << item->lmId << L";";
 }
 
-void GoCodeGen::SET_TOKEND( ostream &ret, GenInlineItem *item )
+void GoCodeGen::SET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	/* The tokend action sets tokend. */
-	ret << TOKEND() << " = " << P();
+	ret << TOKEND() << L" = " << P();
 	if ( item->offset != 0 )
-		out << "+" << item->offset;
+		out << L"+" << item->offset;
 	out << endl;
 }
 
-void GoCodeGen::GET_TOKEND( ostream &ret, GenInlineItem *item )
+void GoCodeGen::GET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	ret << TOKEND();
 }
 
-void GoCodeGen::INIT_TOKSTART( ostream &ret, GenInlineItem *item )
+void GoCodeGen::INIT_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << NULL_ITEM() << endl;
+	ret << TOKSTART() << L" = " << NULL_ITEM() << endl;
 }
 
-void GoCodeGen::INIT_ACT( ostream &ret, GenInlineItem *item )
+void GoCodeGen::INIT_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = 0" << endl;
+	ret << ACT() << L" = 0" << endl;
 }
 
-void GoCodeGen::SET_TOKSTART( ostream &ret, GenInlineItem *item )
+void GoCodeGen::SET_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << P() << endl;
+	ret << TOKSTART() << L" = " << P() << endl;
 }
 
-void GoCodeGen::SUB_ACTION( ostream &ret, GenInlineItem *item,
+void GoCodeGen::SUB_ACTION( wostream &ret, GenInlineItem *item,
 		int targState, bool inFinish, bool csForced )
 {
 	if ( item->children->length() > 0 ) {
 		/* Write the block and close it off. */
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, item->children, targState, inFinish, csForced );
-		ret << "}";
+		ret << L"}";
 	}
 }
 
 
 /* Write out an inline tree structure. Walks the list and possibly calls out
  * to virtual functions than handle language specific items in the tree. */
-void GoCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
+void GoCodeGen::INLINE_LIST( wostream &ret, GenInlineList *inlineList,
 		int targState, bool inFinish, bool csForced )
 {
 	for ( GenInlineList::Iter item = *inlineList; item.lte(); item++ ) {
@@ -446,7 +446,7 @@ void GoCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 			ret << GET_KEY();
 			break;
 		case GenInlineItem::Hold:
-			ret << P() << "--" << endl;
+			ret << P() << L"--" << endl;
 			break;
 		case GenInlineItem::Exec:
 			EXEC( ret, item, targState, inFinish );
@@ -500,19 +500,19 @@ void GoCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 	}
 }
 /* Write out paths in line directives. Escapes any special characters. */
-string GoCodeGen::LDIR_PATH( char *path )
+wstring GoCodeGen::LDIR_PATH( wchar_t *path )
 {
-	ostringstream ret;
-	for ( char *pc = path; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			ret << "\\\\";
+	wostringstream ret;
+	for ( wchar_t *pc = path; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			ret << L"\\\\";
 		else
 			ret << *pc;
 	}
 	return ret.str();
 }
 
-void GoCodeGen::ACTION( ostream &ret, GenAction *action, int targState,
+void GoCodeGen::ACTION( wostream &ret, GenAction *action, int targState,
 		bool inFinish, bool csForced )
 {
 	/* Write the preprocessor line info for going into the source file. */
@@ -523,24 +523,24 @@ void GoCodeGen::ACTION( ostream &ret, GenAction *action, int targState,
 	ret << endl;
 }
 
-void GoCodeGen::CONDITION( ostream &ret, GenAction *condition )
+void GoCodeGen::CONDITION( wostream &ret, GenAction *condition )
 {
 	INLINE_LIST( ret, condition->inlineList, 0, false, false );
 }
 
-string GoCodeGen::ERROR_STATE()
+wstring GoCodeGen::ERROR_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->errState != 0 )
 		ret << redFsm->errState->id;
 	else
-		ret << "-1";
+		ret << L"-1";
 	return ret.str();
 }
 
-string GoCodeGen::FIRST_FINAL_STATE()
+wstring GoCodeGen::FIRST_FINAL_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->firstFinState != 0 )
 		ret << redFsm->firstFinState->id;
 	else
@@ -550,59 +550,59 @@ string GoCodeGen::FIRST_FINAL_STATE()
 
 void GoCodeGen::writeInit()
 {
-	out << "	{" << endl;
+	out << L"	{" << endl;
 
 	if ( !noCS )
-		out << "	" << vCS() << " = " << START() << endl;
+		out << L"	" << vCS() << L" = " << START() << endl;
 
 	/* If there are any calls, then the stack top needs initialization. */
 	if ( redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "	" << TOP() << " = 0" << endl;
+		out << L"	" << TOP() << L" = 0" << endl;
 
 	if ( hasLongestMatch ) {
 		out <<
-			"	" << TOKSTART() << " = " << NULL_ITEM() << endl <<
-			"	" << TOKEND() << " = " << NULL_ITEM() << endl <<
-			"	" << ACT() << " = 0" << endl;
+			L"	" << TOKSTART() << L" = " << NULL_ITEM() << endl <<
+			L"	" << TOKEND() << L" = " << NULL_ITEM() << endl <<
+			L"	" << ACT() << L" = 0" << endl;
 	}
-	out << "	}" << endl;
+	out << L"	}" << endl;
 }
 
-string GoCodeGen::DATA()
+wstring GoCodeGen::DATA()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( dataExpr == 0 )
-		ret << ACCESS() + "data";
+		ret << ACCESS() + L"data";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, dataExpr, 0, false, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string GoCodeGen::DATA_PREFIX()
+wstring GoCodeGen::DATA_PREFIX()
 {
 	if ( !noPrefix )
-		return FSM_NAME() + "_";
-	return "";
+		return FSM_NAME() + L"_";
+	return L"";
 }
 
 /* Emit the alphabet data type. */
-string GoCodeGen::ALPH_TYPE()
+wstring GoCodeGen::ALPH_TYPE()
 {
-	string ret = keyOps->alphType->data1;
+	wstring ret = keyOps->alphType->data1;
 	if ( keyOps->alphType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += + keyOps->alphType->data2;
 	}
 	return ret;
 }
 
 /* Emit the alphabet data type. */
-string GoCodeGen::WIDE_ALPH_TYPE()
+wstring GoCodeGen::WIDE_ALPH_TYPE()
 {
-	string ret;
+	wstring ret;
 	if ( redFsm->maxKey <= keyOps->maxKey )
 		ret = ALPH_TYPE();
 	else {
@@ -612,7 +612,7 @@ string GoCodeGen::WIDE_ALPH_TYPE()
 
 		ret = wideType->data1;
 		if ( wideType->data2 != 0 ) {
-			ret += " ";
+			ret += L" ";
 			ret += wideType->data2;
 		}
 	}
@@ -622,20 +622,20 @@ string GoCodeGen::WIDE_ALPH_TYPE()
 void GoCodeGen::STATE_IDS()
 {
 	if ( redFsm->startState != 0 )
-		CONST( "int", START() ) << " = " << START_STATE_ID() << endl;
+		CONST( L"int", START() ) << L" = " << START_STATE_ID() << endl;
 
 	if ( !noFinal )
-		CONST( "int" , FIRST_FINAL() ) << " = " << FIRST_FINAL_STATE() << endl;
+		CONST( L"int" , FIRST_FINAL() ) << L" = " << FIRST_FINAL_STATE() << endl;
 
 	if ( !noError )
-		CONST( "int", ERROR() ) << " = " << ERROR_STATE() << endl;
+		CONST( L"int", ERROR() ) << L" = " << ERROR_STATE() << endl;
 
 	out << endl;
 
 	if ( entryPointNames.length() > 0 ) {
 		for ( EntryNameVect::Iter en = entryPointNames; en.lte(); en++ ) {
-			CONST( "int", DATA_PREFIX() + "en_" + *en ) <<
-					" = " << entryPointIds[en.pos()] << endl;
+			CONST( L"int", DATA_PREFIX() + L"en_" + *en ) <<
+					L" = " << entryPointIds[en.pos()] << endl;
 		}
 		out << endl;
 	}
@@ -700,18 +700,18 @@ void GoCodeGen::finishRagelDef()
 	calcIndexSize();
 }
 
-ostream &GoCodeGen::source_warning( const InputLoc &loc )
+wostream &GoCodeGen::source_warning( const InputLoc &loc )
 {
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": warning: ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return wcerr;
 }
 
-ostream &GoCodeGen::source_error( const InputLoc &loc )
+wostream &GoCodeGen::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return wcerr;
 }
 
 
@@ -720,54 +720,54 @@ ostream &GoCodeGen::source_error( const InputLoc &loc )
  *
  */
 
-std::ostream &GoCodeGen::OPEN_ARRAY( string type, string name )
+std::wostream &GoCodeGen::OPEN_ARRAY( wstring type, wstring name )
 {
-	out << "var " << name << " []" << type << " = []" << type << "{" << endl;
+	out << L"var " << name << L" []" << type << L" = []" << type << L"{" << endl;
 	return out;
 }
 
-std::ostream &GoCodeGen::CLOSE_ARRAY()
+std::wostream &GoCodeGen::CLOSE_ARRAY()
 {
-	return out << "}" << endl;
+	return out << L"}" << endl;
 }
 
-std::ostream &GoCodeGen::STATIC_VAR( string type, string name )
+std::wostream &GoCodeGen::STATIC_VAR( wstring type, wstring name )
 {
-	out << "var " << name << " " << type;
+	out << L"var " << name << L" " << type;
 	return out;
 }
 
-std::ostream &GoCodeGen::CONST( string type, string name )
+std::wostream &GoCodeGen::CONST( wstring type, wstring name )
 {
-	out << "const " << name << " " << type;
+	out << L"const " << name << L" " << type;
 	return out;
 }
 
-string GoCodeGen::UINT( )
+wstring GoCodeGen::UINT( )
 {
-	return "uint";
+	return L"uint";
 }
 
-string GoCodeGen::INT()
+wstring GoCodeGen::INT()
 {
-	return "int";
+	return L"int";
 }
 
-string GoCodeGen::CAST( string type, string expr )
+wstring GoCodeGen::CAST( wstring type, wstring expr )
 {
-	return type + "(" + expr + ")";
+	return type + L"(" + expr + L")";
 }
 
-string GoCodeGen::NULL_ITEM()
+wstring GoCodeGen::NULL_ITEM()
 {
-	return "0";
+	return L"0";
 }
 
 void GoCodeGen::writeExports()
 {
 	if ( exportList.length() > 0 ) {
 		for ( ExportList::Iter ex = exportList; ex.lte(); ex++ ) {
-			out << "const " << DATA_PREFIX() << "ex_" << ex->name << " = " <<
+			out << L"const " << DATA_PREFIX() << L"ex_" << ex->name << L" = " <<
 					KEY(ex->key) << endl;
 		}
 		out << endl;

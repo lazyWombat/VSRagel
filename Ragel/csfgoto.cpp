@@ -27,19 +27,19 @@
 #include "gendata.h"
 #include "bstmap.h"
 
-std::ostream &CSharpFGotoCodeGen::EXEC_ACTIONS()
+std::wostream &CSharpFGotoCodeGen::EXEC_ACTIONS()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
 			/* 	We are at the start of a glob, write the case. */
-			out << "f" << redAct->actListId << ":\n";
+			out << L"f" << redAct->actListId << L":\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\tgoto _again;\n";
+			out << L"\tgoto _again;\n";
 		}
 	}
 	return out;
@@ -47,19 +47,19 @@ std::ostream &CSharpFGotoCodeGen::EXEC_ACTIONS()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &CSharpFGotoCodeGen::TO_STATE_ACTION_SWITCH()
+std::wostream &CSharpFGotoCodeGen::TO_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numToStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\tcase " << redAct->actListId+1 << ":\n";
+			out << L"\tcase " << redAct->actListId+1 << L":\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\tbreak;\n";
+			out << L"\tbreak;\n";
 		}
 	}
 
@@ -69,19 +69,19 @@ std::ostream &CSharpFGotoCodeGen::TO_STATE_ACTION_SWITCH()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &CSharpFGotoCodeGen::FROM_STATE_ACTION_SWITCH()
+std::wostream &CSharpFGotoCodeGen::FROM_STATE_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numFromStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\tcase " << redAct->actListId+1 << ":\n";
+			out << L"\tcase " << redAct->actListId+1 << L":\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false );
 
-			out << "\tbreak;\n";
+			out << L"\tbreak;\n";
 		}
 	}
 
@@ -89,19 +89,19 @@ std::ostream &CSharpFGotoCodeGen::FROM_STATE_ACTION_SWITCH()
 	return out;
 }
 
-std::ostream &CSharpFGotoCodeGen::EOF_ACTION_SWITCH()
+std::wostream &CSharpFGotoCodeGen::EOF_ACTION_SWITCH()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numEofRefs > 0 ) {
 			/* Write the entry label. */
-			out << "\tcase " << redAct->actListId+1 << ":\n";
+			out << L"\tcase " << redAct->actListId+1 << L":\n";
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, true );
 
-			out << "\tbreak;\n";
+			out << L"\tbreak;\n";
 		}
 	}
 
@@ -110,16 +110,16 @@ std::ostream &CSharpFGotoCodeGen::EOF_ACTION_SWITCH()
 }
 
 
-std::ostream &CSharpFGotoCodeGen::FINISH_CASES()
+std::wostream &CSharpFGotoCodeGen::FINISH_CASES()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* States that are final and have an out action need a case. */
 		if ( st->eofAction != 0 ) {
 			/* Write the case label. */
-			out << "\t\tcase " << st->id << ": ";
+			out << L"\t\tcase " << st->id << L": ";
 
 			/* Jump to the func. */
-			out << "goto f" << st->eofAction->actListId << ";\n";
+			out << L"goto f" << st->eofAction->actListId << L";\n";
 		}
 	}
 
@@ -156,21 +156,21 @@ void CSharpFGotoCodeGen::writeData()
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), TSA() );
 		TO_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyFromStateActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), FSA() );
 		FROM_STATE_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	if ( redFsm->anyEofActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActionLoc), EA() );
 		EOF_ACTIONS();
 		CLOSE_ARRAY() <<
-		"\n";
+		L"\n";
 	}
 
 	STATE_IDS();
@@ -181,116 +181,116 @@ void CSharpFGotoCodeGen::writeExec()
 	testEofUsed = false;
 	outLabelUsed = false;
 
-	out << "	{\n";
+	out << L"	{\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	int _ps = 0;\n";
+		out << L"	int _ps = 0;\n";
 
 	if ( redFsm->anyConditions() )
-		out << "	" << WIDE_ALPH_TYPE() << " _widec;\n";
+		out << L"	" << WIDE_ALPH_TYPE() << L" _widec;\n";
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out << 
-			"	if ( " << P() << " == " << PE() << " )\n"
-			"		goto _test_eof;\n";
+			L"	if ( " << P() << L" == " << PE() << L" )\n"
+			L"		goto _test_eof;\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if ( " << vCS() << " == " << redFsm->errState->id << " )\n"
-			"		goto _out;\n";
+			L"	if ( " << vCS() << L" == " << redFsm->errState->id << L" )\n"
+			L"		goto _out;\n";
 	}
 
-	out << "_resume:\n";
+	out << L"_resume:\n";
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	switch ( " << FSA() << "[" << vCS() << "] ) {\n";
+			L"	switch ( " << FSA() << L"[" << vCS() << L"] ) {\n";
 			FROM_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"	}\n"
-			"\n";
+			L"	}\n"
+			L"\n";
 	}
 
 	out << 
-		"	switch ( " << vCS() << " ) {\n";
+		L"	switch ( " << vCS() << L" ) {\n";
 		STATE_GOTOS();
 		SWITCH_DEFAULT() <<
-		"	}\n"
-		"\n";
+		L"	}\n"
+		L"\n";
 		TRANSITIONS() << 
-		"\n";
+		L"\n";
 
 	if ( redFsm->anyRegActions() )
-		EXEC_ACTIONS() << "\n";
+		EXEC_ACTIONS() << L"\n";
 
-	out << "_again:\n";
+	out << L"_again:\n";
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	switch ( " << TSA() << "[" << vCS() << "] ) {\n";
+			L"	switch ( " << TSA() << L"[" << vCS() << L"] ) {\n";
 			TO_STATE_ACTION_SWITCH();
 			SWITCH_DEFAULT() <<
-			"	}\n"
-			"\n";
+			L"	}\n"
+			L"\n";
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out << 
-			"	if ( " << vCS() << " == " << redFsm->errState->id << " )\n"
-			"		goto _out;\n";
+			L"	if ( " << vCS() << L" == " << redFsm->errState->id << L" )\n"
+			L"		goto _out;\n";
 	}
 
 	if ( !noEnd ) {
 		out << 
-			"	if ( ++" << P() << " != " << PE() << " )\n"
-			"		goto _resume;\n";
+			L"	if ( ++" << P() << L" != " << PE() << L" )\n"
+			L"		goto _resume;\n";
 	}
 	else {
 		out << 
-			"	" << P() << " += 1;\n"
-			"	goto _resume;\n";
+			L"	" << P() << L" += 1;\n"
+			L"	goto _resume;\n";
 	}
 
 	if ( testEofUsed )
-		out << "	_test_eof: {}\n";
+		out << L"	_test_eof: {}\n";
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if ( " << P() << " == " << vEOF() << " )\n"
-			"	{\n";
+			L"	if ( " << P() << L" == " << vEOF() << L" )\n"
+			L"	{\n";
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"	switch ( " << vCS() << " ) {\n";
+				L"	switch ( " << vCS() << L" ) {\n";
 
 			for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 				if ( st->eofTrans != 0 )
-					out << "	case " << st->id << ": goto tr" << st->eofTrans->id << ";\n";
+					out << L"	case " << st->id << L": goto tr" << st->eofTrans->id << L";\n";
 			}
 
 			SWITCH_DEFAULT() <<
-				"	}\n";
+				L"	}\n";
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"	switch ( " << EA() << "[" << vCS() << "] ) {\n";
+				L"	switch ( " << EA() << L"[" << vCS() << L"] ) {\n";
 				EOF_ACTION_SWITCH();
 				SWITCH_DEFAULT() <<
-				"	}\n";
+				L"	}\n";
 		}
 
 		out <<
-			"	}\n"
-			"\n";
+			L"	}\n"
+			L"\n";
 	}
 
 	if ( outLabelUsed )
-		out << "	_out: {}\n";
+		out << L"	_out: {}\n";
 
-	out << "	}\n";
+	out << L"	}\n";
 }

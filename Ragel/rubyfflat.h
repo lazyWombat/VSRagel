@@ -29,21 +29,21 @@
 class RubyFFlatCodeGen : public RubyFlatCodeGen 
 {
 public:
-	RubyFFlatCodeGen( ostream &out ) : 
+	RubyFFlatCodeGen( wostream &out ) : 
 		RubyFlatCodeGen(out) {}
 protected:
 	
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &EOF_ACTION_SWITCH();
-	std::ostream &ACTION_SWITCH();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &EOF_ACTION_SWITCH();
+	std::wostream &ACTION_SWITCH();
 
-	void GOTO( ostream &out, int gotoDest, bool inFinish );
-	void GOTO_EXPR( ostream &out, GenInlineItem *ilItem, bool inFinish );
-	void CALL( ostream &out, int callDest, int targState, bool inFinish );
-	void CALL_EXPR(ostream &out, GenInlineItem *ilItem, int targState, bool inFinish );
-	void RET( ostream &out, bool inFinish );
-	void BREAK( ostream &out, int targState );
+	void GOTO( wostream &out, int gotoDest, bool inFinish );
+	void GOTO_EXPR( wostream &out, GenInlineItem *ilItem, bool inFinish );
+	void CALL( wostream &out, int callDest, int targState, bool inFinish );
+	void CALL_EXPR(wostream &out, GenInlineItem *ilItem, int targState, bool inFinish );
+	void RET( wostream &out, bool inFinish );
+	void BREAK( wostream &out, int targState );
 
 	virtual int TO_STATE_ACTION( RedStateAp *state );
 	virtual int FROM_STATE_ACTION( RedStateAp *state );
@@ -58,7 +58,7 @@ protected:
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */
 

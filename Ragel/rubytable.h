@@ -31,8 +31,8 @@
 #include "rubycodegen.h"
 
 
-using std::string;
-using std::ostream;
+using std::wstring;
+using std::wostream;
 
 /*
  * RubyCodeGen
@@ -40,17 +40,17 @@ using std::ostream;
 class RubyTabCodeGen : public RubyCodeGen
 {
 public:
-	RubyTabCodeGen( ostream &out ) : 
+	RubyTabCodeGen( wostream &out ) : 
           RubyCodeGen(out) {}
         virtual ~RubyTabCodeGen() {}
 
 public:
-	void BREAK( ostream &ret, int targState );
-	void GOTO( ostream &ret, int gotoDest, bool inFinish );
-	void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void CALL( ostream &ret, int callDest, int targState, bool inFinish );
-	void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
-	void RET( ostream &ret, bool inFinish );
+	void BREAK( wostream &ret, int targState );
+	void GOTO( wostream &ret, int gotoDest, bool inFinish );
+	void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void CALL( wostream &ret, int callDest, int targState, bool inFinish );
+	void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
+	void RET( wostream &ret, bool inFinish );
 
 	void COND_TRANSLATE();
 	void LOCATE_TRANS();
@@ -59,54 +59,54 @@ public:
 	virtual void writeData();
 
  protected:
-	virtual std::ostream &TO_STATE_ACTION_SWITCH();
-	virtual std::ostream &FROM_STATE_ACTION_SWITCH();
-	virtual std::ostream &EOF_ACTION_SWITCH();
-	virtual std::ostream &ACTION_SWITCH();
+	virtual std::wostream &TO_STATE_ACTION_SWITCH();
+	virtual std::wostream &FROM_STATE_ACTION_SWITCH();
+	virtual std::wostream &EOF_ACTION_SWITCH();
+	virtual std::wostream &ACTION_SWITCH();
 
-	std::ostream &COND_KEYS();
-	std::ostream &COND_SPACES();
-	std::ostream &KEYS();
-	std::ostream &INDICIES();
-	std::ostream &COND_OFFSETS();
-	std::ostream &KEY_OFFSETS();
-	std::ostream &INDEX_OFFSETS();
-	std::ostream &COND_LENS();
-	std::ostream &SINGLE_LENS();
-	std::ostream &RANGE_LENS();
-	std::ostream &TO_STATE_ACTIONS();
-	std::ostream &FROM_STATE_ACTIONS();
-	std::ostream &EOF_ACTIONS();
-	std::ostream &EOF_TRANS();
-	std::ostream &TRANS_TARGS();
-	std::ostream &TRANS_ACTIONS();
-	std::ostream &TRANS_TARGS_WI();
-	std::ostream &TRANS_ACTIONS_WI();
+	std::wostream &COND_KEYS();
+	std::wostream &COND_SPACES();
+	std::wostream &KEYS();
+	std::wostream &INDICIES();
+	std::wostream &COND_OFFSETS();
+	std::wostream &KEY_OFFSETS();
+	std::wostream &INDEX_OFFSETS();
+	std::wostream &COND_LENS();
+	std::wostream &SINGLE_LENS();
+	std::wostream &RANGE_LENS();
+	std::wostream &TO_STATE_ACTIONS();
+	std::wostream &FROM_STATE_ACTIONS();
+	std::wostream &EOF_ACTIONS();
+	std::wostream &EOF_TRANS();
+	std::wostream &TRANS_TARGS();
+	std::wostream &TRANS_ACTIONS();
+	std::wostream &TRANS_TARGS_WI();
+	std::wostream &TRANS_ACTIONS_WI();
 
 
-	void NEXT( ostream &ret, int nextDest, bool inFinish );
-	void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void NEXT( wostream &ret, int nextDest, bool inFinish );
+	void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
 
 	virtual int TO_STATE_ACTION( RedStateAp *state );
 	virtual int FROM_STATE_ACTION( RedStateAp *state );
 	virtual int EOF_ACTION( RedStateAp *state );
 
 private:
-	string array_type;
-	string array_name;
+	wstring array_type;
+	wstring array_name;
 
 public:
 
-	void EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish );
-	void EXECTE( ostream &ret, GenInlineItem *item, int targState, int inFinish );
-	void LM_SWITCH( ostream &ret, GenInlineItem *item, int targState, int inFinish );
-	void SET_ACT( ostream &ret, GenInlineItem *item );
-	void INIT_TOKSTART( ostream &ret, GenInlineItem *item );
-	void INIT_ACT( ostream &ret, GenInlineItem *item );
-	void SET_TOKSTART( ostream &ret, GenInlineItem *item );
-	void SET_TOKEND( ostream &ret, GenInlineItem *item );
-	void GET_TOKEND( ostream &ret, GenInlineItem *item );
-	void SUB_ACTION( ostream &ret, GenInlineItem *item, 
+	void EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish );
+	void EXECTE( wostream &ret, GenInlineItem *item, int targState, int inFinish );
+	void LM_SWITCH( wostream &ret, GenInlineItem *item, int targState, int inFinish );
+	void SET_ACT( wostream &ret, GenInlineItem *item );
+	void INIT_TOKSTART( wostream &ret, GenInlineItem *item );
+	void INIT_ACT( wostream &ret, GenInlineItem *item );
+	void SET_TOKSTART( wostream &ret, GenInlineItem *item );
+	void SET_TOKEND( wostream &ret, GenInlineItem *item );
+	void GET_TOKEND( wostream &ret, GenInlineItem *item );
+	void SUB_ACTION( wostream &ret, GenInlineItem *item, 
 			int targState, bool inFinish );
 
 
@@ -119,6 +119,6 @@ public:
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */

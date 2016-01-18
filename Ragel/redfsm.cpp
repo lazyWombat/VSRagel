@@ -25,15 +25,15 @@
 #include <iostream>
 #include <sstream>
 
-using std::ostringstream;
+using std::wostringstream;
 
-string GenAction::nameOrLoc()
+wstring GenAction::nameOrLoc()
 {
 	if ( name != 0 )
-		return string(name);
+		return wstring(name);
 	else {
-		ostringstream ret;
-		ret << loc.line << ":" << loc.col;
+		wostringstream ret;
+		ret << loc.line << L":" << loc.col;
 		return ret.str();
 	}
 }

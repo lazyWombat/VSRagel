@@ -30,19 +30,19 @@ class GoTablishCodeGen
     : public GoCodeGen
 {
 public:
-    GoTablishCodeGen( ostream &out )
+    GoTablishCodeGen( wostream &out )
         : GoCodeGen(out) {}
 protected:
-    virtual void GOTO( ostream &ret, int gotoDest, bool inFinish );
-    virtual void CALL( ostream &ret, int callDest, int targState, bool inFinish );
-    virtual void NEXT( ostream &ret, int nextDest, bool inFinish );
-    virtual void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-    virtual void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-    virtual void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
-    virtual void CURS( ostream &ret, bool inFinish );
-    virtual void TARGS( ostream &ret, bool inFinish, int targState );
-    virtual void RET( ostream &ret, bool inFinish );
-    virtual void BREAK( ostream &ret, int targState, bool csForced );
+    virtual void GOTO( wostream &ret, int gotoDest, bool inFinish );
+    virtual void CALL( wostream &ret, int callDest, int targState, bool inFinish );
+    virtual void NEXT( wostream &ret, int nextDest, bool inFinish );
+    virtual void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+    virtual void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+    virtual void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
+    virtual void CURS( wostream &ret, bool inFinish );
+    virtual void TARGS( wostream &ret, bool inFinish, int targState );
+    virtual void RET( wostream &ret, bool inFinish );
+    virtual void BREAK( wostream &ret, int targState, bool csForced );
 };
 
 #endif

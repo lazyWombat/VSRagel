@@ -25,24 +25,24 @@
 class ParamCheck
 {
 public:
-	ParamCheck( const char *paramSpec, int argc, const char **argv);
+	ParamCheck( const wchar_t *paramSpec, int argc, const wchar_t **argv);
 
 	bool check();
 
-	const char *paramArg;     /* The argument to the parameter. */
-	char parameter;     /* The parameter matched. */
+	const wchar_t *paramArg;     /* The argument to the parameter. */
+	wchar_t parameter;     /* The parameter matched. */
 	enum { match, invalid, noparam } state;
 
-	const char *argOffset;    /* If we are reading params inside an
+	const wchar_t *argOffset;    /* If we are reading params inside an
 	                     * arg this points to the offset. */
 
-	const char *curArg;       /* Pointer to the current arg. */
+	const wchar_t *curArg;       /* Pointer to the current arg. */
 	int iCurArg;        /* Index to the current arg. */
 
 private:
-	const char *paramSpec;    /* Parameter spec supplied by the coder. */
+	const wchar_t *paramSpec;    /* Parameter spec supplied by the coder. */
 	int argc;           /* Arguement data from the command line. */
-	const char **argv;
+	const wchar_t **argv;
 };
 
 #endif

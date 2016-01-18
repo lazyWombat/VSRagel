@@ -57,7 +57,7 @@ void GoTabCodeGen::calcIndexSize()
 	useIndicies = sizeWithInds < sizeWithoutInds;
 }
 
-std::ostream &GoTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
+std::wostream &GoTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->toStateAction != 0 )
@@ -66,7 +66,7 @@ std::ostream &GoTabCodeGen::TO_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
+std::wostream &GoTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->fromStateAction != 0 )
@@ -75,7 +75,7 @@ std::ostream &GoTabCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::EOF_ACTION( RedStateAp *state )
+std::wostream &GoTabCodeGen::EOF_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->eofAction != 0 )
@@ -85,7 +85,7 @@ std::ostream &GoTabCodeGen::EOF_ACTION( RedStateAp *state )
 }
 
 
-std::ostream &GoTabCodeGen::TRANS_ACTION( RedTransAp *trans )
+std::wostream &GoTabCodeGen::TRANS_ACTION( RedTransAp *trans )
 {
 	/* If there are actions, emit them. Otherwise emit zero. */
 	int act = 0;
@@ -95,14 +95,14 @@ std::ostream &GoTabCodeGen::TRANS_ACTION( RedTransAp *trans )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::TO_STATE_ACTION_SWITCH( int level )
+std::wostream &GoTabCodeGen::TO_STATE_ACTION_SWITCH( int level )
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numToStateRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << TABS(level) << "case " << act->actionId << ":" << endl;
+			out << TABS(level) << L"case " << act->actionId << L":" << endl;
 			ACTION( out, act, 0, false, false );
 		}
 	}
@@ -111,14 +111,14 @@ std::ostream &GoTabCodeGen::TO_STATE_ACTION_SWITCH( int level )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::FROM_STATE_ACTION_SWITCH( int level )
+std::wostream &GoTabCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numFromStateRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << TABS(level) << "case " << act->actionId << ":" << endl;
+			out << TABS(level) << L"case " << act->actionId << L":" << endl;
 			ACTION( out, act, 0, false, false );
 		}
 	}
@@ -127,14 +127,14 @@ std::ostream &GoTabCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::EOF_ACTION_SWITCH( int level )
+std::wostream &GoTabCodeGen::EOF_ACTION_SWITCH( int level )
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numEofRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << TABS(level) << "case " << act->actionId << ":" << endl;
+			out << TABS(level) << L"case " << act->actionId << L":" << endl;
 			ACTION( out, act, 0, true, false );
 		}
 	}
@@ -144,14 +144,14 @@ std::ostream &GoTabCodeGen::EOF_ACTION_SWITCH( int level )
 }
 
 
-std::ostream &GoTabCodeGen::ACTION_SWITCH( int level )
+std::wostream &GoTabCodeGen::ACTION_SWITCH( int level )
 {
 	/* Walk the list of functions, printing the cases. */
 	for ( GenActionList::Iter act = actionList; act.lte(); act++ ) {
 		/* Write out referenced actions. */
 		if ( act->numTransRefs > 0 ) {
 			/* Write the case label, the action and the case break. */
-			out << TABS(level) << "case " << act->actionId << ":" << endl;
+			out << TABS(level) << L"case " << act->actionId << L":" << endl;
 			ACTION( out, act, 0, false, false );
 		}
 	}
@@ -160,17 +160,17 @@ std::ostream &GoTabCodeGen::ACTION_SWITCH( int level )
 	return out;
 }
 
-std::ostream &GoTabCodeGen::COND_OFFSETS()
+std::wostream &GoTabCodeGen::COND_OFFSETS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0, curKeyOffset = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write the key offset. */
 		out << curKeyOffset;
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Move the key offset ahead. */
@@ -180,17 +180,17 @@ std::ostream &GoTabCodeGen::COND_OFFSETS()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::KEY_OFFSETS()
+std::wostream &GoTabCodeGen::KEY_OFFSETS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0, curKeyOffset = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write the key offset. */
 		out << curKeyOffset;
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Move the key offset ahead. */
@@ -201,17 +201,17 @@ std::ostream &GoTabCodeGen::KEY_OFFSETS()
 }
 
 
-std::ostream &GoTabCodeGen::INDEX_OFFSETS()
+std::wostream &GoTabCodeGen::INDEX_OFFSETS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0, curIndOffset = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write the index offset. */
 		out << curIndOffset;
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Move the index offset ahead. */
@@ -223,17 +223,17 @@ std::ostream &GoTabCodeGen::INDEX_OFFSETS()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::COND_LENS()
+std::wostream &GoTabCodeGen::COND_LENS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write singles length. */
 		out << st->stateCondList.length();
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
@@ -241,94 +241,94 @@ std::ostream &GoTabCodeGen::COND_LENS()
 }
 
 
-std::ostream &GoTabCodeGen::SINGLE_LENS()
+std::wostream &GoTabCodeGen::SINGLE_LENS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write singles length. */
 		out << st->outSingle.length();
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
 	return out;
 }
 
-std::ostream &GoTabCodeGen::RANGE_LENS()
+std::wostream &GoTabCodeGen::RANGE_LENS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Emit length of range index. */
 		out << st->outRange.length();
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
 	return out;
 }
 
-std::ostream &GoTabCodeGen::TO_STATE_ACTIONS()
+std::wostream &GoTabCodeGen::TO_STATE_ACTIONS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
 		TO_STATE_ACTION(st);
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
 	return out;
 }
 
-std::ostream &GoTabCodeGen::FROM_STATE_ACTIONS()
+std::wostream &GoTabCodeGen::FROM_STATE_ACTIONS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
 		FROM_STATE_ACTION(st);
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
 	return out;
 }
 
-std::ostream &GoTabCodeGen::EOF_ACTIONS()
+std::wostream &GoTabCodeGen::EOF_ACTIONS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
 		EOF_ACTION(st);
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
 	return out;
 }
 
-std::ostream &GoTabCodeGen::EOF_TRANS()
+std::wostream &GoTabCodeGen::EOF_TRANS()
 {
-	out << "	";
+	out << L"	";
 	int totalStateNum = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Write any eof action. */
@@ -339,10 +339,10 @@ std::ostream &GoTabCodeGen::EOF_TRANS()
 		}
 		out << trans;
 
-		out << ", ";
+		out << L", ";
 		if ( !st.last() ) {
 			if ( ++totalStateNum % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
@@ -350,22 +350,22 @@ std::ostream &GoTabCodeGen::EOF_TRANS()
 }
 
 
-std::ostream &GoTabCodeGen::COND_KEYS()
+std::wostream &GoTabCodeGen::COND_KEYS()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Loop the state's transitions. */
 		for ( GenStateCondList::Iter sc = st->stateCondList; sc.lte(); sc++ ) {
 			/* Lower key. */
-			out << KEY( sc->lowKey ) << ", ";
+			out << KEY( sc->lowKey ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 
 			/* Upper key. */
-			out << KEY( sc->highKey ) << ", ";
+			out << KEY( sc->highKey ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -373,17 +373,17 @@ std::ostream &GoTabCodeGen::COND_KEYS()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::COND_SPACES()
+std::wostream &GoTabCodeGen::COND_SPACES()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Loop the state's transitions. */
 		for ( GenStateCondList::Iter sc = st->stateCondList; sc.lte(); sc++ ) {
 			/* Cond Space id. */
-			out << sc->condSpace->condSpaceId << ", ";
+			out << sc->condSpace->condSpaceId << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -391,29 +391,29 @@ std::ostream &GoTabCodeGen::COND_SPACES()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::KEYS()
+std::wostream &GoTabCodeGen::KEYS()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Loop the singles. */
 		for ( RedTransList::Iter stel = st->outSingle; stel.lte(); stel++ ) {
-			out << KEY( stel->lowKey ) << ", ";
+			out << KEY( stel->lowKey ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Loop the state's transitions. */
 		for ( RedTransList::Iter rtel = st->outRange; rtel.lte(); rtel++ ) {
 			/* Lower key. */
-			out << KEY( rtel->lowKey ) << ", ";
+			out << KEY( rtel->lowKey ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 
 			/* Upper key. */
-			out << KEY( rtel->highKey ) << ", ";
+			out << KEY( rtel->highKey ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -421,30 +421,30 @@ std::ostream &GoTabCodeGen::KEYS()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::INDICIES()
+std::wostream &GoTabCodeGen::INDICIES()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Walk the singles. */
 		for ( RedTransList::Iter stel = st->outSingle; stel.lte(); stel++ ) {
-			out << stel->value->id << ", ";
+			out << stel->value->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Walk the ranges. */
 		for ( RedTransList::Iter rtel = st->outRange; rtel.lte(); rtel++ ) {
-			out << rtel->value->id << ", ";
+			out << rtel->value->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* The state's default index goes next. */
 		if ( st->defTrans != 0 ) {
-			out << st->defTrans->id << ", ";
+			out << st->defTrans->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -452,33 +452,33 @@ std::ostream &GoTabCodeGen::INDICIES()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::TRANS_TARGS()
+std::wostream &GoTabCodeGen::TRANS_TARGS()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Walk the singles. */
 		for ( RedTransList::Iter stel = st->outSingle; stel.lte(); stel++ ) {
 			RedTransAp *trans = stel->value;
-			out << trans->targ->id << ", ";
+			out << trans->targ->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Walk the ranges. */
 		for ( RedTransList::Iter rtel = st->outRange; rtel.lte(); rtel++ ) {
 			RedTransAp *trans = rtel->value;
-			out << trans->targ->id << ", ";
+			out << trans->targ->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* The state's default target state. */
 		if ( st->defTrans != 0 ) {
 			RedTransAp *trans = st->defTrans;
-			out << trans->targ->id << ", ";
+			out << trans->targ->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -487,9 +487,9 @@ std::ostream &GoTabCodeGen::TRANS_TARGS()
 		if ( st->eofTrans != 0 ) {
 			RedTransAp *trans = st->eofTrans;
 			trans->pos = totalTrans;
-			out << trans->targ->id << ", ";
+			out << trans->targ->id << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -499,33 +499,33 @@ std::ostream &GoTabCodeGen::TRANS_TARGS()
 }
 
 
-std::ostream &GoTabCodeGen::TRANS_ACTIONS()
+std::wostream &GoTabCodeGen::TRANS_ACTIONS()
 {
-	out << "	";
+	out << L"	";
 	int totalTrans = 0;
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Walk the singles. */
 		for ( RedTransList::Iter stel = st->outSingle; stel.lte(); stel++ ) {
 			RedTransAp *trans = stel->value;
-			TRANS_ACTION( trans ) << ", ";
+			TRANS_ACTION( trans ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* Walk the ranges. */
 		for ( RedTransList::Iter rtel = st->outRange; rtel.lte(); rtel++ ) {
 			RedTransAp *trans = rtel->value;
-			TRANS_ACTION( trans ) << ", ";
+			TRANS_ACTION( trans ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 
 		/* The state's default index goes next. */
 		if ( st->defTrans != 0 ) {
 			RedTransAp *trans = st->defTrans;
-			TRANS_ACTION( trans ) << ", ";
+			TRANS_ACTION( trans ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -533,9 +533,9 @@ std::ostream &GoTabCodeGen::TRANS_ACTIONS()
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->eofTrans != 0 ) {
 			RedTransAp *trans = st->eofTrans;
-			TRANS_ACTION( trans ) << ", ";
+			TRANS_ACTION( trans ) << L", ";
 			if ( ++totalTrans % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 
@@ -543,7 +543,7 @@ std::ostream &GoTabCodeGen::TRANS_ACTIONS()
 	return out;
 }
 
-std::ostream &GoTabCodeGen::TRANS_TARGS_WI()
+std::wostream &GoTabCodeGen::TRANS_TARGS_WI()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -551,7 +551,7 @@ std::ostream &GoTabCodeGen::TRANS_TARGS_WI()
 		transPtrs[trans->id] = trans;
 
 	/* Keep a count of the num of items in the array written. */
-	out << "	";
+	out << L"	";
 	int totalStates = 0;
 	for ( int t = 0; t < redFsm->transSet.length(); t++ ) {
 		/* Record the position, need this for eofTrans. */
@@ -559,10 +559,10 @@ std::ostream &GoTabCodeGen::TRANS_TARGS_WI()
 		trans->pos = t;
 
 		/* Write out the target state. */
-		out << trans->targ->id << ", ";
+		out << trans->targ->id << L", ";
 		if ( t < redFsm->transSet.length()-1 ) {
 			if ( ++totalStates % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
@@ -571,7 +571,7 @@ std::ostream &GoTabCodeGen::TRANS_TARGS_WI()
 }
 
 
-std::ostream &GoTabCodeGen::TRANS_ACTIONS_WI()
+std::wostream &GoTabCodeGen::TRANS_ACTIONS_WI()
 {
 	/* Transitions must be written ordered by their id. */
 	RedTransAp **transPtrs = new RedTransAp*[redFsm->transSet.length()];
@@ -579,16 +579,16 @@ std::ostream &GoTabCodeGen::TRANS_ACTIONS_WI()
 		transPtrs[trans->id] = trans;
 
 	/* Keep a count of the num of items in the array written. */
-	out << "	";
+	out << L"	";
 	int totalAct = 0;
 	for ( int t = 0; t < redFsm->transSet.length(); t++ ) {
 		/* Write the function for the transition. */
 		RedTransAp *trans = transPtrs[t];
 		TRANS_ACTION( trans );
-		out << ", ";
+		out << L", ";
 		if ( t < redFsm->transSet.length()-1 ) {
 			if ( ++totalAct % IALL == 0 )
-				out << endl << "	";
+				out << endl << L"	";
 		}
 	}
 	out << endl;
@@ -599,7 +599,7 @@ std::ostream &GoTabCodeGen::TRANS_ACTIONS_WI()
 void GoTabCodeGen::writeData()
 {
 	/* If there are any transtion functions then output the array. If there
-	 * are none, don't bother emitting an empty array that won't be used. */
+	 * are none, donL't bother emitting an empty array that won't be used. */
 	if ( redFsm->anyActions() ) {
 		OPEN_ARRAY( ARRAY_TYPE(redFsm->maxActArrItem), A() );
 		ACTIONS_ARRAY();
@@ -701,106 +701,106 @@ void GoTabCodeGen::writeData()
 void GoTabCodeGen::LOCATE_TRANS()
 {
 	out <<
-		"	_keys = " << CAST(INT(), KO() + "[" + vCS() + "]") << endl <<
-		"	_trans = " << CAST(INT(), IO() + "[" + vCS() + "]") << endl <<
+		L"	_keys = " << CAST(INT(), KO() + L"[" + vCS() + L"]") << endl <<
+		L"	_trans = " << CAST(INT(), IO() + L"[" + vCS() + L"]") << endl <<
 		endl <<
-		"	_klen = " << CAST(INT(), SL() + "[" + vCS() + "]") << endl <<
-		"	if _klen > 0 {" << endl <<
-		"		_lower := " << CAST(INT(), "_keys") << endl <<
-		"		var _mid " << INT() << endl <<
-		"		_upper := " << CAST(INT(), "_keys + _klen - 1") << endl <<
-		"		for {" << endl <<
-		"			if _upper < _lower {" << endl <<
-		"				break" << endl <<
-		"			}" << endl <<
+		L"	_klen = " << CAST(INT(), SL() + L"[" + vCS() + L"]") << endl <<
+		L"	if _klen > 0 {" << endl <<
+		L"		_lower := " << CAST(INT(), L"_keys") << endl <<
+		L"		var _mid " << INT() << endl <<
+		L"		_upper := " << CAST(INT(), L"_keys + _klen - 1") << endl <<
+		L"		for {" << endl <<
+		L"			if _upper < _lower {" << endl <<
+		L"				break" << endl <<
+		L"			}" << endl <<
 		endl <<
-		"			_mid = _lower + ((_upper - _lower) >> 1)" << endl <<
-		"			switch {" << endl <<
-		"			case " << GET_WIDE_KEY() << " < " << K() << "[_mid]" << ":" << endl <<
-		"				_upper = _mid - 1" << endl <<
-		"			case " << GET_WIDE_KEY() << " > " << K() << "[_mid]" << ":" << endl <<
-		"				_lower = _mid + 1" << endl <<
-		"			default:" << endl <<
-		"				_trans += " << CAST(INT(), "_mid - " + CAST(INT(), "_keys")) << endl <<
-		"				goto _match" << endl <<
-		"			}" << endl <<
-		"		}" << endl <<
-		"		_keys += _klen" << endl <<
-		"		_trans += _klen" << endl <<
-		"	}" << endl <<
+		L"			_mid = _lower + ((_upper - _lower) >> 1)" << endl <<
+		L"			switch {" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" < " << K() << L"[_mid]" << L":" << endl <<
+		L"				_upper = _mid - 1" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" > " << K() << L"[_mid]" << L":" << endl <<
+		L"				_lower = _mid + 1" << endl <<
+		L"			default:" << endl <<
+		L"				_trans += " << CAST(INT(), L"_mid - " + CAST(INT(), L"_keys")) << endl <<
+		L"				goto _match" << endl <<
+		L"			}" << endl <<
+		L"		}" << endl <<
+		L"		_keys += _klen" << endl <<
+		L"		_trans += _klen" << endl <<
+		L"	}" << endl <<
 		endl <<
-		"	_klen = " << CAST(INT(), RL() + "[" + vCS() + "]") << endl <<
-		"	if _klen > 0 {" << endl <<
-		"		_lower := " << CAST(INT(), "_keys") << endl <<
-		"		var _mid " << INT() << endl <<
-		"		_upper := " << CAST(INT(), "_keys + (_klen << 1) - 2") << endl <<
-		"		for {" << endl <<
-		"			if _upper < _lower {" << endl <<
-		"				break" << endl <<
-		"			}" << endl <<
+		L"	_klen = " << CAST(INT(), RL() + L"[" + vCS() + L"]") << endl <<
+		L"	if _klen > 0 {" << endl <<
+		L"		_lower := " << CAST(INT(), L"_keys") << endl <<
+		L"		var _mid " << INT() << endl <<
+		L"		_upper := " << CAST(INT(), L"_keys + (_klen << 1) - 2") << endl <<
+		L"		for {" << endl <<
+		L"			if _upper < _lower {" << endl <<
+		L"				break" << endl <<
+		L"			}" << endl <<
 		endl <<
-		"			_mid = _lower + (((_upper - _lower) >> 1) & ^1)" << endl <<
-		"			switch {" << endl <<
-		"			case " << GET_WIDE_KEY() << " < " << K() << "[_mid]" << ":" << endl <<
-		"				_upper = _mid - 2" << endl <<
-		"			case " << GET_WIDE_KEY() << " > " << K() << "[_mid + 1]" << ":" << endl <<
-		"				_lower = _mid + 2" << endl <<
-		"			default:" << endl <<
-		"				_trans += " << CAST(INT(), "(_mid - " + CAST(INT(), "_keys") + ") >> 1") << endl <<
-		"				goto _match" << endl <<
-		"			}" << endl <<
-		"		}" << endl <<
-		"		_trans += _klen" << endl <<
-		"	}" << endl <<
+		L"			_mid = _lower + (((_upper - _lower) >> 1) & ^1)" << endl <<
+		L"			switch {" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" < " << K() << L"[_mid]" << L":" << endl <<
+		L"				_upper = _mid - 2" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" > " << K() << L"[_mid + 1]" << L":" << endl <<
+		L"				_lower = _mid + 2" << endl <<
+		L"			default:" << endl <<
+		L"				_trans += " << CAST(INT(), L"(_mid - " + CAST(INT(), L"_keys") + L") >> 1") << endl <<
+		L"				goto _match" << endl <<
+		L"			}" << endl <<
+		L"		}" << endl <<
+		L"		_trans += _klen" << endl <<
+		L"	}" << endl <<
 		endl;
 }
 
 void GoTabCodeGen::COND_TRANSLATE()
 {
 	out <<
-		"	_widec = " << CAST(WIDE_ALPH_TYPE(), GET_KEY()) << endl <<
-		"	_klen = " << CAST(INT(), CL() + "[" + vCS() + "]") << endl <<
-		"	_keys = " << CAST(INT(), CO() + "[" + vCS() + "] * 2") << endl <<
-		"	if _klen > 0 {" << endl <<
-		"		_lower := " << CAST(INT(), "_keys") << endl <<
-		"		var _mid " << INT() << endl <<
-		"		_upper := " << CAST(INT(), "_keys + (_klen << 1) - 2") << endl <<
-		"	COND_LOOP:" << endl <<
-		"		for {" << endl <<
-		"			if _upper < _lower {" << endl <<
-		"				break" << endl <<
-		"			}" << endl <<
+		L"	_widec = " << CAST(WIDE_ALPH_TYPE(), GET_KEY()) << endl <<
+		L"	_klen = " << CAST(INT(), CL() + L"[" + vCS() + L"]") << endl <<
+		L"	_keys = " << CAST(INT(), CO() + L"[" + vCS() + L"] * 2") << endl <<
+		L"	if _klen > 0 {" << endl <<
+		L"		_lower := " << CAST(INT(), L"_keys") << endl <<
+		L"		var _mid " << INT() << endl <<
+		L"		_upper := " << CAST(INT(), L"_keys + (_klen << 1) - 2") << endl <<
+		L"	COND_LOOP:" << endl <<
+		L"		for {" << endl <<
+		L"			if _upper < _lower {" << endl <<
+		L"				break" << endl <<
+		L"			}" << endl <<
 		endl <<
-		"			_mid = _lower + (((_upper - _lower) >> 1) & ^1)" << endl <<
-		"			switch {" << endl <<
-		"			case " << GET_WIDE_KEY() << " < " << CAST(WIDE_ALPH_TYPE(), CK() + "[_mid]") << ":" << endl <<
-		"				_upper = _mid - 2" << endl <<
-		"			case " << GET_WIDE_KEY() << " > " << CAST(WIDE_ALPH_TYPE(), CK() + "[_mid + 1]") << ":" << endl <<
-		"				_lower = _mid + 2" << endl <<
-		"			default:" << endl <<
-		"				switch " << C() << "[" << CAST(INT(), CO() + "[" + vCS() + "]") <<
-							" + ((_mid - _keys)>>1)] {" << endl;
+		L"			_mid = _lower + (((_upper - _lower) >> 1) & ^1)" << endl <<
+		L"			switch {" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" < " << CAST(WIDE_ALPH_TYPE(), CK() + L"[_mid]") << L":" << endl <<
+		L"				_upper = _mid - 2" << endl <<
+		L"			case " << GET_WIDE_KEY() << L" > " << CAST(WIDE_ALPH_TYPE(), CK() + L"[_mid + 1]") << L":" << endl <<
+		L"				_lower = _mid + 2" << endl <<
+		L"			default:" << endl <<
+		L"				switch " << C() << L"[" << CAST(INT(), CO() + L"[" + vCS() + L"]") <<
+							L" + ((_mid - _keys)>>1)] {" << endl;
 
 	for ( CondSpaceList::Iter csi = condSpaceList; csi.lte(); csi++ ) {
 		GenCondSpace *condSpace = csi;
-		out << TABS(4) << "case " << condSpace->condSpaceId << ":" << endl;
-		out << TABS(5) << "_widec = " << KEY(condSpace->baseKey) << " + (" << CAST(WIDE_ALPH_TYPE(), GET_KEY()) <<
-					" - " << KEY(keyOps->minKey) << ")" << endl;
+		out << TABS(4) << L"case " << condSpace->condSpaceId << L":" << endl;
+		out << TABS(5) << L"_widec = " << KEY(condSpace->baseKey) << L" + (" << CAST(WIDE_ALPH_TYPE(), GET_KEY()) <<
+					L" - " << KEY(keyOps->minKey) << L")" << endl;
 
 		for ( GenCondSet::Iter csi = condSpace->condSet; csi.lte(); csi++ ) {
-			out << TABS(5) << "if ";
+			out << TABS(5) << L"if ";
 			CONDITION( out, *csi );
 			Size condValOffset = ((1 << csi.pos()) * keyOps->alphSize());
-			out << " {" << endl << TABS(6) << "_widec += " << condValOffset << endl << TABS(5) << "}" << endl;
+			out << L" {" << endl << TABS(6) << L"_widec += " << condValOffset << endl << TABS(5) << L"}" << endl;
 		}
 	}
 
 	out <<
-		"				}" << endl <<
-		"				break COND_LOOP" << endl <<
-		"			}" << endl <<
-		"		}" << endl <<
-		"	}" << endl <<
+		L"				}" << endl <<
+		L"				break COND_LOOP" << endl <<
+		L"			}" << endl <<
+		L"		}" << endl <<
+		L"	}" << endl <<
 		endl;
 }
 
@@ -810,58 +810,58 @@ void GoTabCodeGen::writeExec()
 	outLabelUsed = false;
 
 	out <<
-		"	{" << endl <<
-		"	var _klen " << INT() << endl;
+		L"	{" << endl <<
+		L"	var _klen " << INT() << endl;
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	var _ps " << INT() << endl;
+		out << L"	var _ps " << INT() << endl;
 
 	out <<
-		"	var _trans " << INT() << endl;
+		L"	var _trans " << INT() << endl;
 
 	if ( redFsm->anyConditions() )
-		out << "	var _widec " << WIDE_ALPH_TYPE() << endl;
+		out << L"	var _widec " << WIDE_ALPH_TYPE() << endl;
 
 	if ( redFsm->anyToStateActions() || redFsm->anyRegActions()
 			|| redFsm->anyFromStateActions() )
 	{
 		out <<
-			"	var _acts " << INT() << endl <<
-			"	var _nacts " << UINT() << endl;
+			L"	var _acts " << INT() << endl <<
+			L"	var _nacts " << UINT() << endl;
 	}
 
 	out <<
-		"	var _keys " << INT() << endl;
+		L"	var _keys " << INT() << endl;
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out <<
-			"	if " << P() << " == " << PE() << " {" << endl <<
-			"		goto _test_eof" << endl <<
-			"	}" << endl;
+			L"	if " << P() << L" == " << PE() << L" {" << endl <<
+			L"		goto _test_eof" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
-	out << "_resume:" << endl;
+	out << L"_resume:" << endl;
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	_acts = " << CAST(INT(), FSA() + "[" + vCS() + "]") << endl <<
-			"	_nacts = " << CAST(UINT(), A() + "[_acts]") << "; _acts++" << endl <<
-			"	for ; _nacts > 0; _nacts-- {" << endl <<
-			"		 _acts++" << endl <<
-			"		switch " << A() << "[_acts - 1]" << " {" << endl;
+			L"	_acts = " << CAST(INT(), FSA() + L"[" + vCS() + L"]") << endl <<
+			L"	_nacts = " << CAST(UINT(), A() + L"[_acts]") << L"; _acts++" << endl <<
+			L"	for ; _nacts > 0; _nacts-- {" << endl <<
+			L"		 _acts++" << endl <<
+			L"		switch " << A() << L"[_acts - 1]" << L" {" << endl;
 			FROM_STATE_ACTION_SWITCH(2);
 			out <<
-			"		}" << endl <<
-			"	}" << endl << endl;
+			L"		}" << endl <<
+			L"	}" << endl << endl;
 	}
 
 	if ( redFsm->anyConditions() )
@@ -869,109 +869,109 @@ void GoTabCodeGen::writeExec()
 
 	LOCATE_TRANS();
 
-	out << "_match:" << endl;
+	out << L"_match:" << endl;
 
 	if ( useIndicies )
-		out << "	_trans = " << CAST(INT(), I() + "[_trans]") << endl;
+		out << L"	_trans = " << CAST(INT(), I() + L"[_trans]") << endl;
 
 	if ( redFsm->anyEofTrans() )
-		out << "_eof_trans:" << endl;
+		out << L"_eof_trans:" << endl;
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	_ps = " << vCS() << endl;
+		out << L"	_ps = " << vCS() << endl;
 
 	out <<
-		"	" << vCS() << " = " << CAST(INT(), TT() + "[_trans]") << endl << endl;
+		L"	" << vCS() << L" = " << CAST(INT(), TT() + L"[_trans]") << endl << endl;
 
 	if ( redFsm->anyRegActions() ) {
 		out <<
-			"	if " << TA() << "[_trans] == 0 {" <<  endl <<
-			"		goto _again" << endl <<
-			"	}" << endl <<
+			L"	if " << TA() << L"[_trans] == 0 {" <<  endl <<
+			L"		goto _again" << endl <<
+			L"	}" << endl <<
 			endl <<
-			"	_acts = " << CAST(INT(), TA() + "[_trans]") << endl <<
-			"	_nacts = " << CAST(UINT(), A() + "[_acts]") << "; _acts++" << endl <<
-			"	for ; _nacts > 0; _nacts-- {" << endl <<
-			"		_acts++" << endl <<
-			"		switch " << A() << "[_acts-1]" << " {" << endl;
+			L"	_acts = " << CAST(INT(), TA() + L"[_trans]") << endl <<
+			L"	_nacts = " << CAST(UINT(), A() + L"[_acts]") << L"; _acts++" << endl <<
+			L"	for ; _nacts > 0; _nacts-- {" << endl <<
+			L"		_acts++" << endl <<
+			L"		switch " << A() << L"[_acts-1]" << L" {" << endl;
 			ACTION_SWITCH(2);
 			out <<
-			"		}" << endl <<
-			"	}" << endl << endl;
+			L"		}" << endl <<
+			L"	}" << endl << endl;
 	}
 
 	if ( redFsm->anyRegActions() || redFsm->anyActionGotos() ||
 			redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "_again:" << endl;
+		out << L"_again:" << endl;
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	_acts = " << CAST(INT(), TSA() + "[" + vCS() + "]") << endl <<
-			"	_nacts = " << CAST(UINT(), A() + "[_acts]") << "; _acts++" << endl <<
-			"	for ; _nacts > 0; _nacts-- {" << endl <<
-			"		_acts++" << endl <<
-			"		switch " << A() << "[_acts-1] {" << endl;
+			L"	_acts = " << CAST(INT(), TSA() + L"[" + vCS() + L"]") << endl <<
+			L"	_nacts = " << CAST(UINT(), A() + L"[_acts]") << L"; _acts++" << endl <<
+			L"	for ; _nacts > 0; _nacts-- {" << endl <<
+			L"		_acts++" << endl <<
+			L"		switch " << A() << L"[_acts-1] {" << endl;
 			TO_STATE_ACTION_SWITCH(2);
 			out <<
-			"		}" << endl <<
-			"	}" << endl << endl;
+			L"		}" << endl <<
+			L"	}" << endl << endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( !noEnd ) {
 		out <<
-			"	" << P() << "++" << endl <<
-			"	if " << P() << " != " << PE() << " {" << endl <<
-			"		goto _resume" << endl <<
-			"	}" << endl;
+			L"	" << P() << L"++" << endl <<
+			L"	if " << P() << L" != " << PE() << L" {" << endl <<
+			L"		goto _resume" << endl <<
+			L"	}" << endl;
 	}
 	else {
 		out <<
-			"	" << P() << "++" << endl <<
-			"	goto _resume" << endl;
+			L"	" << P() << L"++" << endl <<
+			L"	goto _resume" << endl;
 	}
 
 	if ( testEofUsed )
-		out << "	_test_eof: {}" << endl;
+		out << L"	_test_eof: {}" << endl;
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if " << P() << " == " << vEOF() << " {" << endl;
+			L"	if " << P() << L" == " << vEOF() << L" {" << endl;
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"		if " << ET() << "[" << vCS() << "] > 0 {" << endl <<
-				"			_trans = " << CAST(INT(), ET() + "[" + vCS() + "] - 1") << endl <<
-				"			goto _eof_trans" << endl <<
-				"		}" << endl;
+				L"		if " << ET() << L"[" << vCS() << L"] > 0 {" << endl <<
+				L"			_trans = " << CAST(INT(), ET() + L"[" + vCS() + L"] - 1") << endl <<
+				L"			goto _eof_trans" << endl <<
+				L"		}" << endl;
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"		__acts := " << EA() << "[" << vCS() << "]" << endl <<
-				"		__nacts := " << CAST(UINT(), A() + "[__acts]") << "; __acts++" << endl <<
-				"		for ; __nacts > 0; __nacts-- {" << endl <<
-				"			__acts++" << endl <<
-				"			switch " << A() << "[__acts-1] {" << endl;
+				L"		__acts := " << EA() << L"[" << vCS() << L"]" << endl <<
+				L"		__nacts := " << CAST(UINT(), A() + L"[__acts]") << L"; __acts++" << endl <<
+				L"		for ; __nacts > 0; __nacts-- {" << endl <<
+				L"			__acts++" << endl <<
+				L"			switch " << A() << L"[__acts-1] {" << endl;
 				EOF_ACTION_SWITCH(3);
 				out <<
-				"			}" << endl <<
-				"		}" << endl;
+				L"			}" << endl <<
+				L"		}" << endl;
 		}
 
 		out <<
-			"	}" << endl << endl;
+			L"	}" << endl << endl;
 	}
 
 	if ( outLabelUsed )
-		out << "	_out: {}" << endl;
+		out << L"	_out: {}" << endl;
 
-	out << "	}" << endl;
+	out << L"	}" << endl;
 }

@@ -27,9 +27,11 @@
 #include "redfsm.h"
 #include "common.h"
 
-using std::ostream;
+using std::wostream;
 
 extern bool generateDot;
+extern bool useStandardOutput;
+extern bool useStandardInput;
 
 struct NameInst;
 typedef DList<GenAction> GenActionList;
@@ -40,19 +42,19 @@ extern int gblErrorCount;
 
 struct CodeGenData;
 
-typedef AvlMap<char *, CodeGenData*, CmpStr> CodeGenMap;
-typedef AvlMapEl<char *, CodeGenData*> CodeGenMapEl;
+typedef AvlMap<wchar_t *, CodeGenData*, CmpStr> CodeGenMap;
+typedef AvlMapEl<wchar_t *, CodeGenData*> CodeGenMapEl;
 
-void cdLineDirective( ostream &out, const char *fileName, int line );
-void javaLineDirective( ostream &out, const char *fileName, int line );
-void goLineDirective( ostream &out, const char *fileName, int line );
-void rubyLineDirective( ostream &out, const char *fileName, int line );
-void csharpLineDirective( ostream &out, const char *fileName, int line );
-void ocamlLineDirective( ostream &out, const char *fileName, int line );
-void genLineDirective( ostream &out );
-void lineDirective( ostream &out, const char *fileName, int line );
+void cdLineDirective( wostream &out, const wchar_t *fileName, int line );
+void javaLineDirective( wostream &out, const wchar_t *fileName, int line );
+void goLineDirective( wostream &out, const wchar_t *fileName, int line );
+void rubyLineDirective( wostream &out, const wchar_t *fileName, int line );
+void csharpLineDirective( wostream &out, const wchar_t *fileName, int line );
+void ocamlLineDirective( wostream &out, const wchar_t *fileName, int line );
+void genLineDirective( wostream &out );
+void lineDirective( wostream &out, const wchar_t *fileName, int line );
 
-string itoa( int i );
+wstring itoa( int i );
 
 /*********************************/
 
@@ -74,20 +76,20 @@ struct CodeGenData
 
 	/* This can also be overwridden to modify the processing of write
 	 * statements. */
-	virtual bool writeStatement( InputLoc &loc, int nargs, char **args );
+	virtual bool writeStatement( InputLoc &loc, int nargs, wchar_t **args );
 
 	/********************/
 
-	CodeGenData( ostream &out );
+	CodeGenData( wostream &out );
 	virtual ~CodeGenData() {}
 
 	/* 
 	 * Collecting the machine.
 	 */
 
-	const char *sourceFileName;
-	const char *fsmName;
-	ostream &out;
+	const wchar_t *sourceFileName;
+	const wchar_t *fsmName;
+	wostream &out;
 	RedFsmAp *redFsm;
 	GenAction *allActions;
 	RedAction *allActionTables;
@@ -133,12 +135,12 @@ struct CodeGenData
 
 	void createMachine();
 	void initActionList( unsigned long length );
-	void newAction( int anum, const char *name, const InputLoc &loc, GenInlineList *inlineList );
+	void newAction( int anum, const wchar_t *name, const InputLoc &loc, GenInlineList *inlineList );
 	void initActionTableList( unsigned long length );
 	void initStateList( unsigned long length );
 	void setStartState( unsigned long startState );
 	void setErrorState( unsigned long errState );
-	void addEntryPoint( char *name, unsigned long entryState );
+	void addEntryPoint( wchar_t *name, unsigned long entryState );
 	void setId( int snum, int id );
 	void setFinal( int snum );
 	void initTransList( int snum, unsigned long length );
@@ -162,7 +164,7 @@ struct CodeGenData
 	GenCondSpace *findCondSpace( Key lowKey, Key highKey );
 	Condition *findCondition( Key key );
 
-	bool setAlphType( const char *data );
+	bool setAlphType( const wchar_t *data );
 
 	void resolveTargetStates( GenInlineList *inlineList );
 	Key findMaxKey();
@@ -177,12 +179,12 @@ struct CodeGenData
 	void setValueLimits();
 	void assignActionIds();
 
-	ostream &source_warning( const InputLoc &loc );
-	ostream &source_error( const InputLoc &loc );
-	void write_option_error( InputLoc &loc, char *arg );
+	wostream &source_warning( const InputLoc &loc );
+	wostream &source_error( const InputLoc &loc );
+	void write_option_error( InputLoc &loc, wchar_t *arg );
 };
 
-CodeGenData *makeCodeGen( const char *sourceFileName, 
-		const char *fsmName, ostream &out );
+CodeGenData *makeCodeGen( const wchar_t *sourceFileName, 
+		const wchar_t *fsmName, wostream &out );
 
 #endif

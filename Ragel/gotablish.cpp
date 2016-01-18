@@ -26,86 +26,86 @@
 
 using std::endl;
 
-void GoTablishCodeGen::GOTO( ostream &ret, int gotoDest, bool inFinish )
+void GoTablishCodeGen::GOTO( wostream &ret, int gotoDest, bool inFinish )
 {
-    ret << vCS() << " = " << gotoDest << endl <<
-            "goto _again" << endl;
+    ret << vCS() << L" = " << gotoDest << endl <<
+            L"goto _again" << endl;
 }
 
-void GoTablishCodeGen::GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void GoTablishCodeGen::GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-    ret << vCS() << " = (";
+    ret << vCS() << L" = (";
     INLINE_LIST( ret, ilItem->children, 0, inFinish, false );
-    ret << ")" << endl << "goto _again" << endl;
+    ret << L")" << endl << L"goto _again" << endl;
 }
 
-void GoTablishCodeGen::CURS( ostream &ret, bool inFinish )
+void GoTablishCodeGen::CURS( wostream &ret, bool inFinish )
 {
-    ret << "(_ps)";
+    ret << L"(_ps)";
 }
 
-void GoTablishCodeGen::TARGS( ostream &ret, bool inFinish, int targState )
+void GoTablishCodeGen::TARGS( wostream &ret, bool inFinish, int targState )
 {
-    ret << "(" << vCS() << ")";
+    ret << L"(" << vCS() << L")";
 }
 
-void GoTablishCodeGen::NEXT( ostream &ret, int nextDest, bool inFinish )
+void GoTablishCodeGen::NEXT( wostream &ret, int nextDest, bool inFinish )
 {
-    ret << vCS() << " = " << nextDest << endl;
+    ret << vCS() << L" = " << nextDest << endl;
 }
 
-void GoTablishCodeGen::NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish )
+void GoTablishCodeGen::NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish )
 {
-    ret << vCS() << " = (";
+    ret << vCS() << L" = (";
     INLINE_LIST( ret, ilItem->children, 0, inFinish, false );
-    ret << ")" << endl;
+    ret << L")" << endl;
 }
 
-void GoTablishCodeGen::CALL( ostream &ret, int callDest, int targState, bool inFinish )
+void GoTablishCodeGen::CALL( wostream &ret, int callDest, int targState, bool inFinish )
 {
     if ( prePushExpr != 0 ) {
-        ret << "{ ";
+        ret << L"{ ";
         INLINE_LIST( ret, prePushExpr, 0, false, false );
     }
 
-    ret << STACK() << "[" << TOP() << "] = " << vCS() << "; " << TOP() << "++; " <<
-            vCS() << " = " << callDest << "; " << "goto _again" << endl;
+    ret << STACK() << L"[" << TOP() << L"] = " << vCS() << L"; " << TOP() << L"++; " <<
+            vCS() << L" = " << callDest << L"; " << L"goto _again" << endl;
 
     if ( prePushExpr != 0 )
-        ret << " }";
+        ret << L" }";
 }
 
-void GoTablishCodeGen::CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
+void GoTablishCodeGen::CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish )
 {
     if ( prePushExpr != 0 ) {
-        ret << "{";
+        ret << L"{";
         INLINE_LIST( ret, prePushExpr, 0, false, false );
     }
 
-    ret << STACK() << "[" << TOP() << "] = " << vCS() << "; " << TOP() << "++; " << vCS() << " = (";
+    ret << STACK() << L"[" << TOP() << L"] = " << vCS() << L"; " << TOP() << L"++; " << vCS() << L" = (";
     INLINE_LIST( ret, ilItem->children, targState, inFinish, false );
-    ret << "); " << "goto _again" << endl;
+    ret << L"); " << L"goto _again" << endl;
 
     if ( prePushExpr != 0 )
-        ret << "}";
+        ret << L"}";
 }
 
-void GoTablishCodeGen::RET( ostream &ret, bool inFinish )
+void GoTablishCodeGen::RET( wostream &ret, bool inFinish )
 {
-    ret << TOP() << "--; " << vCS() << " = " << STACK() << "[" <<
-            TOP() << "]" << endl;
+    ret << TOP() << L"--; " << vCS() << L" = " << STACK() << L"[" <<
+            TOP() << L"]" << endl;
 
     if ( postPopExpr != 0 ) {
-        ret << "{ ";
+        ret << L"{ ";
         INLINE_LIST( ret, postPopExpr, 0, false, false );
-        ret << " }" << endl;
+        ret << L" }" << endl;
     }
 
-    ret << "goto _again" << endl;
+    ret << L"goto _again" << endl;
 }
 
-void GoTablishCodeGen::BREAK( ostream &ret, int targState, bool csForced )
+void GoTablishCodeGen::BREAK( wostream &ret, int targState, bool csForced )
 {
     outLabelUsed = true;
-    ret << P() << "++; " << "goto _out" << endl;
+    ret << P() << L"++; " << L"goto _out" << endl;
 }

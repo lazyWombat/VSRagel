@@ -30,15 +30,15 @@
 #include "avltree.h"
 #include "vector.h"
 
-using std::istream;
-using std::ostream;
+using std::wistream;
+using std::wostream;
 
-extern char *Parser_lelNames[];
+extern wchar_t *Parser_lelNames[];
 
 struct Scanner
 {
-	Scanner( InputData &id, const char *fileName, istream &input,
-			Parser *inclToParser, char *inclSectionTarg,
+	Scanner( InputData &id, const wchar_t *fileName, wistream &input,
+			Parser *inclToParser, wchar_t *inclSectionTarg,
 			int includeDepth, bool importMachines )
 	: 
 		id(id), fileName(fileName), 
@@ -55,39 +55,39 @@ struct Scanner
 		lastToken(0)
 		{}
 
-	bool duplicateInclude( char *inclFileName, char *inclSectionName );
+	bool duplicateInclude( wchar_t *inclFileName, wchar_t *inclSectionName );
 
 	/* Make a list of places to look for an included file. */
-	char **makeIncludePathChecks( const char *curFileName, const char *fileName, int len );
-	std::ifstream *tryOpenInclude( char **pathChecks, long &found );
+	wchar_t **makeIncludePathChecks( const wchar_t *curFileName, const wchar_t *fileName, int len );
+	std::wifstream *tryOpenInclude( wchar_t **pathChecks, long &found );
 
 	void handleMachine();
 	void handleInclude();
 	void handleImport();
 
 	void init();
-	void token( int type, char *start, char *end );
-	void token( int type, char c );
+	void token( int type, wchar_t *start, wchar_t *end );
+	void token( int type, wchar_t c );
 	void token( int type );
-	void processToken( int type, char *tokdata, int toklen );
-	void directToParser( Parser *toParser, const char *tokFileName, int tokLine, 
-		int tokColumn, int type, char *tokdata, int toklen );
+	void processToken( int type, wchar_t *tokdata, int toklen );
+	void directToParser( Parser *toParser, const wchar_t *tokFileName, int tokLine, 
+		int tokColumn, int type, wchar_t *tokdata, int toklen );
 	void flushImport( );
-	void importToken( int type, char *start, char *end );
-	void pass( int token, char *start, char *end );
+	void importToken( int type, wchar_t *start, wchar_t *end );
+	void pass( int token, wchar_t *start, wchar_t *end );
 	void pass();
 	void updateCol();
 	void startSection();
 	void endSection();
 	void do_scan();
 	bool active();
-	ostream &scan_error();
+	wostream &scan_error();
 
 	InputData &id;
-	const char *fileName;
-	istream &input;
+	const wchar_t *fileName;
+	wistream &input;
 	Parser *inclToParser;
-	char *inclSectionTarg;
+	wchar_t *inclSectionTarg;
 	int includeDepth;
 	bool importMachines;
 
@@ -97,20 +97,20 @@ struct Scanner
 	int cur_token;
 	static const int max_tokens = 32;
 	int token_data[max_tokens];
-	char *token_strings[max_tokens];
+	wchar_t *token_strings[max_tokens];
 	int token_lens[max_tokens];
 
 	/* For section processing. */
 	int cs;
-	char *word, *lit;
+	wchar_t *word, *lit;
 	int word_len, lit_len;
 
 	/* For character scanning. */
 	int line;
 	InputLoc sectionLoc;
-	char *ts, *te;
+	wchar_t *ts, *te;
 	int column;
-	char *lastnl;
+	wchar_t *lastnl;
 
 	/* Set by machine statements, these persist from section to section
 	 * allowing for unnamed sections. */

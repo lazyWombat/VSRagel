@@ -23,56 +23,56 @@
 #include "dotcodegen.h"
 #include "gendata.h"
 
-using std::istream;
-using std::ifstream;
-using std::ostream;
+using std::wistream;
+using std::wifstream;
+using std::wostream;
 using std::ios;
 using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
 /* Override this so that write statement processing is ignored */
-bool GraphvizDotGen::writeStatement( InputLoc &, int, char ** )
+bool GraphvizDotGen::writeStatement( InputLoc &, int, wchar_t ** )
 {
 	return false;
 }
 
-std::ostream &GraphvizDotGen::KEY( Key key )
+std::wostream &GraphvizDotGen::KEY( Key key )
 {
 	if ( displayPrintables && key.isPrintable() ) {
 		// Output values as characters, ensuring we escape the quote (") character
 		char cVal = (char) key.getVal();
 		switch ( cVal ) {
-			case '"': case '\\':
-				out << "'\\" << cVal << "'";
+			case L'"': case L'\\':
+				out << L"'\\" << cVal << L"'";
 				break;
-			case '\a':
-				out << "'\\\\a'";
+			case L'\a':
+				out << L"'\\\\a'";
 				break;
-			case '\b':
-				out << "'\\\\b'";
+			case L'\b':
+				out << L"'\\\\b'";
 				break;
-			case '\t':
-				out << "'\\\\t'";
+			case L'\t':
+				out << L"'\\\\t'";
 				break;
-			case '\n':
-				out << "'\\\\n'";
+			case L'\n':
+				out << L"'\\\\n'";
 				break;
-			case '\v':
-				out << "'\\\\v'";
+			case L'\v':
+				out << L"'\\\\v'";
 				break;
-			case '\f':
-				out << "'\\\\f'";
+			case L'\f':
+				out << L"'\\\\f'";
 				break;
-			case '\r':
-				out << "'\\\\r'";
+			case L'\r':
+				out << L"'\\\\r'";
 				break;
-			case ' ':
-				out << "SP";
+			case L' ':
+				out << L"SP";
 				break;
 			default:	
-				out << "'" << cVal << "'";
+				out << L"'" << cVal << L"'";
 				break;
 		}
 	}
@@ -86,7 +86,7 @@ std::ostream &GraphvizDotGen::KEY( Key key )
 	return out;
 }
 
-std::ostream &GraphvizDotGen::TRANS_ACTION( RedStateAp *fromState, RedTransAp *trans )
+std::wostream &GraphvizDotGen::TRANS_ACTION( RedStateAp *fromState, RedTransAp *trans )
 {
 	int n = 0;
 	RedAction *actions[3];
@@ -99,7 +99,7 @@ std::ostream &GraphvizDotGen::TRANS_ACTION( RedStateAp *fromState, RedTransAp *t
 		actions[n++] = trans->targ->toStateAction;
 
 	if ( n > 0 )
-		out << " / ";
+		out << L" / ";
 	
 	/* Loop the existing actions and write out what's there. */
 	for ( int a = 0; a < n; a++ ) {
@@ -107,29 +107,29 @@ std::ostream &GraphvizDotGen::TRANS_ACTION( RedStateAp *fromState, RedTransAp *t
 			GenAction *action = actIt->value;
 			out << action->nameOrLoc();
 			if ( a < n-1 || !actIt.last() )
-				out << ", ";
+				out << L", ";
 		}
 	}
 	return out;
 }
 
-std::ostream &GraphvizDotGen::ACTION( RedAction *action )
+std::wostream &GraphvizDotGen::ACTION( RedAction *action )
 {
 	/* The action. */
-	out << " / ";
+	out << L" / ";
 	for ( GenActionTable::Iter actIt = action->key.first(); actIt.lte(); actIt++ ) {
 		GenAction *action = actIt->value;
 		if ( action->name != 0 )
 			out << action->name;
 		else
-			out << action->loc.line << ":" << action->loc.col;
+			out << action->loc.line << L":" << action->loc.col;
 		if ( !actIt.last() )
-			out << ", ";
+			out << L", ";
 	}
 	return out;
 }
 
-std::ostream &GraphvizDotGen::ONCHAR( Key lowKey, Key highKey )
+std::wostream &GraphvizDotGen::ONCHAR( Key lowKey, Key highKey )
 {
 	GenCondSpace *condSpace;
 	if ( lowKey > keyOps->maxKey && (condSpace=findCondSpace(lowKey, highKey) ) ) {
@@ -141,26 +141,26 @@ std::ostream &GraphvizDotGen::ONCHAR( Key lowKey, Key highKey )
 			(highKey - condSpace->baseKey - keyOps->alphSize() * values.getVal());
 		KEY( lowKey );
 		if ( lowKey != highKey ) {
-			out << "..";
+			out << L"..";
 			KEY( highKey );
 		}
-		out << "(";
+		out << L"(";
 
 		for ( GenCondSet::Iter csi = condSpace->condSet; csi.lte(); csi++ ) {
 			bool set = values & (1 << csi.pos());
 			if ( !set )
-				out << "!";
+				out << L"!";
 			out << (*csi)->nameOrLoc();
 			if ( !csi.last() )
-				out << ", ";
+				out << L", ";
 		}
-		out << ")";
+		out << L")";
 	}
 	else {
 		/* Output the key. Possibly a range. */
 		KEY( lowKey );
 		if ( highKey != lowKey ) {
-			out << "..";
+			out << L"..";
 			KEY( highKey );
 		}
 	}
@@ -176,78 +176,78 @@ void GraphvizDotGen::writeTransList( RedStateAp *state )
 		 * emitting all the transitions on the same character. */
 		if ( stTransSet.insert( tel->value ) ) {
 			/* Write out the from and to states. */
-			out << "\t" << state->id << " -> ";
+			out << L"\t" << state->id << L" -> ";
 
 			if ( tel->value->targ == 0 )
-				out << "err_" << state->id;
+				out << L"err_" << state->id;
 			else
 				out << tel->value->targ->id;
 
 			/* Begin the label. */
-			out << " [ label = \""; 
+			out << L" [ label = \""; 
 			ONCHAR( tel->lowKey, tel->highKey );
 
 			/* Walk the transition list, finding the same. */
 			for ( RedTransList::Iter mtel = tel.next(); mtel.lte(); mtel++ ) {
 				if ( mtel->value == tel->value ) {
-					out << ", ";
+					out << L", ";
 					ONCHAR( mtel->lowKey, mtel->highKey );
 				}
 			}
 
 			/* Write the action and close the transition. */
 			TRANS_ACTION( state, tel->value );
-			out << "\" ];\n";
+			out << L"\" ];\n";
 		}
 	}
 
 	/* Write the default transition. */
 	if ( state->defTrans != 0 ) {
 		/* Write out the from and to states. */
-		out << "\t" << state->id << " -> ";
+		out << L"\t" << state->id << L" -> ";
 
 		if ( state->defTrans->targ == 0 )
-			out << "err_" << state->id;
+			out << L"err_" << state->id;
 		else
 			out << state->defTrans->targ->id;
 
 		/* Begin the label. */
-		out << " [ label = \"DEF"; 
+		out << L" [ label = \"DEF"; 
 
 		/* Write the action and close the transition. */
 		TRANS_ACTION( state, state->defTrans );
-		out << "\" ];\n";
+		out << L"\" ];\n";
 	}
 }
 
 void GraphvizDotGen::writeDotFile( )
 {
 	out << 
-		"digraph " << fsmName << " {\n"
-		"	rankdir=LR;\n";
+		L"digraph " << fsmName << L" {\n"
+		L"	rankdir=LR;\n";
 	
 	/* Define the psuedo states. Transitions will be done after the states
 	 * have been defined as either final or not final. */
-	out << "	node [ shape = point ];\n";
+	out << L"	node [ shape = point ];\n";
 
 	if ( redFsm->startState != 0 )
-		out << "	ENTRY;\n";
+		out << L"	ENTRY;\n";
 
 	/* Psuedo states for entry points in the entry map. */
 	for ( EntryIdVect::Iter en = entryPointIds; en.lte(); en++ ) {
 		RedStateAp *state = allStates + *en;
-		out << "	en_" << state->id << ";\n";
+		out << L"	en_" << state->id << L";\n";
 	}
 
 	/* Psuedo states for final states with eof actions. */
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->eofTrans != 0 && st->eofTrans->action != 0 )
-			out << "	eof_" << st->id << ";\n";
+			out << L"	eof_" << st->id << L";\n";
 		if ( st->eofAction != 0 )
-			out << "	eof_" << st->id << ";\n";
+			out << L"	eof_" << st->id << L";\n";
 	}
 
-	out << "	node [ shape = circle, height = 0.2 ];\n";
+	out << L"	node [ shape = circle, height = 0.2 ];\n";
 
 	/* Psuedo states for states whose default actions go to error. */
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
@@ -264,20 +264,20 @@ void GraphvizDotGen::writeDotFile( )
 		}
 
 		if ( needsErr )
-			out << "	err_" << st->id << " [ label=\"\"];\n";
+			out << L"	err_" << st->id << L" [ label=\"\"];\n";
 	}
 
 	/* Attributes common to all nodes, plus double circle for final states. */
-	out << "	node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
+	out << L"	node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
 
 	/* List Final states. */
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->isFinal )
-			out << "	" << st->id << ";\n";
+			out << L"	" << st->id << L";\n";
 	}
 
 	/* List transitions. */
-	out << "	node [ shape = circle ];\n";
+	out << L"	node [ shape = circle ];\n";
 
 	/* Walk the states. */
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
@@ -285,32 +285,32 @@ void GraphvizDotGen::writeDotFile( )
 
 	/* Transitions into the start state. */
 	if ( redFsm->startState != 0 ) 
-		out << "	ENTRY -> " << redFsm->startState->id << " [ label = \"IN\" ];\n";
+		out << L"	ENTRY -> " << redFsm->startState->id << L" [ label = \"IN\" ];\n";
 
 	/* Transitions into the entry points. */
 	for ( EntryIdVect::Iter en = entryPointIds; en.lte(); en++ ) {
 		RedStateAp *state = allStates + *en;
-		char *name = entryPointNames[en.pos()];
-		out << "	en_" << state->id << " -> " << state->id <<
-				" [ label = \"" << name << "\" ];\n";
+		wchar_t *name = entryPointNames[en.pos()];
+		out << L"	en_" << state->id << L" -> " << state->id <<
+				L" [ label = \"" << name << "\" ];\n";
 	}
 
 	/* Out action transitions. */
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->eofTrans != 0 && st->eofTrans->action != 0 ) {
-			out << "	" << st->id << " -> eof_" << 
-					st->id << " [ label = \"EOF"; 
-			ACTION( st->eofTrans->action ) << "\" ];\n";
+			out << L"	" << st->id << L" -> eof_" << 
+					st->id << L" [ label = \"EOF"; 
+			ACTION( st->eofTrans->action ) << L"\" ];\n";
 		}
 		if ( st->eofAction != 0 ) {
-			out << "	" << st->id << " -> eof_" << 
-					st->id << " [ label = \"EOF"; 
-			ACTION( st->eofAction ) << "\" ];\n";
+			out << L"	" << st->id << L" -> eof_" << 
+					st->id << L" [ label = \"EOF"; 
+			ACTION( st->eofAction ) << L"\" ];\n";
 		}
 	}
 
 	out <<
-		"}\n";
+		L"}\n";
 }
 
 void GraphvizDotGen::finishRagelDef()

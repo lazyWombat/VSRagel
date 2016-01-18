@@ -41,32 +41,32 @@ class GoGotoCodeGen
 	: public GoTablishCodeGen
 {
 public:
-	GoGotoCodeGen( ostream &out )
+	GoGotoCodeGen( wostream &out )
 		: GoTablishCodeGen(out) {}
 
 protected:
-	std::ostream &TO_STATE_ACTION_SWITCH( int level );
-	std::ostream &FROM_STATE_ACTION_SWITCH( int level );
-	std::ostream &EOF_ACTION_SWITCH( int level );
-	std::ostream &ACTION_SWITCH( int level );
-	std::ostream &STATE_GOTOS( int level );
-	std::ostream &TRANSITIONS();
-	std::ostream &EXEC_FUNCS();
-	std::ostream &FINISH_CASES();
+	std::wostream &TO_STATE_ACTION_SWITCH( int level );
+	std::wostream &FROM_STATE_ACTION_SWITCH( int level );
+	std::wostream &EOF_ACTION_SWITCH( int level );
+	std::wostream &ACTION_SWITCH( int level );
+	std::wostream &STATE_GOTOS( int level );
+	std::wostream &TRANSITIONS();
+	std::wostream &EXEC_FUNCS();
+	std::wostream &FINISH_CASES();
 
 	virtual unsigned int TO_STATE_ACTION( RedStateAp *state );
 	virtual unsigned int FROM_STATE_ACTION( RedStateAp *state );
 	virtual unsigned int EOF_ACTION( RedStateAp *state );
 
-	std::ostream &TO_STATE_ACTIONS();
-	std::ostream &FROM_STATE_ACTIONS();
-	std::ostream &EOF_ACTIONS();
+	std::wostream &TO_STATE_ACTIONS();
+	std::wostream &FROM_STATE_ACTIONS();
+	std::wostream &EOF_ACTIONS();
 
 	void COND_TRANSLATE( GenStateCond *stateCond, int level );
 	void emitCondBSearch( RedStateAp *state, int level, int low, int high );
 	void STATE_CONDS( RedStateAp *state, bool genDefault );
 
-	virtual std::ostream &TRANS_GOTO( RedTransAp *trans, int level );
+	virtual std::wostream &TRANS_GOTO( RedTransAp *trans, int level );
 	virtual int TRANS_NR( RedTransAp *trans );
 
 	void emitSingleSwitch( RedStateAp *state, int level );

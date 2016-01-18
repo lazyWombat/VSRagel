@@ -36,17 +36,17 @@ struct CodeGenData;
 class FFlatCodeGen : public FlatCodeGen
 {
 protected:
-	FFlatCodeGen( ostream &out ) : FsmCodeGen(out), FlatCodeGen(out) {}
+	FFlatCodeGen( wostream &out ) : FsmCodeGen(out), FlatCodeGen(out) {}
 
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &EOF_ACTION_SWITCH();
-	std::ostream &ACTION_SWITCH();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &EOF_ACTION_SWITCH();
+	std::wostream &ACTION_SWITCH();
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 
 	virtual void writeData();
 	virtual void writeExec();
@@ -58,7 +58,7 @@ protected:
 struct CFFlatCodeGen
 	: public FFlatCodeGen, public CCodeGen
 {
-	CFFlatCodeGen( ostream &out ) : 
+	CFFlatCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FFlatCodeGen(out), CCodeGen(out) {}
 };
 
@@ -68,7 +68,7 @@ struct CFFlatCodeGen
 struct DFFlatCodeGen
 	: public FFlatCodeGen, public DCodeGen
 {
-	DFFlatCodeGen( ostream &out ) : 
+	DFFlatCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FFlatCodeGen(out), DCodeGen(out) {}
 };
 
@@ -78,7 +78,7 @@ struct DFFlatCodeGen
 struct D2FFlatCodeGen
 	: public FFlatCodeGen, public D2CodeGen
 {
-	D2FFlatCodeGen( ostream &out ) : 
+	D2FFlatCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FFlatCodeGen(out), D2CodeGen(out) {}
 };
 

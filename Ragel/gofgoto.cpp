@@ -29,19 +29,19 @@
 
 using std::endl;
 
-std::ostream &GoFGotoCodeGen::EXEC_ACTIONS()
+std::wostream &GoFGotoCodeGen::EXEC_ACTIONS()
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
 			/* 	We are at the start of a glob, write the case. */
-			out << "f" << redAct->actListId << ":" << endl;
+			out << L"f" << redAct->actListId << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
 				ACTION( out, item->value, 0, false, false );
 
-			out << TABS(1) << "goto _again" << endl;
+			out << TABS(1) << L"goto _again" << endl;
 		}
 	}
 	return out;
@@ -49,13 +49,13 @@ std::ostream &GoFGotoCodeGen::EXEC_ACTIONS()
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &GoFGotoCodeGen::TO_STATE_ACTION_SWITCH( int level )
+std::wostream &GoFGotoCodeGen::TO_STATE_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numToStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -69,13 +69,13 @@ std::ostream &GoFGotoCodeGen::TO_STATE_ACTION_SWITCH( int level )
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &GoFGotoCodeGen::FROM_STATE_ACTION_SWITCH( int level )
+std::wostream &GoFGotoCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numFromStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -87,13 +87,13 @@ std::ostream &GoFGotoCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 	return out;
 }
 
-std::ostream &GoFGotoCodeGen::EOF_ACTION_SWITCH( int level )
+std::wostream &GoFGotoCodeGen::EOF_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numEofRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -106,16 +106,16 @@ std::ostream &GoFGotoCodeGen::EOF_ACTION_SWITCH( int level )
 }
 
 
-std::ostream &GoFGotoCodeGen::FINISH_CASES()
+std::wostream &GoFGotoCodeGen::FINISH_CASES()
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* States that are final and have an out action need a case. */
 		if ( st->eofAction != 0 ) {
 			/* Write the case label. */
-			out << TABS(2) << "case " << st->id << ":" << endl;
+			out << TABS(2) << L"case " << st->id << L":" << endl;
 
 			/* Jump to the func. */
-			out << TABS(3) << "goto f" << st->eofAction->actListId << endl;
+			out << TABS(3) << L"goto f" << st->eofAction->actListId << endl;
 		}
 	}
 
@@ -177,46 +177,46 @@ void GoFGotoCodeGen::writeExec()
 	testEofUsed = false;
 	outLabelUsed = false;
 
-	out << "	{" << endl;
+	out << L"	{" << endl;
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	var _ps " << INT() << " = 0" << endl;
+		out << L"	var _ps " << INT() << L" = 0" << endl;
 
 	if ( redFsm->anyConditions() )
-		out << "	var _widec " << WIDE_ALPH_TYPE() << endl;
+		out << L"	var _widec " << WIDE_ALPH_TYPE() << endl;
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out <<
-			"	if " << P() << " == " << PE() << " {" << endl <<
-			"		goto _test_eof" << endl <<
-			"	}" << endl;
+			L"	if " << P() << L" == " << PE() << L" {" << endl <<
+			L"		goto _test_eof" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
-	out << "_resume:" << endl;
+	out << L"_resume:" << endl;
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	switch " << FSA() << "[" << vCS() << "] {" << endl;
+			L"	switch " << FSA() << L"[" << vCS() << L"] {" << endl;
 			FROM_STATE_ACTION_SWITCH(1);
 			out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	out <<
-		"	switch " << vCS() << " {" << endl;
+		L"	switch " << vCS() << L" {" << endl;
 		STATE_GOTOS(1);
 		out <<
-		"	}" << endl <<
+		L"	}" << endl <<
 		endl;
 		TRANSITIONS() <<
 		endl;
@@ -224,74 +224,74 @@ void GoFGotoCodeGen::writeExec()
 	if ( redFsm->anyRegActions() )
 		EXEC_ACTIONS() << endl;
 
-	out << "_again:" << endl;
+	out << L"_again:" << endl;
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	switch " << TSA() << "[" << vCS() << "] {" << endl;
+			L"	switch " << TSA() << L"[" << vCS() << L"] {" << endl;
 			TO_STATE_ACTION_SWITCH(1);
 			out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( !noEnd ) {
 		out <<
-			"	if " << P() << "++; " << P() << " != " << PE() << " {" << endl <<
-			"		goto _resume" << endl <<
-			"	}" << endl;
+			L"	if " << P() << L"++; " << P() << L" != " << PE() << L" {" << endl <<
+			L"		goto _resume" << endl <<
+			L"	}" << endl;
 	}
 	else {
 		out <<
-			"	" << P() << "++" << endl <<
-			"	goto _resume" << endl;
+			L"	" << P() << L"++" << endl <<
+			L"	goto _resume" << endl;
 	}
 
 	if ( testEofUsed )
-		out << "	_test_eof: {}" << endl;
+		out << L"	_test_eof: {}" << endl;
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if " << P() << " == " << vEOF() << " {" << endl;
+			L"	if " << P() << L" == " << vEOF() << L" {" << endl;
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"		switch " << vCS() << " {" << endl;
+				L"		switch " << vCS() << L" {" << endl;
 
 			for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 				if ( st->eofTrans != 0 )
 					out <<
-						"		case " << st->id << ":" << endl <<
-						"			goto tr" << st->eofTrans->id << endl;
+						L"		case " << st->id << L":" << endl <<
+						L"			goto tr" << st->eofTrans->id << endl;
 			}
 
 			out <<
-				"		}" << endl;
+				L"		}" << endl;
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"		switch " << EA() << "[" << vCS() << "] {" << endl;
+				L"		switch " << EA() << L"[" << vCS() << L"] {" << endl;
 				EOF_ACTION_SWITCH(2);
 				out <<
-				"		}" << endl;
+				L"		}" << endl;
 		}
 
 		out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	if ( outLabelUsed )
-		out << "	_out: {}" << endl;
+		out << L"	_out: {}" << endl;
 
-	out << "	}" << endl;
+	out << L"	}" << endl;
 }

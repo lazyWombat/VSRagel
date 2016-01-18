@@ -31,7 +31,7 @@ class GoTabCodeGen
     : public GoTablishCodeGen
 {
 public:
-	GoTabCodeGen( ostream &out )
+	GoTabCodeGen( wostream &out )
         : GoTablishCodeGen(out) {}
 
     virtual ~GoTabCodeGen() { }
@@ -39,37 +39,37 @@ public:
     virtual void writeExec();
 
 protected:
-    std::ostream &TO_STATE_ACTION_SWITCH( int level );
-    std::ostream &FROM_STATE_ACTION_SWITCH( int level );
-    std::ostream &EOF_ACTION_SWITCH( int level );
-    std::ostream &ACTION_SWITCH( int level );
+    std::wostream &TO_STATE_ACTION_SWITCH( int level );
+    std::wostream &FROM_STATE_ACTION_SWITCH( int level );
+    std::wostream &EOF_ACTION_SWITCH( int level );
+    std::wostream &ACTION_SWITCH( int level );
 
-    std::ostream &COND_KEYS();
-    std::ostream &COND_SPACES();
-    std::ostream &KEYS();
-    std::ostream &INDICIES();
-    std::ostream &COND_OFFSETS();
-    std::ostream &KEY_OFFSETS();
-    std::ostream &INDEX_OFFSETS();
-    std::ostream &COND_LENS();
-    std::ostream &SINGLE_LENS();
-    std::ostream &RANGE_LENS();
-    std::ostream &TO_STATE_ACTIONS();
-    std::ostream &FROM_STATE_ACTIONS();
-    std::ostream &EOF_ACTIONS();
-    std::ostream &EOF_TRANS();
-    std::ostream &TRANS_TARGS();
-    std::ostream &TRANS_ACTIONS();
-    std::ostream &TRANS_TARGS_WI();
-    std::ostream &TRANS_ACTIONS_WI();
+    std::wostream &COND_KEYS();
+    std::wostream &COND_SPACES();
+    std::wostream &KEYS();
+    std::wostream &INDICIES();
+    std::wostream &COND_OFFSETS();
+    std::wostream &KEY_OFFSETS();
+    std::wostream &INDEX_OFFSETS();
+    std::wostream &COND_LENS();
+    std::wostream &SINGLE_LENS();
+    std::wostream &RANGE_LENS();
+    std::wostream &TO_STATE_ACTIONS();
+    std::wostream &FROM_STATE_ACTIONS();
+    std::wostream &EOF_ACTIONS();
+    std::wostream &EOF_TRANS();
+    std::wostream &TRANS_TARGS();
+    std::wostream &TRANS_ACTIONS();
+    std::wostream &TRANS_TARGS_WI();
+    std::wostream &TRANS_ACTIONS_WI();
     void LOCATE_TRANS();
 
     void COND_TRANSLATE();
 
-    virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-    virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-    virtual std::ostream &EOF_ACTION( RedStateAp *state );
-    virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+    virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+    virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+    virtual std::wostream &EOF_ACTION( RedStateAp *state );
+    virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
     virtual void calcIndexSize();
 };
 

@@ -37,19 +37,19 @@ class GoFFlatCodeGen
 	: public GoFlatCodeGen
 {
 public:
-	GoFFlatCodeGen( ostream &out )
+	GoFFlatCodeGen( wostream &out )
 		: GoFlatCodeGen(out) {}
 
 protected:
-	std::ostream &TO_STATE_ACTION_SWITCH( int level );
-	std::ostream &FROM_STATE_ACTION_SWITCH( int level );
-	std::ostream &EOF_ACTION_SWITCH( int level );
-	std::ostream &ACTION_SWITCH( int level );
+	std::wostream &TO_STATE_ACTION_SWITCH( int level );
+	std::wostream &FROM_STATE_ACTION_SWITCH( int level );
+	std::wostream &EOF_ACTION_SWITCH( int level );
+	std::wostream &ACTION_SWITCH( int level );
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 
 	virtual void writeData();
 	virtual void writeExec();

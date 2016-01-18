@@ -30,52 +30,55 @@
 #include <string>
 #include <assert.h>
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
 
-using std::istream;
-using std::ifstream;
-using std::ostream;
+using std::wistream;
+using std::wifstream;
+using std::wostream;
 using std::ios;
 using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
-void csharpLineDirective( ostream &out, const char *fileName, int line )
+void csharpLineDirective( wostream &out, const wchar_t *fileName, int line )
 {
+	if (fileName == NULL)
+	{
+		return;
+	}
 	if ( noLineDirectives )
-		out << "/* ";
-
+		out << L"/* ";
 	/* Write the preprocessor line info for to the input file. */
-	out << "#line " << line  << " \"";
-	for ( const char *pc = fileName; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			out << "\\\\";
+	out << L"#line " << line  << L" \"";
+	for ( const wchar_t *pc = fileName; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			out << L"\\\\";
 		else
 			out << *pc;
 	}
-	out << '"';
+	out << L'"';
 
 	if ( noLineDirectives )
-		out << " */";
+		out << L" */";
 
-	out << '\n';
+	out << L'\n';
 }
 
-void CSharpFsmCodeGen::genLineDirective( ostream &out )
+void CSharpFsmCodeGen::genLineDirective( wostream &out )
 {
-	std::streambuf *sbuf = out.rdbuf();
+	std::wstreambuf *sbuf = out.rdbuf();
 	output_filter *filter = static_cast<output_filter*>(sbuf);
 	csharpLineDirective( out, filter->fileName, filter->line + 1 );
 }
 
 
 /* Init code gen with in parameters. */
-CSharpFsmCodeGen::CSharpFsmCodeGen( ostream &out )
+CSharpFsmCodeGen::CSharpFsmCodeGen( wostream &out )
 :
 	CodeGenData(out)
 {
@@ -89,12 +92,12 @@ unsigned int CSharpFsmCodeGen::arrayTypeSize( unsigned long maxVal )
 	return arrayType->size;
 }
 
-string CSharpFsmCodeGen::ARRAY_TYPE( unsigned long maxVal )
+wstring CSharpFsmCodeGen::ARRAY_TYPE( unsigned long maxVal )
 {
 	return ARRAY_TYPE( maxVal, false );
 }
 
-string CSharpFsmCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
+wstring CSharpFsmCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
 {
 	long long maxValLL = (long long) maxVal;
 	HostType *arrayType;
@@ -104,336 +107,336 @@ string CSharpFsmCodeGen::ARRAY_TYPE( unsigned long maxVal, bool forceSigned )
 		arrayType = keyOps->typeSubsumes( maxValLL );
 	assert( arrayType != 0 );
 
-	string ret = arrayType->data1;
+	wstring ret = arrayType->data1;
 	if ( arrayType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += arrayType->data2;
 	}
 	return ret;
 }
 
 /* Write out the fsm name. */
-string CSharpFsmCodeGen::FSM_NAME()
+wstring CSharpFsmCodeGen::FSM_NAME()
 {
 	return fsmName;
 }
 
 /* Emit the offset of the start state as a decimal integer. */
-string CSharpFsmCodeGen::START_STATE_ID()
+wstring CSharpFsmCodeGen::START_STATE_ID()
 {
-	ostringstream ret;
+	wostringstream ret;
 	ret << redFsm->startState->id;
 	return ret.str();
 };
 
 /* Write out the array of actions. */
-std::ostream &CSharpFsmCodeGen::ACTIONS_ARRAY()
+std::wostream &CSharpFsmCodeGen::ACTIONS_ARRAY()
 {
-	out << "\t0, ";
+	out << L"\t0, ";
 	int totalActions = 1;
 	for ( GenActionTableMap::Iter act = redFsm->actionMap; act.lte(); act++ ) {
 		/* Write out the length, which will never be the last character. */
-		out << act->key.length() << ", ";
+		out << act->key.length() << L", ";
 		/* Put in a line break every 8 */
 		if ( totalActions++ % 8 == 7 )
-			out << "\n\t";
+			out << L"\n\t";
 
 		for ( GenActionTable::Iter item = act->key; item.lte(); item++ ) {
 			out << item->value->actionId;
 			if ( ! (act.last() && item.last()) )
-				out << ", ";
+				out << L", ";
 
 			/* Put in a line break every 8 */
 			if ( totalActions++ % 8 == 7 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
 
-string CSharpFsmCodeGen::ACCESS()
+wstring CSharpFsmCodeGen::ACCESS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( accessExpr != 0 )
 		INLINE_LIST( ret, accessExpr, 0, false );
 	return ret.str();
 }
 
 
-string CSharpFsmCodeGen::P()
+wstring CSharpFsmCodeGen::P()
 { 
-	ostringstream ret;
+	wostringstream ret;
 	if ( pExpr == 0 )
-		ret << "p";
+		ret << L"p";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, pExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::PE()
+wstring CSharpFsmCodeGen::PE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( peExpr == 0 )
-		ret << "pe";
+		ret << L"pe";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, peExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::vEOF()
+wstring CSharpFsmCodeGen::vEOF()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( eofExpr == 0 )
-		ret << "eof";
+		ret << L"eof";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, eofExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::vCS()
+wstring CSharpFsmCodeGen::vCS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( csExpr == 0 )
-		ret << ACCESS() << "cs";
+		ret << ACCESS() << L"cs";
 	else {
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, csExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::TOP()
+wstring CSharpFsmCodeGen::TOP()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( topExpr == 0 )
-		ret << ACCESS() + "top";
+		ret << ACCESS() + L"top";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, topExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::STACK()
+wstring CSharpFsmCodeGen::STACK()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( stackExpr == 0 )
-		ret << ACCESS() + "stack";
+		ret << ACCESS() + L"stack";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, stackExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::ACT()
+wstring CSharpFsmCodeGen::ACT()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( actExpr == 0 )
-		ret << ACCESS() + "act";
+		ret << ACCESS() + L"act";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, actExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::TOKSTART()
+wstring CSharpFsmCodeGen::TOKSTART()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokstartExpr == 0 )
-		ret << ACCESS() + "ts";
+		ret << ACCESS() + L"ts";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, tokstartExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::TOKEND()
+wstring CSharpFsmCodeGen::TOKEND()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokendExpr == 0 )
-		ret << ACCESS() + "te";
+		ret << ACCESS() + L"te";
 	else {
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, tokendExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::GET_WIDE_KEY()
+wstring CSharpFsmCodeGen::GET_WIDE_KEY()
 {
 	if ( redFsm->anyConditions() ) 
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string CSharpFsmCodeGen::GET_WIDE_KEY( RedStateAp *state )
+wstring CSharpFsmCodeGen::GET_WIDE_KEY( RedStateAp *state )
 {
 	if ( state->stateCondList.length() > 0 )
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string CSharpFsmCodeGen::GET_KEY()
+wstring CSharpFsmCodeGen::GET_KEY()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( getKeyExpr != 0 ) { 
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, getKeyExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	else {
 		/* Expression for retrieving the key, use simple dereference. */
-		ret << "(*" << P() << ")";
+		ret << L"(*" << P() << L")";
 	}
 	return ret.str();
 }
 
 /* Write out level number of tabs. Makes the nested binary search nice
  * looking. */
-string CSharpFsmCodeGen::TABS( int level )
+wstring CSharpFsmCodeGen::TABS( int level )
 {
-	string result;
+	wstring result;
 	while ( level-- > 0 )
-		result += "\t";
+		result += L"\t";
 	return result;
 }
 
 /* Write out a key from the fsm code gen. Depends on wether or not the key is
  * signed. */
-string CSharpFsmCodeGen::KEY( Key key )
+wstring CSharpFsmCodeGen::KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( keyOps->isSigned || !hostLang->explicitUnsigned )
 		ret << key.getVal();
 	else
-		ret << (unsigned long) key.getVal() << 'u';
+		ret << (unsigned long) key.getVal() << L'u';
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::ALPHA_KEY( Key key )
+wstring CSharpFsmCodeGen::ALPHA_KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
 	if (key.getVal() > 0xFFFF) {
 		ret << key.getVal();
 	} else {
 		if ( keyOps->alphType->isChar )
-			ret << "'\\u" << std::hex << std::setw(4) << std::setfill('0') << key.getVal() << "'";
+			ret << L"'\\u" << std::hex << std::setw(4) << std::setfill(L'0') << key.getVal() << L"'";
 		else
 			ret << key.getVal();
 	}
-	//ret << "(char) " << key.getVal();
+	//ret << L"(char) " << key.getVal();
 	return ret.str();
 }
 
-void CSharpFsmCodeGen::EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish )
+void CSharpFsmCodeGen::EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish )
 {
 	/* The parser gives fexec two children. The double brackets are for D
 	 * code. If the inline list is a single word it will get interpreted as a
 	 * C-style cast by the D compiler. */
-	ret << "{" << P() << " = ((";
+	ret << L"{" << P() << L" = ((";
 	INLINE_LIST( ret, item->children, targState, inFinish );
-	ret << "))-1;}";
+	ret << L"))-1;}";
 }
 
-void CSharpFsmCodeGen::LM_SWITCH( ostream &ret, GenInlineItem *item, 
+void CSharpFsmCodeGen::LM_SWITCH( wostream &ret, GenInlineItem *item, 
 		int targState, int inFinish )
 {
 	ret << 
-		"	switch( " << ACT() << " ) {\n";
+		L"	switch( " << ACT() << L" ) {\n";
 
 	for ( GenInlineList::Iter lma = *item->children; lma.lte(); lma++ ) {
 		/* Write the case label, the action and the case break. */
 		if ( lma->lmId < 0 )
-			ret << "	default:\n";
+			ret << L"	default:\n";
 		else
-			ret << "	case " << lma->lmId << ":\n";
+			ret << L"	case " << lma->lmId << L":\n";
 
 		/* Write the block and close it off. */
-		ret << "	{";
+		ret << L"	{";
 		INLINE_LIST( ret, lma->children, targState, inFinish );
-		ret << "}\n";
+		ret << L"}\n";
 
-		ret << "	break;\n";
+		ret << L"	break;\n";
 	}
 
 	ret << 
-		"	}\n"
-		"\t";
+		L"	}\n"
+		L"\t";
 }
 
-void CSharpFsmCodeGen::SET_ACT( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::SET_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = " << item->lmId << ";";
+	ret << ACT() << L" = " << item->lmId << L";";
 }
 
-void CSharpFsmCodeGen::SET_TOKEND( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::SET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	/* The tokend action sets tokend. */
-	ret << TOKEND() << " = " << P();
+	ret << TOKEND() << L" = " << P();
 	if ( item->offset != 0 ) 
-		out << "+" << item->offset;
-	out << ";";
+		out << L"+" << item->offset;
+	out << L";";
 }
 
-void CSharpFsmCodeGen::GET_TOKEND( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::GET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	ret << TOKEND();
 }
 
-void CSharpFsmCodeGen::INIT_TOKSTART( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::INIT_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << NULL_ITEM() << ";";
+	ret << TOKSTART() << L" = " << NULL_ITEM() << L";";
 }
 
-void CSharpFsmCodeGen::INIT_ACT( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::INIT_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = 0;";
+	ret << ACT() << L" = 0;";
 }
 
-void CSharpFsmCodeGen::SET_TOKSTART( ostream &ret, GenInlineItem *item )
+void CSharpFsmCodeGen::SET_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << P() << ";";
+	ret << TOKSTART() << L" = " << P() << L";";
 }
 
-void CSharpFsmCodeGen::SUB_ACTION( ostream &ret, GenInlineItem *item, 
+void CSharpFsmCodeGen::SUB_ACTION( wostream &ret, GenInlineItem *item, 
 		int targState, bool inFinish )
 {
 	if ( item->children->length() > 0 ) {
 		/* Write the block and close it off. */
-		ret << "{";
+		ret << L"{";
 		INLINE_LIST( ret, item->children, targState, inFinish );
-		ret << "}";
+		ret << L"}";
 	}
 }
 
 
 /* Write out an inline tree structure. Walks the list and possibly calls out
  * to virtual functions than handle language specific items in the tree. */
-void CSharpFsmCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList, 
+void CSharpFsmCodeGen::INLINE_LIST( wostream &ret, GenInlineList *inlineList, 
 		int targState, bool inFinish )
 {
 	for ( GenInlineList::Iter item = *inlineList; item.lte(); item++ ) {
@@ -460,7 +463,7 @@ void CSharpFsmCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 			ret << GET_KEY();
 			break;
 		case GenInlineItem::Hold:
-			ret << P() << "--;";
+			ret << P() << L"--;";
 			break;
 		case GenInlineItem::Exec:
 			EXEC( ret, item, targState, inFinish );
@@ -514,49 +517,49 @@ void CSharpFsmCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 	}
 }
 /* Write out paths in line directives. Escapes any special characters. */
-string CSharpFsmCodeGen::LDIR_PATH( char *path )
+wstring CSharpFsmCodeGen::LDIR_PATH( wchar_t *path )
 {
-	ostringstream ret;
-	for ( char *pc = path; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			ret << "\\\\";
+	wostringstream ret;
+	for ( wchar_t *pc = path; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			ret << L"\\\\";
 		else
 			ret << *pc;
 	}
 	return ret.str();
 }
 
-void CSharpFsmCodeGen::ACTION( ostream &ret, GenAction *action, int targState, bool inFinish )
+void CSharpFsmCodeGen::ACTION( wostream &ret, GenAction *action, int targState, bool inFinish )
 {
 	/* Write the preprocessor line info for going into the source file. */
 	csharpLineDirective( ret, action->loc.fileName, action->loc.line );
 
 	/* Write the block and close it off. */
-	ret << "\t{";
+	ret << L"\t{";
 	INLINE_LIST( ret, action->inlineList, targState, inFinish );
-	ret << "}\n";
+	ret << L"}\n";
 }
 
-void CSharpFsmCodeGen::CONDITION( ostream &ret, GenAction *condition )
+void CSharpFsmCodeGen::CONDITION( wostream &ret, GenAction *condition )
 {
-	ret << "\n";
+	ret << L"\n";
 	csharpLineDirective( ret, condition->loc.fileName, condition->loc.line );
 	INLINE_LIST( ret, condition->inlineList, 0, false );
 }
 
-string CSharpFsmCodeGen::ERROR_STATE()
+wstring CSharpFsmCodeGen::ERROR_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->errState != 0 )
 		ret << redFsm->errState->id;
 	else
-		ret << "-1";
+		ret << L"-1";
 	return ret.str();
 }
 
-string CSharpFsmCodeGen::FIRST_FINAL_STATE()
+wstring CSharpFsmCodeGen::FIRST_FINAL_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->firstFinState != 0 )
 		ret << redFsm->firstFinState->id;
 	else
@@ -566,46 +569,46 @@ string CSharpFsmCodeGen::FIRST_FINAL_STATE()
 
 void CSharpFsmCodeGen::writeInit()
 {
-	out << "	{\n";
+	out << L"	{\n";
 
 	if ( !noCS )
-		out << "\t" << vCS() << " = " << START() << ";\n";
+		out << L"\t" << vCS() << L" = " << START() << L";\n";
 	
 	/* If there are any calls, then the stack top needs initialization. */
 	if ( redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "\t" << TOP() << " = 0;\n";
+		out << L"\t" << TOP() << L" = 0;\n";
 
 	if ( hasLongestMatch ) {
 		out << 
-			"	" << TOKSTART() << " = " << NULL_ITEM() << ";\n"
-			"	" << TOKEND() << " = " << NULL_ITEM() << ";\n"
-			"	" << ACT() << " = 0;\n";
+			L"	" << TOKSTART() << L" = " << NULL_ITEM() << L";\n"
+			L"	" << TOKEND() << L" = " << NULL_ITEM() << L";\n"
+			L"	" << ACT() << L" = 0;\n";
 	}
-	out << "	}\n";
+	out << L"	}\n";
 }
 
-string CSharpFsmCodeGen::DATA_PREFIX()
+wstring CSharpFsmCodeGen::DATA_PREFIX()
 {
 	if ( !noPrefix )
-		return FSM_NAME() + "_";
-	return "";
+		return FSM_NAME() + L"_";
+	return L"";
 }
 
 /* Emit the alphabet data type. */
-string CSharpFsmCodeGen::ALPH_TYPE()
+wstring CSharpFsmCodeGen::ALPH_TYPE()
 {
-	string ret = keyOps->alphType->data1;
+	wstring ret = keyOps->alphType->data1;
 	if ( keyOps->alphType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += + keyOps->alphType->data2;
 	}
 	return ret;
 }
 
 /* Emit the alphabet data type. */
-string CSharpFsmCodeGen::WIDE_ALPH_TYPE()
+wstring CSharpFsmCodeGen::WIDE_ALPH_TYPE()
 {
-	string ret;
+	wstring ret;
 	if ( redFsm->maxKey <= keyOps->maxKey )
 		ret = ALPH_TYPE();
 	else {
@@ -615,7 +618,7 @@ string CSharpFsmCodeGen::WIDE_ALPH_TYPE()
 
 		ret = wideType->data1;
 		if ( wideType->data2 != 0 ) {
-			ret += " ";
+			ret += L" ";
 			ret += wideType->data2;
 		}
 	}
@@ -625,22 +628,22 @@ string CSharpFsmCodeGen::WIDE_ALPH_TYPE()
 void CSharpFsmCodeGen::STATE_IDS()
 {
 	if ( redFsm->startState != 0 )
-		STATIC_VAR( "int", START() ) << " = " << START_STATE_ID() << ";\n";
+		STATIC_VAR( L"int", START() ) << L" = " << START_STATE_ID() << L";\n";
 
 	if ( !noFinal )
-		STATIC_VAR( "int" , FIRST_FINAL() ) << " = " << FIRST_FINAL_STATE() << ";\n";
+		STATIC_VAR( L"int" , FIRST_FINAL() ) << L" = " << FIRST_FINAL_STATE() << L";\n";
 
 	if ( !noError )
-		STATIC_VAR( "int", ERROR() ) << " = " << ERROR_STATE() << ";\n";
+		STATIC_VAR( L"int", ERROR() ) << L" = " << ERROR_STATE() << L";\n";
 
-	out << "\n";
+	out << L"\n";
 
 	if ( entryPointNames.length() > 0 ) {
 		for ( EntryNameVect::Iter en = entryPointNames; en.lte(); en++ ) {
-			STATIC_VAR( "int", DATA_PREFIX() + "en_" + *en ) << 
-					" = " << entryPointIds[en.pos()] << ";\n";
+			STATIC_VAR( L"int", DATA_PREFIX() + L"en_" + *en ) << 
+					L" = " << entryPointIds[en.pos()] << L";\n";
 		}
-		out << "\n";
+		out << L"\n";
 	}
 }
 
@@ -663,100 +666,100 @@ void CSharpFsmCodeGen::writeError()
 /*
  * C# Specific
  */
-string CSharpCodeGen::GET_KEY()
+wstring CSharpCodeGen::GET_KEY()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( getKeyExpr != 0 ) { 
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, getKeyExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	else {
 		/* Expression for retrieving the key, use simple dereference. */
 		if ( dataExpr == 0 )
-			ret << "data";
+			ret << L"data";
 		else
 			INLINE_LIST( ret, dataExpr, 0, false );
 
-		ret << "[" << P() << "]";
+		ret << L"[" << P() << L"]";
 	}
 	return ret.str();
 }
-string CSharpCodeGen::NULL_ITEM()
+wstring CSharpCodeGen::NULL_ITEM()
 {
-	return "-1";
+	return L"-1";
 }
 
-string CSharpCodeGen::POINTER()
+wstring CSharpCodeGen::POINTER()
 {
 	// XXX C# has no pointers
 	// multiple items seperated by commas can also be pointer types.
-	return " ";
+	return L" ";
 }
 
-string CSharpCodeGen::PTR_CONST()
+wstring CSharpCodeGen::PTR_CONST()
 {
-	return "";
+	return L"";
 }
 
-std::ostream &CSharpCodeGen::OPEN_ARRAY( string type, string name )
+std::wostream &CSharpCodeGen::OPEN_ARRAY( wstring type, wstring name )
 {
-	out << "static readonly " << type << "[] " << name << " =  ";
+	out << L"static readonly " << type << L"[] " << name << L" =  ";
 	/*
-	if (type == "char")
-		out << "Encoding.ASCII.Get";
+	if (type == L"char")
+		out << L"Encoding.ASCII.Get";
 	else */
-		out << "new " << type << " [] {\n";
+		out << L"new " << type << L" [] {\n";
 	return out;
 }
 
-std::ostream &CSharpCodeGen::CLOSE_ARRAY()
+std::wostream &CSharpCodeGen::CLOSE_ARRAY()
 {
-	return out << "};\n";
+	return out << L"};\n";
 }
 
-std::ostream &CSharpCodeGen::STATIC_VAR( string type, string name )
+std::wostream &CSharpCodeGen::STATIC_VAR( wstring type, wstring name )
 {
-	out << "const " << type << " " << name;
+	out << L"const " << type << L" " << name;
 	return out;
 }
 
-string CSharpCodeGen::ARR_OFF( string ptr, string offset )
+wstring CSharpCodeGen::ARR_OFF( wstring ptr, wstring offset )
 {
 	// XXX C# can't do pointer arithmetic
-	return "&" + ptr + "[" + offset + "]";
+	return L"&" + ptr + L"[" + offset + L"]";
 }
 
-string CSharpCodeGen::CAST( string type )
+wstring CSharpCodeGen::CAST( wstring type )
 {
-	return "(" + type + ")";
+	return L"(" + type + L")";
 }
 
-string CSharpCodeGen::UINT( )
+wstring CSharpCodeGen::UINT( )
 {
-	return "uint";
+	return L"uint";
 }
 
-std::ostream &CSharpCodeGen::SWITCH_DEFAULT()
+std::wostream &CSharpCodeGen::SWITCH_DEFAULT()
 {
-	out << "		default: break;\n";
+	out << L"		default: break;\n";
 	return out;
 }
 
-string CSharpCodeGen::CTRL_FLOW()
+wstring CSharpCodeGen::CTRL_FLOW()
 {
-	return "if (true) ";
+	return L"if (true) ";
 }
 
 void CSharpCodeGen::writeExports()
 {
 	if ( exportList.length() > 0 ) {
 		for ( ExportList::Iter ex = exportList; ex.lte(); ex++ ) {
-			out << "const " << ALPH_TYPE() << " " << DATA_PREFIX() << 
-					"ex_" << ex->name << " = " << KEY(ex->key) << ";\n";
+			out << L"const " << ALPH_TYPE() << L" " << DATA_PREFIX() << 
+					L"ex_" << ex->name << L" = " << KEY(ex->key) << L";\n";
 		}
-		out << "\n";
+		out << L"\n";
 	}
 }
 
@@ -808,17 +811,17 @@ void CSharpFsmCodeGen::finishRagelDef()
 	calcIndexSize();
 }
 
-ostream &CSharpFsmCodeGen::source_warning( const InputLoc &loc )
+wostream &CSharpFsmCodeGen::source_warning( const InputLoc &loc )
 {
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": warning: ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return wcerr;
 }
 
-ostream &CSharpFsmCodeGen::source_error( const InputLoc &loc )
+wostream &CSharpFsmCodeGen::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return wcerr;
 }
 

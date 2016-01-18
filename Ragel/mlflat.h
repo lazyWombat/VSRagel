@@ -39,53 +39,53 @@
 class OCamlFlatCodeGen : public OCamlCodeGen
 {
 public:
-	OCamlFlatCodeGen( ostream &out ) : OCamlCodeGen(out) {}
+	OCamlFlatCodeGen( wostream &out ) : OCamlCodeGen(out) {}
 	virtual ~OCamlFlatCodeGen() { }
 
 protected:
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &EOF_ACTION_SWITCH();
-	std::ostream &ACTION_SWITCH();
-	std::ostream &KEYS();
-	std::ostream &INDICIES();
-	std::ostream &FLAT_INDEX_OFFSET();
-	std::ostream &KEY_SPANS();
-	std::ostream &TO_STATE_ACTIONS();
-	std::ostream &FROM_STATE_ACTIONS();
-	std::ostream &EOF_ACTIONS();
-	std::ostream &EOF_TRANS();
-	std::ostream &TRANS_TARGS();
-	std::ostream &TRANS_ACTIONS();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &EOF_ACTION_SWITCH();
+	std::wostream &ACTION_SWITCH();
+	std::wostream &KEYS();
+	std::wostream &INDICIES();
+	std::wostream &FLAT_INDEX_OFFSET();
+	std::wostream &KEY_SPANS();
+	std::wostream &TO_STATE_ACTIONS();
+	std::wostream &FROM_STATE_ACTIONS();
+	std::wostream &EOF_ACTIONS();
+	std::wostream &EOF_TRANS();
+	std::wostream &TRANS_TARGS();
+	std::wostream &TRANS_ACTIONS();
 	void LOCATE_TRANS();
 
-	std::ostream &COND_INDEX_OFFSET();
+	std::wostream &COND_INDEX_OFFSET();
 	void COND_TRANSLATE();
-	std::ostream &CONDS();
-	std::ostream &COND_KEYS();
-	std::ostream &COND_KEY_SPANS();
+	std::wostream &CONDS();
+	std::wostream &COND_KEYS();
+	std::wostream &COND_KEY_SPANS();
 
-	void GOTO( ostream &ret, int gotoDest, bool inFinish );
-	void CALL( ostream &ret, int callDest, int targState, bool inFinish );
-	void NEXT( ostream &ret, int nextDest, bool inFinish );
-	void GOTO_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void NEXT_EXPR( ostream &ret, GenInlineItem *ilItem, bool inFinish );
-	void CALL_EXPR( ostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
-	void CURS( ostream &ret, bool inFinish );
-	void TARGS( ostream &ret, bool inFinish, int targState );
-	void RET( ostream &ret, bool inFinish );
-	void BREAK( ostream &ret, int targState );
+	void GOTO( wostream &ret, int gotoDest, bool inFinish );
+	void CALL( wostream &ret, int callDest, int targState, bool inFinish );
+	void NEXT( wostream &ret, int nextDest, bool inFinish );
+	void GOTO_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void NEXT_EXPR( wostream &ret, GenInlineItem *ilItem, bool inFinish );
+	void CALL_EXPR( wostream &ret, GenInlineItem *ilItem, int targState, bool inFinish );
+	void CURS( wostream &ret, bool inFinish );
+	void TARGS( wostream &ret, bool inFinish, int targState );
+	void RET( wostream &ret, bool inFinish );
+	void BREAK( wostream &ret, int targState );
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 
 	virtual void writeData();
 	virtual void writeExec();
 
 	void initVarTypes();
-	string slenType, transType, indsType, condsType;
+	wstring slenType, transType, indsType, condsType;
 };
 
 #endif

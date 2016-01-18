@@ -50,7 +50,7 @@
 #define STB_ISMARKED   0x08
 #define STB_ONLIST     0x10
 
-using std::ostream;
+using std::wostream;
 
 struct TransAp;
 struct StateAp;
@@ -90,7 +90,7 @@ struct NameInst;
 struct InlineList;
 typedef Vector<NameInst*> ActionRefs;
 
-/* Element in list of actions. Contains the string for the code to exectute. */
+/* Element in list of actions. Contains the wstring for the code to exectute. */
 struct Action 
 :
 	public DListEl<Action>,
@@ -98,7 +98,7 @@ struct Action
 {
 public:
 
-	Action( const InputLoc &loc, const char *name, InlineList *inlineList, int condId )
+	Action( const InputLoc &loc, const wchar_t *name, InlineList *inlineList, int condId )
 	:
 		loc(loc),
 		name(name),
@@ -116,20 +116,20 @@ public:
 	}
 
 	/* Key for action dictionary. */
-	const char *getKey() const { return name; }
+	const wchar_t *getKey() const { return name; }
 
 	/* Data collected during parse. */
 	InputLoc loc;
-	const char *name;
+	const wchar_t *name;
 	InlineList *inlineList;
 	int actionId;
 
-	void actionName( ostream &out )
+	void actionName( wostream &out )
 	{
 		if ( name != 0 )
 			out << name;
 		else
-			out << loc.line << ":" << loc.col;
+			out << loc.line << L":" << loc.col;
 	}
 
 	/* Places in the input text that reference the action. */
@@ -163,12 +163,12 @@ struct CmpCondId
 
 /* A list of actions. */
 typedef DList<Action> ActionList;
-typedef AvlTree<Action, char *, CmpStr> ActionDict;
+typedef AvlTree<Action, wchar_t *, CmpStr> ActionDict;
 
 /* Structure for reverse action mapping. */
 struct RevActionMapEl
 {
-	char *name;
+	wchar_t *name;
 	InputLoc location;
 };
 
@@ -923,7 +923,7 @@ entryBegin:
 			}
 			break;
 		}
-		/* Both state1's and state2's transition elements are good.
+		/* Both state1L's and state2's transition elements are good.
 		 * The signiture of no overlap is a back key being in front of a
 		 * front key. */
 		else if ( s1Tel.highKey < s2Tel.lowKey ) {

@@ -381,7 +381,7 @@ void FsmAp::outTransCopy( MergeData &md, StateAp *dest, TransAp *srcList )
 		case BreakS1: {
 			/* Since we are always writing to the dest trans, the dest needs
 			 * to be copied when it is broken. The copy goes into the first
-			 * half of the break to "break it off". */
+			 * half of the break to L"break it off". */
 			outPair.s1Tel.trans = dupTrans( dest, outPair.s1Tel.trans );
 			break;
 		}

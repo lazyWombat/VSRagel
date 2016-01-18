@@ -40,38 +40,38 @@ class GoFlatCodeGen
 	: public GoTablishCodeGen
 {
 public:
-	GoFlatCodeGen( ostream &out )
+	GoFlatCodeGen( wostream &out )
 		: GoTablishCodeGen(out) {}
 
 	virtual ~GoFlatCodeGen() { }
 
 protected:
-	std::ostream &TO_STATE_ACTION_SWITCH( int level );
-	std::ostream &FROM_STATE_ACTION_SWITCH( int level );
-	std::ostream &EOF_ACTION_SWITCH( int level );
-	std::ostream &ACTION_SWITCH( int level );
-	std::ostream &KEYS();
-	std::ostream &INDICIES();
-	std::ostream &FLAT_INDEX_OFFSET();
-	std::ostream &KEY_SPANS();
-	std::ostream &TO_STATE_ACTIONS();
-	std::ostream &FROM_STATE_ACTIONS();
-	std::ostream &EOF_ACTIONS();
-	std::ostream &EOF_TRANS();
-	std::ostream &TRANS_TARGS();
-	std::ostream &TRANS_ACTIONS();
+	std::wostream &TO_STATE_ACTION_SWITCH( int level );
+	std::wostream &FROM_STATE_ACTION_SWITCH( int level );
+	std::wostream &EOF_ACTION_SWITCH( int level );
+	std::wostream &ACTION_SWITCH( int level );
+	std::wostream &KEYS();
+	std::wostream &INDICIES();
+	std::wostream &FLAT_INDEX_OFFSET();
+	std::wostream &KEY_SPANS();
+	std::wostream &TO_STATE_ACTIONS();
+	std::wostream &FROM_STATE_ACTIONS();
+	std::wostream &EOF_ACTIONS();
+	std::wostream &EOF_TRANS();
+	std::wostream &TRANS_TARGS();
+	std::wostream &TRANS_ACTIONS();
 	void LOCATE_TRANS();
 
-	std::ostream &COND_INDEX_OFFSET();
+	std::wostream &COND_INDEX_OFFSET();
 	void COND_TRANSLATE();
-	std::ostream &CONDS();
-	std::ostream &COND_KEYS();
-	std::ostream &COND_KEY_SPANS();
+	std::wostream &CONDS();
+	std::wostream &COND_KEYS();
+	std::wostream &COND_KEY_SPANS();
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 
 	virtual void writeData();
 	virtual void writeExec();

@@ -26,7 +26,7 @@
 #include "mergesort.h"
 #include "parsedata.h"
 
-using std::cerr;
+using std::wcerr;
 using std::endl;
 
 /* Make a new state. The new state will be put on the graph's
@@ -128,7 +128,7 @@ void FsmAp::orFsm( Key *set, int len )
 	for ( int i = 1; i < len; i++ )
 		assert( set[i-1] < set[i] );
 
-	/* Attach on all the integers in the given string of ints. */
+	/* Attach on all the integers in the given wstring of ints. */
 	for ( int i = 0; i < len; i++ )
 		attachNewTrans( startState, end, set[i], set[i] );
 }
@@ -161,7 +161,7 @@ void FsmAp::rangeStarFsm( Key low, Key high)
 	attachNewTrans( startState, startState, low, high );
 }
 
-/* Construct a machine that matches the empty string.  A new machine will be
+/* Construct a machine that matches the empty wstring.  A new machine will be
  * made with only one state. The new state will be both a start and final
  * state. IsSigned determines if the machine has a signed or unsigned
  * alphabet. Fsm operations must be done on machines with the same alphabet
@@ -271,7 +271,7 @@ void FsmAp::optionalRepeatOp( int times )
 	/* Must be 1 and up. 0 produces null machine and requires deleting this. */
 	assert( times > 0 );
 
-	/* A repeat of one optional merely allows zero string. */
+	/* A repeat of one optional merely allows zero wstring. */
 	if ( times == 1 ) {
 		setFinState( startState );
 		return;
@@ -713,7 +713,7 @@ void FsmAp::joinOp( int startId, int finalId, FsmAp **others, int numOthers )
 
 		/* Assign an entry into the final state on the final state entry id. Note
 		 * that there may already be an entry on this id. That's ok. Also set the
-		 * final state owning machine id. It's in a class all it's own. */
+		 * final state owning machine id. ItL's in a class all it's own. */
 		setEntry( finalId, finState );
 		finState->owningGraph = 0;
 	}
@@ -894,34 +894,34 @@ void FsmAp::isolateStartState( )
 void logCondSpace( CondSpace *condSpace )
 {
 	if ( condSpace == 0 )
-		cerr << "<empty>";
+		wcerr << L"<empty>";
 	else {
 		for ( CondSet::Iter csi = condSpace->condSet.last(); csi.gtb(); csi-- ) {
 			if ( ! csi.last() )
-				cerr << ',';
-			(*csi)->actionName( cerr );
+				wcerr << L',';
+			(*csi)->actionName( wcerr );
 		}
 	}
 }
 
 void logNewExpansion( Expansion *exp )
 {
-	cerr << "created expansion:" << endl;
-	cerr << "  range: " << exp->lowKey.getVal() << " .. " << 
+	wcerr << L"created expansion:" << endl;
+	wcerr << L"  range: " << exp->lowKey.getVal() << L" .. " << 
 			exp->highKey.getVal() << endl;
 
-	cerr << "  fromCondSpace: ";
+	wcerr << L"  fromCondSpace: ";
 	logCondSpace( exp->fromCondSpace );
-	cerr << endl;
-	cerr << "  fromVals: " << exp->fromVals << endl;
+	wcerr << endl;
+	wcerr << L"  fromVals: " << exp->fromVals << endl;
 
-	cerr << "  toCondSpace: ";
+	wcerr << L"  toCondSpace: ";
 	logCondSpace( exp->toCondSpace );
-	cerr << endl;
-	cerr << "  toValsList: ";
+	wcerr << endl;
+	wcerr << L"  toValsList: ";
 	for ( LongVect::Iter to = exp->toValsList; to.lte(); to++ )
-		cerr << " " << *to;
-	cerr << endl;
+		wcerr << L" " << *to;
+	wcerr << endl;
 }
 #endif
 
@@ -1014,8 +1014,8 @@ void FsmAp::findCondExpansions( ExpansionList &expansionList,
 
 			if ( srcOnlyCS.length() > 0 ) {
 				#ifdef LOG_CONDS
-				cerr << "there are " << srcOnlyCS.length() << " item(s) that are "
-							"only in the srcCS" << endl;
+				wcerr << L"there are " << srcOnlyCS.length() << L" item(s) that are "
+							L"only in the srcCS" << endl;
 				#endif
 
 				CondSet mergedCS = destCS;

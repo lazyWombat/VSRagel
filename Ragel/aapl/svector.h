@@ -1191,7 +1191,7 @@ template <class T, class Resize> long SVector<T, Resize>::
 
 			/* Shift over data at insert spot if needed. */
 			if ( len > 0 && pos < head->tabLen ) {
-				memmove( BaseTable::data + pos + len, BaseTable::data + pos,
+				wmemmove( BaseTable::data + pos + len, BaseTable::data + pos,
 						sizeof(T)*(head->tabLen - pos) );
 			}
 

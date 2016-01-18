@@ -28,7 +28,7 @@
 
 using std::endl;
 
-std::ostream &GoFFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
+std::wostream &GoFFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->toStateAction != 0 )
@@ -37,7 +37,7 @@ std::ostream &GoFFlatCodeGen::TO_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &GoFFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
+std::wostream &GoFFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->fromStateAction != 0 )
@@ -46,7 +46,7 @@ std::ostream &GoFFlatCodeGen::FROM_STATE_ACTION( RedStateAp *state )
 	return out;
 }
 
-std::ostream &GoFFlatCodeGen::EOF_ACTION( RedStateAp *state )
+std::wostream &GoFFlatCodeGen::EOF_ACTION( RedStateAp *state )
 {
 	int act = 0;
 	if ( state->eofAction != 0 )
@@ -56,7 +56,7 @@ std::ostream &GoFFlatCodeGen::EOF_ACTION( RedStateAp *state )
 }
 
 /* Write out the function for a transition. */
-std::ostream &GoFFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
+std::wostream &GoFFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
 {
 	int action = 0;
 	if ( trans->action != 0 )
@@ -67,13 +67,13 @@ std::ostream &GoFFlatCodeGen::TRANS_ACTION( RedTransAp *trans )
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &GoFFlatCodeGen::TO_STATE_ACTION_SWITCH( int level )
+std::wostream &GoFFlatCodeGen::TO_STATE_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numToStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -87,13 +87,13 @@ std::ostream &GoFFlatCodeGen::TO_STATE_ACTION_SWITCH( int level )
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &GoFFlatCodeGen::FROM_STATE_ACTION_SWITCH( int level )
+std::wostream &GoFFlatCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numFromStateRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -105,13 +105,13 @@ std::ostream &GoFFlatCodeGen::FROM_STATE_ACTION_SWITCH( int level )
 	return out;
 }
 
-std::ostream &GoFFlatCodeGen::EOF_ACTION_SWITCH( int level )
+std::wostream &GoFFlatCodeGen::EOF_ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numEofRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -125,13 +125,13 @@ std::ostream &GoFFlatCodeGen::EOF_ACTION_SWITCH( int level )
 
 /* Write out the function switch. This switch is keyed on the values
  * of the func index. */
-std::ostream &GoFFlatCodeGen::ACTION_SWITCH( int level )
+std::wostream &GoFFlatCodeGen::ACTION_SWITCH( int level )
 {
 	/* Loop the actions. */
 	for ( GenActionTableMap::Iter redAct = redFsm->actionMap; redAct.lte(); redAct++ ) {
 		if ( redAct->numTransRefs > 0 ) {
 			/* Write the entry label. */
-			out << TABS(level) << "case " << redAct->actListId+1 << ":" << endl;
+			out << TABS(level) << L"case " << redAct->actListId+1 << L":" << endl;
 
 			/* Write each action in the list of action items. */
 			for ( GenActionTable::Iter item = redAct->key; item.lte(); item++ )
@@ -236,51 +236,51 @@ void GoFFlatCodeGen::writeExec()
 	outLabelUsed = false;
 
 	out <<
-		"	{" << endl <<
-		"	var _slen " << INT() << endl;
+		L"	{" << endl <<
+		L"	var _slen " << INT() << endl;
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	var _ps " << INT() << endl;
+		out << L"	var _ps " << INT() << endl;
 
-	out << "	var _trans " << INT() << endl;
+	out << L"	var _trans " << INT() << endl;
 
 	if ( redFsm->anyConditions() )
-		out << "	var _cond " << INT() << endl;
+		out << L"	var _cond " << INT() << endl;
 
 	out <<
-		"	var _keys " << INT() << endl <<
-		"	var _inds " << INT() << endl;
+		L"	var _keys " << INT() << endl <<
+		L"	var _inds " << INT() << endl;
 
 	if ( redFsm->anyConditions() ) {
 		out <<
-			"	var _conds " << INT() << endl <<
-			"	var _widec " << WIDE_ALPH_TYPE() << endl;
+			L"	var _conds " << INT() << endl <<
+			L"	var _widec " << WIDE_ALPH_TYPE() << endl;
 	}
 
 	if ( !noEnd ) {
 		testEofUsed = true;
 		out <<
-			"	if " << P() << " == " << PE() << " {" << endl <<
-			"		goto _test_eof" << endl <<
-			"	}" << endl;
+			L"	if " << P() << L" == " << PE() << L" {" << endl <<
+			L"		goto _test_eof" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
-	out << "_resume:" << endl;
+	out << L"_resume:" << endl;
 
 	if ( redFsm->anyFromStateActions() ) {
 		out <<
-			"	switch " << FSA() << "[" << vCS() << "] {" << endl;
+			L"	switch " << FSA() << L"[" << vCS() << L"] {" << endl;
 			FROM_STATE_ACTION_SWITCH(1);
 			out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
@@ -290,91 +290,91 @@ void GoFFlatCodeGen::writeExec()
 	LOCATE_TRANS();
 
 	if ( redFsm->anyEofTrans() )
-		out << "_eof_trans:" << endl;
+		out << L"_eof_trans:" << endl;
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	_ps = " << vCS() << endl;
+		out << L"	_ps = " << vCS() << endl;
 
 	out <<
-		"	" << vCS() << " = " << CAST(INT(), TT() + "[_trans]") << endl <<
+		L"	" << vCS() << L" = " << CAST(INT(), TT() + L"[_trans]") << endl <<
 		endl;
 
 	if ( redFsm->anyRegActions() ) {
 		out <<
-			"	if " << TA() << "[_trans] == 0 {" << endl <<
-			"		goto _again" << endl <<
-			"	}" << endl <<
+			L"	if " << TA() << L"[_trans] == 0 {" << endl <<
+			L"		goto _again" << endl <<
+			L"	}" << endl <<
 			endl <<
-			"	switch " << TA() << "[_trans] {" << endl;
+			L"	switch " << TA() << L"[_trans] {" << endl;
 			ACTION_SWITCH(1);
 			out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	if ( redFsm->anyRegActions() || redFsm->anyActionGotos() ||
 			redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "_again:" << endl;
+		out << L"_again:" << endl;
 
 	if ( redFsm->anyToStateActions() ) {
 		out <<
-			"	switch " << TSA() << "[" << vCS() << "] {" << endl;
+			L"	switch " << TSA() << L"[" << vCS() << L"] {" << endl;
 			TO_STATE_ACTION_SWITCH(1);
 			out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	if ( redFsm->errState != 0 ) {
 		outLabelUsed = true;
 		out <<
-			"	if " << vCS() << " == " << redFsm->errState->id << " {" << endl <<
-			"		goto _out" << endl <<
-			"	}" << endl;
+			L"	if " << vCS() << L" == " << redFsm->errState->id << L" {" << endl <<
+			L"		goto _out" << endl <<
+			L"	}" << endl;
 	}
 
 	if ( !noEnd ) {
 		out <<
-			"	if " << P() << "++; " << P() << " != " << PE() << " {"
-			"		goto _resume" << endl <<
-			"	}" << endl;
+			L"	if " << P() << L"++; " << P() << L" != " << PE() << L" {"
+			L"		goto _resume" << endl <<
+			L"	}" << endl;
 	}
 	else {
 		out <<
-			"	" << P() << "++" << endl <<
-			"	goto _resume" << endl;
+			L"	" << P() << L"++" << endl <<
+			L"	goto _resume" << endl;
 	}
 
 	if ( testEofUsed )
-		out << "	_test_eof: {}" << endl;
+		out << L"	_test_eof: {}" << endl;
 
 	if ( redFsm->anyEofTrans() || redFsm->anyEofActions() ) {
 		out <<
-			"	if " << P() << " == " << vEOF() << " {" << endl;
+			L"	if " << P() << L" == " << vEOF() << L" {" << endl;
 
 		if ( redFsm->anyEofTrans() ) {
 			out <<
-				"		if " << ET() << "[" << vCS() << "] > 0 {" << endl <<
-				"			_trans = " << CAST(INT(), ET() + "[" + vCS() + "] - 1") << endl <<
-				"			goto _eof_trans" << endl <<
-				"		}" << endl;
+				L"		if " << ET() << L"[" << vCS() << L"] > 0 {" << endl <<
+				L"			_trans = " << CAST(INT(), ET() + L"[" + vCS() + L"] - 1") << endl <<
+				L"			goto _eof_trans" << endl <<
+				L"		}" << endl;
 		}
 
 		if ( redFsm->anyEofActions() ) {
 			out <<
-				"		switch " << EA() << "[" << vCS() << "] {" << endl;
+				L"		switch " << EA() << L"[" << vCS() << L"] {" << endl;
 				EOF_ACTION_SWITCH(2);
 				out <<
-				"		}" << endl;
+				L"		}" << endl;
 		}
 
 		out <<
-			"	}" << endl <<
+			L"	}" << endl <<
 			endl;
 	}
 
 	if ( outLabelUsed )
-		out << "	_out: {}" << endl;
+		out << L"	_out: {}" << endl;
 
-	out << "	}" << endl;
+	out << L"	}" << endl;
 }

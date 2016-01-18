@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cdcodegen.cpp" />
+    <ClCompile Include="cdfflat.cpp" />
+    <ClCompile Include="cdfgoto.cpp" />
+    <ClCompile Include="cdflat.cpp" />
+    <ClCompile Include="cdftable.cpp" />
+    <ClCompile Include="cdgoto.cpp" />
+    <ClCompile Include="cdipgoto.cpp" />
+    <ClCompile Include="cdsplit.cpp" />
+    <ClCompile Include="cdtable.cpp" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="cscodegen.cpp" />
+    <ClCompile Include="csfflat.cpp" />
+    <ClCompile Include="csfgoto.cpp" />
+    <ClCompile Include="csflat.cpp" />
+    <ClCompile Include="csftable.cpp" />
+    <ClCompile Include="csgoto.cpp" />
+    <ClCompile Include="csipgoto.cpp" />
+    <ClCompile Include="cssplit.cpp" />
+    <ClCompile Include="cstable.cpp" />
+    <ClCompile Include="dotcodegen.cpp" />
+    <ClCompile Include="fsmap.cpp" />
+    <ClCompile Include="fsmattach.cpp" />
+    <ClCompile Include="fsmbase.cpp" />
+    <ClCompile Include="fsmgraph.cpp" />
+    <ClCompile Include="fsmmin.cpp" />
+    <ClCompile Include="fsmstate.cpp" />
+    <ClCompile Include="gendata.cpp" />
+    <ClCompile Include="gocodegen.cpp" />
+    <ClCompile Include="gofflat.cpp" />
+    <ClCompile Include="gofgoto.cpp" />
+    <ClCompile Include="goflat.cpp" />
+    <ClCompile Include="goftable.cpp" />
+    <ClCompile Include="gogoto.cpp" />
+    <ClCompile Include="goipgoto.cpp" />
+    <ClCompile Include="gotable.cpp" />
+    <ClCompile Include="gotablish.cpp" />
+    <ClCompile Include="inputdata.cpp" />
+    <ClCompile Include="javacodegen.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mlcodegen.cpp" />
+    <ClCompile Include="mlfflat.cpp" />
+    <ClCompile Include="mlfgoto.cpp" />
+    <ClCompile Include="mlflat.cpp" />
+    <ClCompile Include="mlftable.cpp" />
+    <ClCompile Include="mlgoto.cpp" />
+    <ClCompile Include="mltable.cpp" />
+    <ClCompile Include="parsedata.cpp" />
+    <ClCompile Include="parsetree.cpp" />
+    <ClCompile Include="rbxgoto.cpp" />
+    <ClCompile Include="redfsm.cpp" />
+    <ClCompile Include="rlparse.cpp" />
+    <ClCompile Include="rlscan.cpp" />
+    <ClCompile Include="rubycodegen.cpp" />
+    <ClCompile Include="rubyfflat.cpp" />
+    <ClCompile Include="rubyflat.cpp" />
+    <ClCompile Include="rubyftable.cpp" />
+    <ClCompile Include="rubytable.cpp" />
+    <ClCompile Include="xmlcodegen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="avlbasic.h" />
+    <ClInclude Include="avlcommon.h" />
+    <ClInclude Include="avlibasic.h" />
+    <ClInclude Include="avlikeyless.h" />
+    <ClInclude Include="avlimap.h" />
+    <ClInclude Include="avlimel.h" />
+    <ClInclude Include="avlimelkey.h" />
+    <ClInclude Include="avliset.h" />
+    <ClInclude Include="avlitree.h" />
+    <ClInclude Include="avlkeyless.h" />
+    <ClInclude Include="avlmap.h" />
+    <ClInclude Include="avlmel.h" />
+    <ClInclude Include="avlmelkey.h" />
+    <ClInclude Include="avlset.h" />
+    <ClInclude Include="avltree.h" />
+    <ClInclude Include="bstcommon.h" />
+    <ClInclude Include="bstmap.h" />
+    <ClInclude Include="bstset.h" />
+    <ClInclude Include="bsttable.h" />
+    <ClInclude Include="bubblesort.h" />
+    <ClInclude Include="buffer.h" />
+    <ClInclude Include="cdcodegen.h" />
+    <ClInclude Include="cdfflat.h" />
+    <ClInclude Include="cdfgoto.h" />
+    <ClInclude Include="cdflat.h" />
+    <ClInclude Include="cdftable.h" />
+    <ClInclude Include="cdgoto.h" />
+    <ClInclude Include="cdipgoto.h" />
+    <ClInclude Include="cdsplit.h" />
+    <ClInclude Include="cdtable.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="compare.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="cscodegen.h" />
+    <ClInclude Include="csfflat.h" />
+    <ClInclude Include="csfgoto.h" />
+    <ClInclude Include="csflat.h" />
+    <ClInclude Include="csftable.h" />
+    <ClInclude Include="csgoto.h" />
+    <ClInclude Include="csipgoto.h" />
+    <ClInclude Include="cssplit.h" />
+    <ClInclude Include="cstable.h" />
+    <ClInclude Include="dlcommon.h" />
+    <ClInclude Include="dlist.h" />
+    <ClInclude Include="dlistmel.h" />
+    <ClInclude Include="dlistval.h" />
+    <ClInclude Include="dotcodegen.h" />
+    <ClInclude Include="fsmgraph.h" />
+    <ClInclude Include="gendata.h" />
+    <ClInclude Include="gocodegen.h" />
+    <ClInclude Include="gofflat.h" />
+    <ClInclude Include="gofgoto.h" />
+    <ClInclude Include="goflat.h" />
+    <ClInclude Include="goftable.h" />
+    <ClInclude Include="gogoto.h" />
+    <ClInclude Include="goipgoto.h" />
+    <ClInclude Include="gotable.h" />
+    <ClInclude Include="gotablish.h" />
+    <ClInclude Include="inputdata.h" />
+    <ClInclude Include="insertsort.h" />
+    <ClInclude Include="javacodegen.h" />
+    <ClInclude Include="mergesort.h" />
+    <ClInclude Include="mlcodegen.h" />
+    <ClInclude Include="mlfflat.h" />
+    <ClInclude Include="mlfgoto.h" />
+    <ClInclude Include="mlflat.h" />
+    <ClInclude Include="mlftable.h" />
+    <ClInclude Include="mlgoto.h" />
+    <ClInclude Include="mltable.h" />
+    <ClInclude Include="parsedata.h" />
+    <ClInclude Include="parsetree.h" />
+    <ClInclude Include="pcheck.h" />
+    <ClInclude Include="quicksort.h" />
+    <ClInclude Include="ragel.h" />
+    <ClInclude Include="rbxgoto.h" />
+    <ClInclude Include="redfsm.h" />
+    <ClInclude Include="resize.h" />
+    <ClInclude Include="rlparse.h" />
+    <ClInclude Include="rlscan.h" />
+    <ClInclude Include="rubycodegen.h" />
+    <ClInclude Include="rubyfflat.h" />
+    <ClInclude Include="rubyflat.h" />
+    <ClInclude Include="rubyftable.h" />
+    <ClInclude Include="rubytable.h" />
+    <ClInclude Include="sbstmap.h" />
+    <ClInclude Include="sbstset.h" />
+    <ClInclude Include="sbsttable.h" />
+    <ClInclude Include="svector.h" />
+    <ClInclude Include="table.h" />
+    <ClInclude Include="vector.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="xmlcodegen.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{81D81BAC-06BA-4CD8-A1F5-3DB95C81D265}</ProjectGuid>
+    <RootNamespace>Ragel</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>aapl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>aapl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

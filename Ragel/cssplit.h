@@ -27,18 +27,18 @@
 class CSharpSplitCodeGen : public CSharpIpGotoCodeGen
 {
 public:
-	CSharpSplitCodeGen( ostream &out ) : CSharpFsmCodeGen(out), CSharpIpGotoCodeGen(out) {}
+	CSharpSplitCodeGen( wostream &out ) : CSharpFsmCodeGen(out), CSharpIpGotoCodeGen(out) {}
 
 	bool ptOutLabelUsed;
 
-	std::ostream &PART_MAP();
-	std::ostream &EXIT_STATES( int partition );
-	std::ostream &PART_TRANS( int partition );
-	std::ostream &TRANS_GOTO( RedTransAp *trans, int level );
+	std::wostream &PART_MAP();
+	std::wostream &EXIT_STATES( int partition );
+	std::wostream &PART_TRANS( int partition );
+	std::wostream &TRANS_GOTO( RedTransAp *trans, int level );
 	void GOTO_HEADER( RedStateAp *state, bool stateInPartition );
-	std::ostream &STATE_GOTOS( int partition );
-	std::ostream &PARTITION( int partition );
-	std::ostream &ALL_PARTITIONS();
+	std::wostream &STATE_GOTOS( int partition );
+	std::wostream &PARTITION( int partition );
+	std::wostream &ALL_PARTITIONS();
 	void writeData();
 	void writeExec();
 	void writeParts();

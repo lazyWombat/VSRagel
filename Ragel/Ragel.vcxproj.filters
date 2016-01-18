@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cdcodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdfflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdfgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdftable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdipgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdsplit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdtable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cscodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csfflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csfgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csftable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csipgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cssplit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cstable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dotcodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmattach.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmgraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmmin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fsmstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gendata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gocodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gofflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gofgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goftable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gogoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goipgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gotable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gotablish.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inputdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="javacodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlcodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlfflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlfgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlftable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mlgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mltable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parsedata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parsetree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rbxgoto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="redfsm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rlparse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rlscan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rubycodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rubyfflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rubyflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rubyftable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rubytable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xmlcodegen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdcodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdfflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdfgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdftable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdipgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdsplit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cscodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csfflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csfgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csftable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csipgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cssplit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cstable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dotcodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fsmgraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gendata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gocodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gofflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gofgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goftable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gogoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goipgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gotable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gotablish.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inputdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="javacodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlcodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlfflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlfgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlftable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mlgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mltable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parsedata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parsetree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pcheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ragel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rbxgoto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="redfsm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rlparse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rlscan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubycodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubyfflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubyflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubyftable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rubytable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xmlcodegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlbasic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlcommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlibasic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlikeyless.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlimap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlimel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlimelkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avliset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlitree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlkeyless.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlmel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlmelkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avlset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avltree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bstcommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bstmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bstset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bsttable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bubblesort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="compare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dlcommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dlistmel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dlistval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="insertsort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mergesort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quicksort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sbstmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sbstset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sbsttable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="svector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

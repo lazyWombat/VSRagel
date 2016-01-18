@@ -25,32 +25,32 @@
 #include "gendata.h"
 #include <assert.h>
 
-using std::ostream;
+using std::wostream;
 using std::ios;
 using std::endl;
 
 /* Emit the goto to take for a given transition. */
-std::ostream &CSharpSplitCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
+std::wostream &CSharpSplitCodeGen::TRANS_GOTO( RedTransAp *trans, int level )
 {
 	if ( trans->targ->partition == currentPartition ) {
 		if ( trans->action != 0 ) {
 			/* Go to the transition which will go to the state. */
-			out << TABS(level) << "goto tr" << trans->id << ";";
+			out << TABS(level) << L"goto tr" << trans->id << L";";
 		}
 		else {
 			/* Go directly to the target state. */
-			out << TABS(level) << "goto st" << trans->targ->id << ";";
+			out << TABS(level) << L"goto st" << trans->targ->id << L";";
 		}
 	}
 	else {
 		if ( trans->action != 0 ) {
 			/* Go to the transition which will go to the state. */
-			out << TABS(level) << "goto ptr" << trans->id << ";";
+			out << TABS(level) << L"goto ptr" << trans->id << L";";
 			trans->partitionBoundary = true;
 		}
 		else {
 			/* Go directly to the target state. */
-			out << TABS(level) << "goto pst" << trans->targ->id << ";";
+			out << TABS(level) << L"goto pst" << trans->targ->id << L";";
 			trans->targ->partitionBoundary = true;
 		}
 	}
@@ -63,7 +63,7 @@ void CSharpSplitCodeGen::GOTO_HEADER( RedStateAp *state, bool stateInPartition )
 	bool anyWritten = IN_TRANS_ACTIONS( state );
 
 	if ( state->labelNeeded ) 
-		out << "st" << state->id << ":\n";
+		out << L"st" << state->id << L":\n";
 
 	if ( state->toStateAction != 0 ) {
 		/* Remember that we wrote an action. Write every action in the list. */
@@ -76,17 +76,17 @@ void CSharpSplitCodeGen::GOTO_HEADER( RedStateAp *state, bool stateInPartition )
 	if ( state->labelNeeded ) {
 		if ( !noEnd ) {
 			out <<
-				"	if ( ++" << P() << " == " << PE() << " )\n"
-				"		goto _out" << state->id << ";\n";
+				L"	if ( ++" << P() << L" == " << PE() << L" )\n"
+				L"		goto _out" << state->id << L";\n";
 		}
 		else {
 			out << 
-				"	" << P() << " += 1;\n";
+				L"	" << P() << L" += 1;\n";
 		}
 	}
 
 	/* Give the state a switch case. */
-	out << "case " << state->id << ":\n";
+	out << L"case " << state->id << L":\n";
 
 	if ( state->fromStateAction != 0 ) {
 		/* Remember that we wrote an action. Write every action in the list. */
@@ -100,10 +100,10 @@ void CSharpSplitCodeGen::GOTO_HEADER( RedStateAp *state, bool stateInPartition )
 
 	/* Record the prev state if necessary. */
 	if ( state->anyRegCurStateRef() )
-		out << "	_ps = " << state->id << ";\n";
+		out << L"	_ps = " << state->id << L";\n";
 }
 
-std::ostream &CSharpSplitCodeGen::STATE_GOTOS( int partition )
+std::wostream &CSharpSplitCodeGen::STATE_GOTOS( int partition )
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->partition == partition ) {
@@ -119,7 +119,7 @@ std::ostream &CSharpSplitCodeGen::STATE_GOTOS( int partition )
 				GOTO_HEADER( st, st->partition == partition );
 
 				if ( st->stateCondVect.length() > 0 ) {
-					out << "	_widec = " << GET_KEY() << ";\n";
+					out << L"	_widec = " << GET_KEY() << L";\n";
 					emitCondBSearch( st, 1, 0, st->stateCondVect.length() - 1 );
 				}
 
@@ -132,7 +132,7 @@ std::ostream &CSharpSplitCodeGen::STATE_GOTOS( int partition )
 					emitRangeBSearch( st, 1, 0, st->outRange.length() - 1 );
 
 				/* Write the default transition. */
-				TRANS_GOTO( st->defTrans, 1 ) << "\n";
+				TRANS_GOTO( st->defTrans, 1 ) << L"\n";
 			}
 		}
 	}
@@ -140,18 +140,18 @@ std::ostream &CSharpSplitCodeGen::STATE_GOTOS( int partition )
 }
 
 
-std::ostream &CSharpSplitCodeGen::PART_TRANS( int partition )
+std::wostream &CSharpSplitCodeGen::PART_TRANS( int partition )
 {
 	for ( TransApSet::Iter trans = redFsm->transSet; trans.lte(); trans++ ) {
 		if ( trans->partitionBoundary ) {
 			out << 
-				"ptr" << trans->id << ":\n";
+				L"ptr" << trans->id << L":\n";
 
 			if ( trans->action != 0 ) {
 				/* If the action contains a next, then we must preload the current
 				 * state since the action may or may not set it. */
 				if ( trans->action->anyNextStmt() )
-					out << "	" << vCS() << " = " << trans->targ->id << ";\n";
+					out << L"	" << vCS() << L" = " << trans->targ->id << L";\n";
 
 				/* Write each action in the list. */
 				for ( GenActionTable::Iter item = trans->action->key; item.lte(); item++ )
@@ -159,7 +159,7 @@ std::ostream &CSharpSplitCodeGen::PART_TRANS( int partition )
 			}
 
 			out <<
-				"	goto pst" << trans->targ->id << ";\n";
+				L"	goto pst" << trans->targ->id << L";\n";
 			trans->targ->partitionBoundary = true;
 		}
 	}
@@ -167,8 +167,8 @@ std::ostream &CSharpSplitCodeGen::PART_TRANS( int partition )
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->partitionBoundary ) {
 			out << 
-				"	pst" << st->id << ":\n" 
-				"	" << vCS() << " = " << st->id << ";\n";
+				L"	pst" << st->id << L":\n" 
+				L"	" << vCS() << L" = " << st->id << L";\n";
 
 			if ( st->toStateAction != 0 ) {
 				/* Remember that we wrote an action. Write every action in the list. */
@@ -178,26 +178,26 @@ std::ostream &CSharpSplitCodeGen::PART_TRANS( int partition )
 			}
 
 			ptOutLabelUsed = true;
-			out << "	goto _pt_out; \n";
+			out << L"	goto _pt_out; \n";
 		}
 	}
 	return out;
 }
 
-std::ostream &CSharpSplitCodeGen::EXIT_STATES( int partition )
+std::wostream &CSharpSplitCodeGen::EXIT_STATES( int partition )
 {
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		if ( st->partition == partition && st->outNeeded ) {
 			outLabelUsed = true;
-			out << "	_out" << st->id << ": " << vCS() << " = " << 
-					st->id << "; goto _out; \n";
+			out << L"	_out" << st->id << L": " << vCS() << L" = " << 
+					st->id << L"; goto _out; \n";
 		}
 	}
 	return out;
 }
 
 
-std::ostream &CSharpSplitCodeGen::PARTITION( int partition )
+std::wostream &CSharpSplitCodeGen::PARTITION( int partition )
 {
 	outLabelUsed = false;
 	ptOutLabelUsed = false;
@@ -209,85 +209,85 @@ std::ostream &CSharpSplitCodeGen::PARTITION( int partition )
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
 		st->partitionBoundary = false;
 
-	out << "	" << ALPH_TYPE() << " *p = *_pp, *pe = *_ppe;\n";
+	out << L"	" << ALPH_TYPE() << L" *p = *_pp, *pe = *_ppe;\n";
 
 	if ( redFsm->anyRegCurStateRef() )
-		out << "	int _ps = 0;\n";
+		out << L"	int _ps = 0;\n";
 
 	if ( redFsm->anyConditions() )
-		out << "	" << WIDE_ALPH_TYPE() << " _widec;\n";
+		out << L"	" << WIDE_ALPH_TYPE() << L" _widec;\n";
 
 	if ( useAgainLabel() ) {
 		out << 
-			"	goto _resume;\n"
-			"\n"
-			"_again:\n"
-			"	switch ( " << vCS() << " ) {\n";
+			L"	goto _resume;\n"
+			L"\n"
+			L"_again:\n"
+			L"	switch ( " << vCS() << L" ) {\n";
 			AGAIN_CASES() <<
-			"	default: break;\n"
-			"	}\n"
-			"\n";
+			L"	default: break;\n"
+			L"	}\n"
+			L"\n";
 
 
 		if ( !noEnd ) {
 			outLabelUsed = true;
 			out << 
-				"	if ( ++" << P() << " == " << PE() << " )\n"
-				"		goto _out;\n";
+				L"	if ( ++" << P() << L" == " << PE() << L" )\n"
+				L"		goto _out;\n";
 
 		}
 		else {
 			out << 
-				"	" << P() << " += 1;\n";
+				L"	" << P() << L" += 1;\n";
 		}
 
 		out <<
-			"_resume:\n";
+			L"_resume:\n";
 	}
 
 	out << 
-		"	switch ( " << vCS() << " )\n	{\n";
+		L"	switch ( " << vCS() << L" )\n	{\n";
 		STATE_GOTOS( partition );
 		SWITCH_DEFAULT() <<
-		"	}\n";
+		L"	}\n";
 		PART_TRANS( partition );
 		EXIT_STATES( partition );
 
 	if ( outLabelUsed ) {
 		out <<
-			"\n"
-			"	_out:\n"
-			"	*_pp = p;\n"
-			"	*_ppe = pe;\n"
-			"	return 0;\n";
+			L"\n"
+			L"	_out:\n"
+			L"	*_pp = p;\n"
+			L"	*_ppe = pe;\n"
+			L"	return 0;\n";
 	}
 
 	if ( ptOutLabelUsed ) {
 		out <<
-			"\n"
-			"	_pt_out:\n"
-			"	*_pp = p;\n"
-			"	*_ppe = pe;\n"
-			"	return 1;\n";
+			L"\n"
+			L"	_pt_out:\n"
+			L"	*_pp = p;\n"
+			L"	*_ppe = pe;\n"
+			L"	return 1;\n";
 	}
 
 	return out;
 }
 
-std::ostream &CSharpSplitCodeGen::PART_MAP()
+std::wostream &CSharpSplitCodeGen::PART_MAP()
 {
 	int *partMap = new int[redFsm->stateList.length()];
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ )
 		partMap[st->id] = st->partition;
 
-	out << "\t";
+	out << L"\t";
 	int totalItem = 0;
 	for ( int i = 0; i < redFsm->stateList.length(); i++ ) {
 		out << partMap[i];
 		if ( i != redFsm->stateList.length() - 1 ) {
-			out << ", ";
+			out << L", ";
 			if ( ++totalItem % IALL == 0 )
-				out << "\n\t";
+				out << L"\n\t";
 		}
 	}
 
@@ -298,70 +298,70 @@ std::ostream &CSharpSplitCodeGen::PART_MAP()
 void CSharpSplitCodeGen::writeData()
 {
 	out <<
-		"const int " << START() << " = " << START_STATE_ID() << ";\n"
-		"\n";
+		L"const int " << START() << L" = " << START_STATE_ID() << L";\n"
+		L"\n";
 
 	if ( !noFinal ) {
 		out <<
-			"const int " << FIRST_FINAL() << " = " << FIRST_FINAL_STATE() << ";\n"
-			"\n";
+			L"const int " << FIRST_FINAL() << L" = " << FIRST_FINAL_STATE() << L";\n"
+			L"\n";
 	}
 
 	if ( !noError ) {
 		out <<
-			"const int " << ERROR() << " = " << ERROR_STATE() << ";\n"
-			"\n";
+			L"const int " << ERROR() << L" = " << ERROR_STATE() << L";\n"
+			L"\n";
 	}
 
 
 	OPEN_ARRAY( ARRAY_TYPE(numSplitPartitions), PM() );
 	PART_MAP();
 	CLOSE_ARRAY() <<
-	"\n";
+	L"\n";
 
 	for ( int p = 0; p < redFsm->nParts; p++ ) {
-		out << "int partition" << p << "( " << ALPH_TYPE() << " **_pp, " << ALPH_TYPE() << 
-			" **_ppe, struct " << FSM_NAME() << " *fsm );\n";
+		out << L"int partition" << p << L"( " << ALPH_TYPE() << L" **_pp, " << ALPH_TYPE() << 
+			L" **_ppe, struct " << FSM_NAME() << L" *fsm );\n";
 	}
-	out << "\n";
+	out << L"\n";
 }
 
-std::ostream &CSharpSplitCodeGen::ALL_PARTITIONS()
+std::wostream &CSharpSplitCodeGen::ALL_PARTITIONS()
 {
-	/* compute the format string. */
+	/* compute the format wstring. */
 	int width = 0, high = redFsm->nParts - 1;
 	while ( high > 0 ) {
 		width++;
 		high /= 10;
 	}
 	assert( width <= 8 );
-	char suffFormat[] = "_%6.6d.c";
-	suffFormat[2] = suffFormat[4] = ( '0' + width );
+	wchar_t suffFormat[] = L"_%6.6d.c";
+	suffFormat[2] = suffFormat[4] = ( L'0' + width );
 
 	for ( int p = 0; p < redFsm->nParts; p++ ) {
-		char suffix[10];
-		sprintf( suffix, suffFormat, p );
-		const char *fn = fileNameFromStem( sourceFileName, suffix );
-		const char *include = fileNameFromStem( sourceFileName, ".h" );
+		wchar_t suffix[10];
+		swprintf( suffix, 10, suffFormat, p );
+		const wchar_t *fn = fileNameFromStem( sourceFileName, suffix );
+		const wchar_t *include = fileNameFromStem( sourceFileName, L".h" );
 
 		/* Create the filter on the output and open it. */
 		output_filter *partFilter = new output_filter( fn );
 		partFilter->open( fn, ios::out|ios::trunc );
 		if ( !partFilter->is_open() ) {
-			error() << "error opening " << fn << " for writing" << endl;
+			error() << L"error opening " << fn << L" for writing" << endl;
 			exit(1);
 		}
 
 		/* Attach the new file to the output stream. */
-		std::streambuf *prev_rdbuf = out.rdbuf( partFilter );
+		std::wstreambuf *prev_rdbuf = out.rdbuf( partFilter );
 
 		out << 
-			"#include \"" << include << "\"\n"
-			"int partition" << p << "( " << ALPH_TYPE() << " **_pp, " << ALPH_TYPE() << 
-					" **_ppe, struct " << FSM_NAME() << " *fsm )\n"
-			"{\n";
+			L"#include \"" << include << "\"\n"
+			L"int partition" << p << L"( " << ALPH_TYPE() << L" **_pp, " << ALPH_TYPE() << 
+					L" **_ppe, struct " << FSM_NAME() << L" *fsm )\n"
+			L"{\n";
 			PARTITION( p ) <<
-			"}\n\n";
+			L"}\n\n";
 		out.flush();
 
 		/* Fix the output stream. */
@@ -377,51 +377,51 @@ void CSharpSplitCodeGen::writeExec()
 	 * noend write option. */
 	setLabelsNeeded();
 	out << 
-		"	{\n"
-		"	int _stat = 0;\n";
+		L"	{\n"
+		L"	int _stat = 0;\n";
 
 	if ( !noEnd ) {
 		out <<
-			"	if ( " << P() << " == " << PE() << " )\n"
-			"		goto _out;\n";
+			L"	if ( " << P() << L" == " << PE() << L" )\n"
+			L"		goto _out;\n";
 	}
 
-	out << "	goto _resume;\n";
+	out << L"	goto _resume;\n";
 	
 	/* In this reentry, to-state actions have already been executed on the
 	 * partition-switch exit from the last partition. */
-	out << "_reenter:\n";
+	out << L"_reenter:\n";
 
 	if ( !noEnd ) {
 		out <<
-			"	if ( ++" << P() << " == " << PE() << " )\n"
-			"		goto _out;\n";
+			L"	if ( ++" << P() << L" == " << PE() << L" )\n"
+			L"		goto _out;\n";
 	}
 	else {
 		out << 
-			"	" << P() << " += 1;\n";
+			L"	" << P() << L" += 1;\n";
 	}
 
-	out << "_resume:\n";
+	out << L"_resume:\n";
 
 	out << 
-		"	switch ( " << PM() << "[" << vCS() << "] ) {\n";
+		L"	switch ( " << PM() << L"[" << vCS() << L"] ) {\n";
 	for ( int p = 0; p < redFsm->nParts; p++ ) {
 		out <<
-			"	case " << p << ":\n"
-			"		_stat = partition" << p << "( &p, &pe, fsm );\n"
-			"		break;\n";
+			L"	case " << p << L":\n"
+			L"		_stat = partition" << p << L"( &p, &pe, fsm );\n"
+			L"		break;\n";
 	}
 	out <<
-		"	}\n"
-		"	if ( _stat )\n"
-		"		goto _reenter;\n";
+		L"	}\n"
+		L"	if ( _stat )\n"
+		L"		goto _reenter;\n";
 	
 	if ( !noEnd )
-		out << "	_out: {}\n";
+		out << L"	_out: {}\n";
 
 	out <<
-		"	}\n";
+		L"	}\n";
 	
 	ALL_PARTITIONS();
 }

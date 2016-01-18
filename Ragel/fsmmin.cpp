@@ -639,7 +639,7 @@ void FsmAp::fuseUnmarkedPairs( MarkIndex &markIndex )
 	 * in it. */
 
 	/* For each unmarked pair merge p into q and delete p. q is always the
-	 * primary state of it's equivalence class. We wouldn't have landed on it
+	 * primary state of itL's equivalence class. We wouldn't have landed on it
 	 * here if it were not, because it would have been deleted.
 	 *
 	 * Proof that q is the primaray state of it's equivalence class: Assume q

@@ -33,13 +33,13 @@
 class OCamlFGotoCodeGen : virtual public OCamlGotoCodeGen
 {
 public:
-	OCamlFGotoCodeGen( ostream &out ) : OCamlCodeGen(out), OCamlGotoCodeGen(out) {}
+	OCamlFGotoCodeGen( wostream &out ) : OCamlCodeGen(out), OCamlGotoCodeGen(out) {}
 
-	std::ostream &EXEC_ACTIONS();
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &FINISH_CASES();
-	std::ostream &EOF_ACTION_SWITCH();
+	std::wostream &EXEC_ACTIONS();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &FINISH_CASES();
+	std::wostream &EOF_ACTION_SWITCH();
 	unsigned int TO_STATE_ACTION( RedStateAp *state );
 	unsigned int FROM_STATE_ACTION( RedStateAp *state );
 	unsigned int EOF_ACTION( RedStateAp *state );

@@ -36,7 +36,7 @@
 #include "parsetree.h"
 
 /* Forwards. */
-using std::ostream;
+using std::wostream;
 
 struct VarDef;
 struct Join;
@@ -65,14 +65,14 @@ struct GraphDictEl
 	public AvlTreeEl<GraphDictEl>,
 	public DListEl<GraphDictEl>
 {
-	GraphDictEl( const char *k ) 
+	GraphDictEl( const wchar_t *k ) 
 		: key(k), value(0), isInstance(false) { }
-	GraphDictEl( const char *k, VarDef *value ) 
+	GraphDictEl( const wchar_t *k, VarDef *value ) 
 		: key(k), value(value), isInstance(false) { }
 
-	const char *getKey() { return key; }
+	const wchar_t *getKey() { return key; }
 
-	const char *key;
+	const wchar_t *key;
 	VarDef *value;
 	bool isInstance;
 
@@ -80,27 +80,27 @@ struct GraphDictEl
 	InputLoc loc;
 };
 
-typedef AvlTree<GraphDictEl, const char*, CmpStr> GraphDict;
+typedef AvlTree<GraphDictEl, const wchar_t*, CmpStr> GraphDict;
 typedef DList<GraphDictEl> GraphList;
 
 /* Priority name dictionary. */
-typedef AvlMapEl<char*, int> PriorDictEl;
-typedef AvlMap<char*, int, CmpStr> PriorDict;
+typedef AvlMapEl<wchar_t*, int> PriorDictEl;
+typedef AvlMap<wchar_t*, int, CmpStr> PriorDict;
 
 /* Local error name dictionary. */
-typedef AvlMapEl<const char*, int> LocalErrDictEl;
-typedef AvlMap<const char*, int, CmpStr> LocalErrDict;
+typedef AvlMapEl<const wchar_t*, int> LocalErrDictEl;
+typedef AvlMap<const wchar_t*, int, CmpStr> LocalErrDict;
 
 /* Tree of instantiated names. */
-typedef BstMapEl<const char*, NameInst*> NameMapEl;
-typedef BstMap<const char*, NameInst*, CmpStr> NameMap;
+typedef BstMapEl<const wchar_t*, NameInst*> NameMapEl;
+typedef BstMap<const wchar_t*, NameInst*, CmpStr> NameMap;
 typedef Vector<NameInst*> NameVect;
 typedef BstSet<NameInst*> NameSet;
 
 /* Node in the tree of instantiated names. */
 struct NameInst
 {
-	NameInst( const InputLoc &loc, NameInst *parent, const char *name, int id, bool isLabel ) : 
+	NameInst( const InputLoc &loc, NameInst *parent, const wchar_t *name, int id, bool isLabel ) : 
 		loc(loc), parent(parent), name(name), id(id), isLabel(isLabel),
 		isLongestMatch(false), numRefs(0), numUses(0), start(0), final(0) {}
 
@@ -110,7 +110,7 @@ struct NameInst
 	 * fully qulified names. */
 	NameInst *parent;
 
-	const char *name;
+	const wchar_t *name;
 	int id;
 	bool isLabel;
 	bool isLongestMatch;
@@ -124,7 +124,7 @@ struct NameInst
 	/* All names underneath us in order of appearance. */
 	NameVect childVect;
 
-	/* Join scopes need an implicit "final" target. */
+	/* Join scopes need an implicit L"final" target. */
 	NameInst *start, *final;
 
 	/* During a fsm generation walk, lists the names that are referenced by
@@ -153,10 +153,10 @@ struct NameFrame
 
 struct LengthDef
 {
-	LengthDef( char *name )
+	LengthDef( wchar_t *name )
 		: name(name) {}
 
-	char *name;
+	wchar_t *name;
 	LengthDef *prev, *next;
 };
 
@@ -168,7 +168,7 @@ struct ParseData
 {
 	/* Create a new parse data object. This is done at the beginning of every
 	 * fsm specification. */
-	ParseData( const char *fileName, char *sectionName, const InputLoc &sectionLoc );
+	ParseData( const wchar_t *fileName, wchar_t *sectionName, const InputLoc &sectionLoc );
 	~ParseData();
 
 	/*
@@ -177,11 +177,11 @@ struct ParseData
 
 	/* Initialize a graph dict with the basic fsms. */
 	void initGraphDict();
-	void createBuiltin( const char *name, BuiltinMachine builtin );
+	void createBuiltin( const wchar_t *name, BuiltinMachine builtin );
 
 	/* Make a name id in the current name instantiation scope if it is not
 	 * already there. */
-	NameInst *addNameInst( const InputLoc &loc, const char *data, bool isLabel );
+	NameInst *addNameInst( const InputLoc &loc, const wchar_t *data, bool isLabel );
 	void makeRootNames();
 	void makeNameTree( GraphDictEl *gdNode );
 	void makeExportsNameTree();
@@ -193,7 +193,7 @@ struct ParseData
 	void unsetObsoleteEntries( FsmAp *graph );
 
 	/* Resove name references in action code and epsilon transitions. */
-	NameSet resolvePart( NameInst *refFrom, const char *data, bool recLabelsOnly );
+	NameSet resolvePart( NameInst *refFrom, const wchar_t *data, bool recLabelsOnly );
 	void resolveFrom( NameSet &result, NameInst *refFrom, 
 			const NameRef &nameRef, int namePos );
 	NameInst *resolveStateRef( const NameRef &nameRef, InputLoc &loc, Action *action );
@@ -201,11 +201,11 @@ struct ParseData
 	void resolveActionNameRefs();
 
 	/* Set the alphabet type. If type types are not valid returns false. */
-	bool setAlphType( const InputLoc &loc, char *s1, char *s2 );
-	bool setAlphType( const InputLoc &loc, char *s1 );
+	bool setAlphType( const InputLoc &loc, wchar_t *s1, wchar_t *s2 );
+	bool setAlphType( const InputLoc &loc, wchar_t *s1 );
 
 	/* Override one of the variables ragel uses. */
-	bool setVariable( char *var, InlineList *inlineList );
+	bool setVariable( wchar_t *var, InlineList *inlineList );
 
 	/* Unique actions. */
 	void removeDups( ActionTable &actionTable );
@@ -229,7 +229,7 @@ struct ParseData
 
 	void prepareMachineGen( GraphDictEl *graphDictEl );
 	void prepareMachineGenTBWrapped( GraphDictEl *graphDictEl );
-	void generateXML( ostream &out );
+	void generateXML( wostream &out );
 	void generateReduced( InputData &inputData );
 	FsmAp *sectionGraph;
 	bool generatingSectionSubset;
@@ -293,13 +293,13 @@ struct ParseData
 	InlineList *dataExpr;
 
 	/* The alphabet range. */
-	char *lowerNum, *upperNum;
+	wchar_t *lowerNum, *upperNum;
 	Key lowKey, highKey;
 	InputLoc rangeLowLoc, rangeHighLoc;
 
 	/* The name of the file the fsm is from, and the spec name. */
-	const char *fileName;
-	char *sectionName;
+	const wchar_t *fileName;
+	wchar_t *sectionName;
 	InputLoc sectionLoc;
 
 	/* Counting the action and priority ordering. */
@@ -344,7 +344,7 @@ struct ParseData
 	/* List of all longest match parse tree items. */
 	LmList lmList;
 
-	Action *newAction( const char *name, InlineList *inlineList );
+	Action *newAction( const wchar_t *name, InlineList *inlineList );
 
 	Action *initTokStart;
 	int initTokStartOrd;
@@ -374,12 +374,12 @@ struct ParseData
 };
 
 void afterOpMinimize( FsmAp *fsm, bool lastInSeq = true );
-Key makeFsmKeyHex( char *str, const InputLoc &loc, ParseData *pd );
-Key makeFsmKeyDec( char *str, const InputLoc &loc, ParseData *pd );
-Key makeFsmKeyNum( char *str, const InputLoc &loc, ParseData *pd );
+Key makeFsmKeyHex( wchar_t *str, const InputLoc &loc, ParseData *pd );
+Key makeFsmKeyDec( wchar_t *str, const InputLoc &loc, ParseData *pd );
+Key makeFsmKeyNum( wchar_t *str, const InputLoc &loc, ParseData *pd );
 Key makeFsmKeyChar( char c, ParseData *pd );
-void makeFsmKeyArray( Key *result, char *data, int len, ParseData *pd );
-void makeFsmUniqueKeyArray( KeySet &result, char *data, int len, 
+void makeFsmKeyArray( Key *result, wchar_t *data, int len, ParseData *pd );
+void makeFsmUniqueKeyArray( KeySet &result, wchar_t *data, int len, 
 		bool caseInsensitive, ParseData *pd );
 FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd );
 FsmAp *dotFsm( ParseData *pd );

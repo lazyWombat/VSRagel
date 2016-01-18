@@ -6,7 +6,7 @@
  * "rlparse.kh" and inherits the copyright status of that file.
  */
 
-#line 1 "rlparse.kh"
+//#line 1 "rlparse.kh"
 /*
  *  Copyright 2001-2007 Adrian Thurston <thurston@complang.org>
  */
@@ -45,18 +45,18 @@
 /* This is used for tracking the include files/machine pairs. */
 struct IncludeHistoryItem
 {
-	IncludeHistoryItem( const char *fileName, const char *sectionName )
+	IncludeHistoryItem( const wchar_t *fileName, const wchar_t *sectionName )
 		: fileName(fileName), sectionName(sectionName) {}
 
-	const char *fileName;
-	const char *sectionName;
+	const wchar_t *fileName;
+	const wchar_t *sectionName;
 };
 
 typedef Vector<IncludeHistoryItem> IncludeHistory;
 
 struct Parser
 {
-#line 102 "rlparse.kh"
+//#line 102 "rlparse.kh"
 
 
 	#line 63 "rlparse.h"
@@ -70,12 +70,12 @@ struct Parser
 	struct Parser_LangEl *lastFinal;
 	int errCount;
 	int curs;
-#line 105 "rlparse.kh"
+//#line 105 "rlparse.kh"
 
 	void init();
 	int parseLangEl( int type, const Token *token );
 
-	Parser( const char *fileName, char *sectionName, InputLoc &sectionLoc )
+	Parser( const wchar_t *fileName, wchar_t *sectionName, InputLoc &sectionLoc )
 		: sectionName(sectionName)
 	{
 		pd = new ParseData( fileName, sectionName, sectionLoc );
@@ -84,17 +84,17 @@ struct Parser
 				fileName, sectionName ) );
 	}
 
-	int token( InputLoc &loc, int tokId, char *tokstart, int toklen );
-	void tryMachineDef( InputLoc &loc, char *name, 
+	int token( InputLoc &loc, int tokId, wchar_t *tokstart, int toklen );
+	void tryMachineDef( InputLoc &loc, wchar_t *name, 
 		MachineDef *machineDef, bool isInstance );
 
 	/* Report an error encountered by the parser. */
-	ostream &parse_error( int tokId, Token &token );
+	wostream &parse_error( int tokId, Token &token );
 
 	ParseData *pd;
 
 	/* The name of the root section, this does not change during an include. */
-	char *sectionName;
+	wchar_t *sectionName;
 
 	NameRef nameRef;
 	NameRefList nameRefList;
@@ -105,7 +105,7 @@ struct Parser
 	Parser *prev, *next;
 };
 
-#line 109 "rlparse.h"
+//#line 109 "rlparse.h"
 #define TK_Word 128
 #define TK_Literal 129
 #define TK_Number 130
@@ -205,6 +205,6 @@ struct Parser
 #define KW_Access 224
 #define Parser_tk_eof 225
 
-#line 140 "rlparse.kh"
+//#line 140 "rlparse.kh"
 
 #endif

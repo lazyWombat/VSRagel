@@ -38,18 +38,18 @@
 #include "rubyfflat.h"
 #include "rbxgoto.h"
 
-using std::ostream;
-using std::ostringstream;
-using std::string;
-using std::cerr;
+using std::wostream;
+using std::wostringstream;
+using std::wstring;
+using std::wcerr;
 using std::endl;
-using std::istream;
-using std::ifstream;
-using std::ostream;
+using std::wistream;
+using std::wifstream;
+using std::wostream;
 using std::ios;
 using std::cin;
-using std::cout;
-using std::cerr;
+using std::wcout;
+using std::wcerr;
 using std::endl;
 
 /* Target ruby impl */
@@ -65,262 +65,262 @@ extern bool noLineDirectives;
  */
 
 
-void rubyLineDirective( ostream &out, const char *fileName, int line )
+void rubyLineDirective( wostream &out, const wchar_t *fileName, int line )
 {
 	if ( noLineDirectives )
 		return;
 
 	/* Write a comment containing line info. */
-	out << "# line " << line  << " \"";
-	for ( const char *pc = fileName; *pc != 0; pc++ ) {
-		if ( *pc == '\\' )
-			out << "\\\\";
+	out << L"# line " << line  << L" \"";
+	for ( const wchar_t *pc = fileName; *pc != 0; pc++ ) {
+		if ( *pc == L'\\' )
+			out << L"\\\\";
 		else
 			out << *pc;
 	}
-	out << "\"\n";
+	out << L"\"\n";
 }
 
-void RubyCodeGen::genLineDirective( ostream &out )
+void RubyCodeGen::genLineDirective( wostream &out )
 {
-	std::streambuf *sbuf = out.rdbuf();
+	std::wstreambuf *sbuf = out.rdbuf();
 	output_filter *filter = static_cast<output_filter*>(sbuf);
 	rubyLineDirective( out, filter->fileName, filter->line + 1 );
 }
 
-string RubyCodeGen::DATA_PREFIX()
+wstring RubyCodeGen::DATA_PREFIX()
 {
 	if ( !noPrefix )
-		return FSM_NAME() + "_";
-	return "";
+		return FSM_NAME() + L"_";
+	return L"";
 }
 
-std::ostream &RubyCodeGen::STATIC_VAR( string type, string name )
+std::wostream &RubyCodeGen::STATIC_VAR( wstring type, wstring name )
 {
 	out << 
-		"class << self\n"
-		"	attr_accessor :" << name << "\n"
-		"end\n"
-		"self." << name;
+		L"class << self\n"
+		L"	attr_accessor :" << name << L"\n"
+		L"end\n"
+		L"self." << name;
 	return out;
 }
 
 
-std::ostream &RubyCodeGen::OPEN_ARRAY( string type, string name )
+std::wostream &RubyCodeGen::OPEN_ARRAY( wstring type, wstring name )
 {
 	out << 
-		"class << self\n"
-		"	attr_accessor :" << name << "\n"
-		"	private :" << name << ", :" << name << "=\n"
-		"end\n"
-		"self." << name << " = [\n";
+		L"class << self\n"
+		L"	attr_accessor :" << name << L"\n"
+		L"	private :" << name << L", :" << name << L"=\n"
+		L"end\n"
+		L"self." << name << L" = [\n";
 	return out;
 }
 
-std::ostream &RubyCodeGen::CLOSE_ARRAY()
+std::wostream &RubyCodeGen::CLOSE_ARRAY()
 {
-	out << "]\n";
+	out << L"]\n";
 	return out;
 }
 
 
-string RubyCodeGen::ARR_OFF( string ptr, string offset )
+wstring RubyCodeGen::ARR_OFF( wstring ptr, wstring offset )
 {
-	return ptr + "[" + offset + "]";
+	return ptr + L"[" + offset + L"]";
 }
 
-string RubyCodeGen::NULL_ITEM()
+wstring RubyCodeGen::NULL_ITEM()
 {
-	return "nil";
+	return L"nil";
 }
 
 
-string RubyCodeGen::P()
+wstring RubyCodeGen::P()
 { 
-	ostringstream ret;
+	wostringstream ret;
 	if ( pExpr == 0 )
-		ret << "p";
+		ret << L"p";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, pExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::PE()
+wstring RubyCodeGen::PE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( peExpr == 0 )
-		ret << "pe";
+		ret << L"pe";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, peExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::vEOF()
+wstring RubyCodeGen::vEOF()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( eofExpr == 0 )
-		ret << "eof";
+		ret << L"eof";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, eofExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::vCS()
+wstring RubyCodeGen::vCS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( csExpr == 0 )
-		ret << ACCESS() << "cs";
+		ret << ACCESS() << L"cs";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, csExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::TOP()
+wstring RubyCodeGen::TOP()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( topExpr == 0 )
-		ret << ACCESS() + "top";
+		ret << ACCESS() + L"top";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, topExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::STACK()
+wstring RubyCodeGen::STACK()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( stackExpr == 0 )
-		ret << ACCESS() + "stack";
+		ret << ACCESS() + L"stack";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, stackExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::ACT()
+wstring RubyCodeGen::ACT()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( actExpr == 0 )
-		ret << ACCESS() + "act";
+		ret << ACCESS() + L"act";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, actExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::TOKSTART()
+wstring RubyCodeGen::TOKSTART()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokstartExpr == 0 )
-		ret << ACCESS() + "ts";
+		ret << ACCESS() + L"ts";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, tokstartExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::TOKEND()
+wstring RubyCodeGen::TOKEND()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( tokendExpr == 0 )
-		ret << ACCESS() + "te";
+		ret << ACCESS() + L"te";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, tokendExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::DATA()
+wstring RubyCodeGen::DATA()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( dataExpr == 0 )
-		ret << ACCESS() + "data";
+		ret << ACCESS() + L"data";
 	else {
-		//ret << "(";
+		//ret << L"(";
 		INLINE_LIST( ret, dataExpr, 0, false );
-		//ret << ")";
+		//ret << L")";
 	}
 	return ret.str();
 }
 
 /* Write out the fsm name. */
-string RubyCodeGen::FSM_NAME()
+wstring RubyCodeGen::FSM_NAME()
 {
 	return fsmName;
 }
 
 
-void RubyCodeGen::ACTION( ostream &ret, GenAction *action, int targState, bool inFinish )
+void RubyCodeGen::ACTION( wostream &ret, GenAction *action, int targState, bool inFinish )
 {
 	/* Write the preprocessor line info for going into the source file. */
 	rubyLineDirective( ret, action->loc.fileName, action->loc.line );
 
 	/* Write the block and close it off. */
-	ret << "		begin\n";
+	ret << L"		begin\n";
 	INLINE_LIST( ret, action->inlineList, targState, inFinish );
-	ret << "		end\n";
+	ret << L"		end\n";
 }
 
 
 
-string RubyCodeGen::GET_WIDE_KEY()
+wstring RubyCodeGen::GET_WIDE_KEY()
 {
 	if ( redFsm->anyConditions() ) 
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string RubyCodeGen::GET_WIDE_KEY( RedStateAp *state )
+wstring RubyCodeGen::GET_WIDE_KEY( RedStateAp *state )
 {
 	if ( state->stateCondList.length() > 0 )
-		return "_widec";
+		return L"_widec";
 	else
 		return GET_KEY();
 }
 
-string RubyCodeGen::GET_KEY()
+wstring RubyCodeGen::GET_KEY()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( getKeyExpr != 0 ) { 
 		/* Emit the user supplied method of retrieving the key. */
-		ret << "(";
+		ret << L"(";
 		INLINE_LIST( ret, getKeyExpr, 0, false );
-		ret << ")";
+		ret << L")";
 	}
 	else {
 		/* Expression for retrieving the key, use dereference and read ordinal,
 		 * for compatibility with Ruby 1.9. */
-		ret << DATA() << "[" << P() << "].ord";
+		ret << DATA() << L"[" << P() << L"].ord";
 	}
 	return ret.str();
 }
 
-string RubyCodeGen::KEY( Key key )
+wstring RubyCodeGen::KEY( Key key )
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( keyOps->isSigned || !hostLang->explicitUnsigned )
 		ret << key.getVal();
 	else
@@ -331,43 +331,43 @@ string RubyCodeGen::KEY( Key key )
 
 /* Write out level number of tabs. Makes the nested binary search nice
  * looking. */
-string RubyCodeGen::TABS( int level )
+wstring RubyCodeGen::TABS( int level )
 {
-	string result;
+	wstring result;
 	while ( level-- > 0 )
-		result += "\t";
+		result += L"\t";
 	return result;
 }
 
-string RubyCodeGen::INT( int i )
+wstring RubyCodeGen::INT( int i )
 {
-	ostringstream ret;
+	wostringstream ret;
 	ret << i;
 	return ret.str();
 }
 
-void RubyCodeGen::CONDITION( ostream &ret, GenAction *condition )
+void RubyCodeGen::CONDITION( wostream &ret, GenAction *condition )
 {
-	ret << "\n";
+	ret << L"\n";
 	rubyLineDirective( ret, condition->loc.fileName, condition->loc.line );
 	INLINE_LIST( ret, condition->inlineList, 0, false );
 }
 
 /* Emit the alphabet data type. */
-string RubyCodeGen::ALPH_TYPE()
+wstring RubyCodeGen::ALPH_TYPE()
 {
-	string ret = keyOps->alphType->data1;
+	wstring ret = keyOps->alphType->data1;
 	if ( keyOps->alphType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += + keyOps->alphType->data2;
 	}
 	return ret;
 }
 
 /* Emit the alphabet data type. */
-string RubyCodeGen::WIDE_ALPH_TYPE()
+wstring RubyCodeGen::WIDE_ALPH_TYPE()
 {
-	string ret;
+	wstring ret;
 	if ( redFsm->maxKey <= keyOps->maxKey )
 		ret = ALPH_TYPE();
 	else {
@@ -377,7 +377,7 @@ string RubyCodeGen::WIDE_ALPH_TYPE()
 
 		ret = wideType->data1;
 		if ( wideType->data2 != 0 ) {
-			ret += " ";
+			ret += L" ";
 			ret += wideType->data2;
 		}
 	}
@@ -385,22 +385,22 @@ string RubyCodeGen::WIDE_ALPH_TYPE()
 }
 
 
-string RubyCodeGen::ARRAY_TYPE( unsigned long maxVal )
+wstring RubyCodeGen::ARRAY_TYPE( unsigned long maxVal )
 {
 	long long maxValLL = (long long) maxVal;
 	HostType *arrayType = keyOps->typeSubsumes( maxValLL );
 	assert( arrayType != 0 );
 
-	string ret = arrayType->data1;
+	wstring ret = arrayType->data1;
 	if ( arrayType->data2 != 0 ) {
-		ret += " ";
+		ret += L" ";
 		ret += arrayType->data2;
 	}
 	return ret;
 }
 
 /* Write out the array of actions. */
-std::ostream &RubyCodeGen::ACTIONS_ARRAY()
+std::wostream &RubyCodeGen::ACTIONS_ARRAY()
 {
 	START_ARRAY_LINE();
 	int totalActions = 0;
@@ -420,37 +420,37 @@ std::ostream &RubyCodeGen::ACTIONS_ARRAY()
 void RubyCodeGen::STATE_IDS()
 {
 	if ( redFsm->startState != 0 )
-		STATIC_VAR( "int", START() ) << " = " << START_STATE_ID() << ";\n";
+		STATIC_VAR( L"int", START() ) << L" = " << START_STATE_ID() << L";\n";
 
 	if ( !noFinal )
-		STATIC_VAR( "int" , FIRST_FINAL() ) << " = " << FIRST_FINAL_STATE() << ";\n";
+		STATIC_VAR( L"int" , FIRST_FINAL() ) << L" = " << FIRST_FINAL_STATE() << L";\n";
 
 	if ( !noError )
-		STATIC_VAR( "int", ERROR() ) << " = " << ERROR_STATE() << ";\n";
+		STATIC_VAR( L"int", ERROR() ) << L" = " << ERROR_STATE() << L";\n";
 
-	out << "\n";
+	out << L"\n";
 
 	if ( entryPointNames.length() > 0 ) {
 		for ( EntryNameVect::Iter en = entryPointNames; en.lte(); en++ ) {
-			STATIC_VAR( "int", DATA_PREFIX() + "en_" + *en ) << 
-					" = " << entryPointIds[en.pos()] << ";\n";
+			STATIC_VAR( L"int", DATA_PREFIX() + L"en_" + *en ) << 
+					L" = " << entryPointIds[en.pos()] << L";\n";
 		}
-		out << "\n";
+		out << L"\n";
 	}
 }
 
-std::ostream &RubyCodeGen::START_ARRAY_LINE()
+std::wostream &RubyCodeGen::START_ARRAY_LINE()
 {
-	out << "\t";
+	out << L"\t";
 	return out;
 }
 
-std::ostream &RubyCodeGen::ARRAY_ITEM( string item, int count, bool last )
+std::wostream &RubyCodeGen::ARRAY_ITEM( wstring item, int count, bool last )
 {
 	out << item;
 	if ( !last )
 	{
-		out << ", ";
+		out << L", ";
 		if ( count % IALL == 0 )
 		{
 			END_ARRAY_LINE();
@@ -460,33 +460,33 @@ std::ostream &RubyCodeGen::ARRAY_ITEM( string item, int count, bool last )
 	return out;
 }
 
-std::ostream &RubyCodeGen::END_ARRAY_LINE()
+std::wostream &RubyCodeGen::END_ARRAY_LINE()
 {
-	out << "\n";
+	out << L"\n";
 	return out;
 }
 
 /* Emit the offset of the start state as a decimal integer. */
-string RubyCodeGen::START_STATE_ID()
+wstring RubyCodeGen::START_STATE_ID()
 {
-	ostringstream ret;
+	wostringstream ret;
 	ret << redFsm->startState->id;
 	return ret.str();
 };
 
-string RubyCodeGen::ERROR_STATE()
+wstring RubyCodeGen::ERROR_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->errState != 0 )
 		ret << redFsm->errState->id;
 	else
-		ret << "-1";
+		ret << L"-1";
 	return ret.str();
 }
 
-string RubyCodeGen::FIRST_FINAL_STATE()
+wstring RubyCodeGen::FIRST_FINAL_STATE()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( redFsm->firstFinState != 0 )
 		ret << redFsm->firstFinState->id;
 	else
@@ -494,9 +494,9 @@ string RubyCodeGen::FIRST_FINAL_STATE()
 	return ret.str();
 }
 
-string RubyCodeGen::ACCESS()
+wstring RubyCodeGen::ACCESS()
 {
-	ostringstream ret;
+	wostringstream ret;
 	if ( accessExpr != 0 )
 		INLINE_LIST( ret, accessExpr, 0, false );
 	return ret.str();
@@ -504,7 +504,7 @@ string RubyCodeGen::ACCESS()
 
 /* Write out an inline tree structure. Walks the list and possibly calls out
  * to virtual functions than handle language specific items in the tree. */
-void RubyCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList, 
+void RubyCodeGen::INLINE_LIST( wostream &ret, GenInlineList *inlineList, 
 		int targState, bool inFinish )
 {
 	for ( GenInlineList::Iter item = *inlineList; item.lte(); item++ ) {
@@ -531,16 +531,16 @@ void RubyCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 			ret << GET_KEY();
 			break;
 		case GenInlineItem::Hold:
-			ret << P() << " = " << P() << " - 1;";
+			ret << P() << L" = " << P() << L" - 1;";
 			break;
 		case GenInlineItem::Exec:
 			EXEC( ret, item, targState, inFinish );
 			break;
 		case GenInlineItem::Curs:
-			ret << "(_ps)";
+			ret << L"(_ps)";
 			break;
 		case GenInlineItem::Targs:
-			ret << "(" << vCS() << ")";
+			ret << L"(" << vCS() << L")";
 			break;
 		case GenInlineItem::Entry:
 			ret << item->targState->id;
@@ -586,81 +586,81 @@ void RubyCodeGen::INLINE_LIST( ostream &ret, GenInlineList *inlineList,
 }
 
 
-void RubyCodeGen::EXEC( ostream &ret, GenInlineItem *item, int targState, int inFinish )
+void RubyCodeGen::EXEC( wostream &ret, GenInlineItem *item, int targState, int inFinish )
 {
 	/* The parser gives fexec two children. The double brackets are for D
 	 * code. If the inline list is a single word it will get interpreted as a
 	 * C-style cast by the D compiler. */
-	ret << " begin " << P() << " = ((";
+	ret << L" begin " << P() << L" = ((";
 	INLINE_LIST( ret, item->children, targState, inFinish );
-	ret << "))-1; end\n";
+	ret << L"))-1; end\n";
 }
 
-void RubyCodeGen::LM_SWITCH( ostream &ret, GenInlineItem *item, 
+void RubyCodeGen::LM_SWITCH( wostream &ret, GenInlineItem *item, 
 		int targState, int inFinish )
 {
 	ret << 
-		"	case " << ACT() << "\n";
+		L"	case " << ACT() << L"\n";
 
 	for ( GenInlineList::Iter lma = *item->children; lma.lte(); lma++ ) {
 		/* Write the case label, the action and the case break. */
 		if ( lma->lmId < 0 )
-			ret << "	else\n";
+			ret << L"	else\n";
 		else
-			ret << "	when " << lma->lmId << " then\n";
+			ret << L"	when " << lma->lmId << L" then\n";
 
 
 		/* Write the block and close it off. */
-		ret << "	begin";
+		ret << L"	begin";
 		INLINE_LIST( ret, lma->children, targState, inFinish );
-		ret << "end\n";
+		ret << L"end\n";
 	}
 
-	ret << "end \n\t";
+	ret << L"end \n\t";
 }
 
-void RubyCodeGen::SET_ACT( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::SET_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = " << item->lmId << ";";
+	ret << ACT() << L" = " << item->lmId << L";";
 }
 
-void RubyCodeGen::INIT_TOKSTART( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::INIT_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << NULL_ITEM() << ";";
+	ret << TOKSTART() << L" = " << NULL_ITEM() << L";";
 }
 
-void RubyCodeGen::INIT_ACT( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::INIT_ACT( wostream &ret, GenInlineItem *item )
 {
-	ret << ACT() << " = 0\n";
+	ret << ACT() << L" = 0\n";
 }
 
-void RubyCodeGen::SET_TOKSTART( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::SET_TOKSTART( wostream &ret, GenInlineItem *item )
 {
-	ret << TOKSTART() << " = " << P() << "\n";
+	ret << TOKSTART() << L" = " << P() << L"\n";
 }
 
-void RubyCodeGen::SET_TOKEND( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::SET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	/* The tokend action sets tokend. */
-	ret << TOKEND() << " = " << P();
+	ret << TOKEND() << L" = " << P();
 	if ( item->offset != 0 ) 
-		out << "+" << item->offset;
-	out << "\n";
+		out << L"+" << item->offset;
+	out << L"\n";
 }
 
-void RubyCodeGen::GET_TOKEND( ostream &ret, GenInlineItem *item )
+void RubyCodeGen::GET_TOKEND( wostream &ret, GenInlineItem *item )
 {
 	ret << TOKEND();
 }
 
-void RubyCodeGen::SUB_ACTION( ostream &ret, GenInlineItem *item, 
+void RubyCodeGen::SUB_ACTION( wostream &ret, GenInlineItem *item, 
 		int targState, bool inFinish )
 {
 	if ( item->children->length() > 0 ) {
 		/* Write the block and close it off. */
-		ret << " begin ";
+		ret << L" begin ";
 		INLINE_LIST( ret, item->children, targState, inFinish );
-		ret << " end\n";
+		ret << L" end\n";
 	}
 }
 
@@ -673,18 +673,18 @@ int RubyCodeGen::TRANS_ACTION( RedTransAp *trans )
 	return act;
 }
 
-ostream &RubyCodeGen::source_warning( const InputLoc &loc )
+wostream &RubyCodeGen::source_warning( const InputLoc &loc )
 {
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": warning: ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": warning: ";
+	return wcerr;
 }
 
-ostream &RubyCodeGen::source_error( const InputLoc &loc )
+wostream &RubyCodeGen::source_error( const InputLoc &loc )
 {
 	gblErrorCount += 1;
 	assert( sourceFileName != 0 );
-	cerr << sourceFileName << ":" << loc.line << ":" << loc.col << ": ";
-	return cerr;
+	wcerr << sourceFileName << L":" << loc.line << L":" << loc.col << L": ";
+	return wcerr;
 }
 
 void RubyCodeGen::finishRagelDef()
@@ -771,38 +771,38 @@ unsigned int RubyCodeGen::arrayTypeSize( unsigned long maxVal )
 
 void RubyCodeGen::writeInit()
 {
-	out << "begin\n";
+	out << L"begin\n";
 	
-	out << "	" << P() << " ||= 0\n";
+	out << L"	" << P() << L" ||= 0\n";
 
 	if ( !noEnd ) 
-		out << "	" << PE() << " ||= " << DATA() << ".length\n";
+		out << L"	" << PE() << L" ||= " << DATA() << L".length\n";
 
 	if ( !noCS )
-		out << "	" << vCS() << " = " << START() << "\n";
+		out << L"	" << vCS() << L" = " << START() << L"\n";
 
 	/* If there are any calls, then the stack top needs initialization. */
 	if ( redFsm->anyActionCalls() || redFsm->anyActionRets() )
-		out << "	" << TOP() << " = 0\n";
+		out << L"	" << TOP() << L" = 0\n";
 
 	if ( hasLongestMatch ) {
 		out <<
-			"	" << TOKSTART() << " = " << NULL_ITEM() << "\n"
-			"	" << TOKEND() << " = " << NULL_ITEM() << "\n"
-			"	" << ACT() << " = 0\n";
+			L"	" << TOKSTART() << L" = " << NULL_ITEM() << L"\n"
+			L"	" << TOKEND() << L" = " << NULL_ITEM() << L"\n"
+			L"	" << ACT() << L" = 0\n";
 	}
 
-	out << "end\n";
+	out << L"end\n";
 }
 
 void RubyCodeGen::writeExports()
 {
 	if ( exportList.length() > 0 ) {
 		for ( ExportList::Iter ex = exportList; ex.lte(); ex++ ) {
-			STATIC_VAR( ALPH_TYPE(), DATA_PREFIX() + "ex_" + ex->name ) 
-					<< " = " << KEY(ex->key) << "\n";
+			STATIC_VAR( ALPH_TYPE(), DATA_PREFIX() + L"ex_" + ex->name ) 
+					<< L" = " << KEY(ex->key) << L"\n";
 		}
-		out << "\n";
+		out << L"\n";
 	}
 }
 
@@ -826,6 +826,6 @@ void RubyCodeGen::writeError()
  * Local Variables:
  * mode: c++
  * indent-tabs-mode: 1
- * c-file-style: "bsd"
+ * c-file-style: L"bsd"
  * End:
  */

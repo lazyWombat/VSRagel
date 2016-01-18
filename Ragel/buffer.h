@@ -30,24 +30,24 @@ struct Buffer
 {
 	Buffer()
 	{
-		data = (char*) malloc( BUFFER_INITIAL_SIZE );
+		data = (wchar_t*) malloc( BUFFER_INITIAL_SIZE );
 		allocated = BUFFER_INITIAL_SIZE;
 		length = 0;
 	}
 	~Buffer() { free(data); }
 
-	void append( char p )
+	void append( wchar_t p )
 	{
 		if ( length == allocated ) {
 			allocated *= 2;
-			data = (char*) realloc( data, allocated );
+			data = (wchar_t*) realloc( data, allocated );
 		}
 		data[length++] = p;
 	}
 		
 	void clear() { length = 0; }
 
-	char *data;
+	wchar_t *data;
 	int allocated;
 	int length;
 };

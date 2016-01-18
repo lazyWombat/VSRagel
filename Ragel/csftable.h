@@ -37,17 +37,17 @@ struct CodeGenData;
 class CSharpFTabCodeGen : public CSharpTabCodeGen
 {
 public:
-	CSharpFTabCodeGen( ostream &out ) : CSharpFsmCodeGen(out), CSharpTabCodeGen(out) {}
+	CSharpFTabCodeGen( wostream &out ) : CSharpFsmCodeGen(out), CSharpTabCodeGen(out) {}
 private:
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &EOF_ACTION_SWITCH();
-	std::ostream &ACTION_SWITCH();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &EOF_ACTION_SWITCH();
+	std::wostream &ACTION_SWITCH();
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 	virtual void writeData();
 	virtual void writeExec();
 	virtual void calcIndexSize();

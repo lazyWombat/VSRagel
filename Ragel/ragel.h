@@ -30,7 +30,7 @@
 #include "config.h"
 #include "common.h"
 
-#define PROGNAME "ragel"
+#define PROGNAME L"ragel"
 
 /* Target output style. */
 enum CodeStyle
@@ -70,7 +70,7 @@ enum RubyImplEnum
 /* Options. */
 extern MinimizeLevel minimizeLevel;
 extern MinimizeOpt minimizeOpt;
-extern const char *machineSpec, *machineName;
+extern const wchar_t *machineSpec, *machineName;
 extern bool printStatistics;
 extern bool wantDupsRemoved;
 extern bool generateDot;
@@ -85,19 +85,19 @@ enum ErrorFormat {
 
 extern ErrorFormat errorFormat;
 extern int gblErrorCount;
-extern char mainMachine[];
+extern wchar_t mainMachine[];
 
-InputLoc makeInputLoc( const char *fileName, int line = 0, int col = 0 );
-std::ostream &operator<<( std::ostream &out, const InputLoc &loc );
+InputLoc makeInputLoc( const wchar_t *fileName, int line = 0, int col = 0 );
+std::wostream &operator<<( std::wostream &out, const InputLoc &loc );
 
 /* Error reporting. */
-std::ostream &error();
-std::ostream &error( const InputLoc &loc ); 
-std::ostream &warning( const InputLoc &loc ); 
+std::wostream &error();
+std::wostream &error( const InputLoc &loc ); 
+std::wostream &warning( const InputLoc &loc ); 
 
 struct XmlParser;
 
-void xmlEscapeHost( std::ostream &out, char *data, long len );
+void xmlEscapeHost( std::wostream &out, wchar_t *data, long len );
 
 extern CodeStyle codeStyle;
 
@@ -109,7 +109,7 @@ extern int gblErrorCount;
 extern int numSplitPartitions;
 extern bool noLineDirectives;
 
-std::ostream &error();
+std::wostream &error();
 
 /* Target language and output style. */
 extern CodeStyle codeStyle;

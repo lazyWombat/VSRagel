@@ -37,17 +37,17 @@ struct CodeGenData;
 class FTabCodeGen : public TabCodeGen
 {
 protected:
-	FTabCodeGen( ostream &out ) : FsmCodeGen(out), TabCodeGen(out) {}
+	FTabCodeGen( wostream &out ) : FsmCodeGen(out), TabCodeGen(out) {}
 
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &EOF_ACTION_SWITCH();
-	std::ostream &ACTION_SWITCH();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &EOF_ACTION_SWITCH();
+	std::wostream &ACTION_SWITCH();
 
-	virtual std::ostream &TO_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &FROM_STATE_ACTION( RedStateAp *state );
-	virtual std::ostream &EOF_ACTION( RedStateAp *state );
-	virtual std::ostream &TRANS_ACTION( RedTransAp *trans );
+	virtual std::wostream &TO_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &FROM_STATE_ACTION( RedStateAp *state );
+	virtual std::wostream &EOF_ACTION( RedStateAp *state );
+	virtual std::wostream &TRANS_ACTION( RedTransAp *trans );
 	virtual void writeData();
 	virtual void writeExec();
 	virtual void calcIndexSize();
@@ -60,7 +60,7 @@ protected:
 struct CFTabCodeGen
 	: public FTabCodeGen, public CCodeGen
 {
-	CFTabCodeGen( ostream &out ) : 
+	CFTabCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FTabCodeGen(out), CCodeGen(out) {}
 };
 
@@ -70,7 +70,7 @@ struct CFTabCodeGen
 struct DFTabCodeGen
 	: public FTabCodeGen, public DCodeGen
 {
-	DFTabCodeGen( ostream &out ) : 
+	DFTabCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FTabCodeGen(out), DCodeGen(out) {}
 };
 
@@ -80,7 +80,7 @@ struct DFTabCodeGen
 struct D2FTabCodeGen
 	: public FTabCodeGen, public D2CodeGen
 {
-	D2FTabCodeGen( ostream &out ) : 
+	D2FTabCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FTabCodeGen(out), D2CodeGen(out) {}
 };
 

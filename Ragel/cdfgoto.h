@@ -37,13 +37,13 @@ struct CodeGenData;
 class FGotoCodeGen : public GotoCodeGen
 {
 public:
-	FGotoCodeGen( ostream &out ) : FsmCodeGen(out), GotoCodeGen(out) {}
+	FGotoCodeGen( wostream &out ) : FsmCodeGen(out), GotoCodeGen(out) {}
 
-	std::ostream &EXEC_ACTIONS();
-	std::ostream &TO_STATE_ACTION_SWITCH();
-	std::ostream &FROM_STATE_ACTION_SWITCH();
-	std::ostream &FINISH_CASES();
-	std::ostream &EOF_ACTION_SWITCH();
+	std::wostream &EXEC_ACTIONS();
+	std::wostream &TO_STATE_ACTION_SWITCH();
+	std::wostream &FROM_STATE_ACTION_SWITCH();
+	std::wostream &FINISH_CASES();
+	std::wostream &EOF_ACTION_SWITCH();
 	unsigned int TO_STATE_ACTION( RedStateAp *state );
 	unsigned int FROM_STATE_ACTION( RedStateAp *state );
 	unsigned int EOF_ACTION( RedStateAp *state );
@@ -58,7 +58,7 @@ public:
 struct CFGotoCodeGen
 	: public FGotoCodeGen, public CCodeGen
 {
-	CFGotoCodeGen( ostream &out ) : 
+	CFGotoCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FGotoCodeGen(out), CCodeGen(out) {}
 };
 
@@ -68,7 +68,7 @@ struct CFGotoCodeGen
 struct DFGotoCodeGen
 	: public FGotoCodeGen, public DCodeGen
 {
-	DFGotoCodeGen( ostream &out ) : 
+	DFGotoCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FGotoCodeGen(out), DCodeGen(out) {}
 };
 
@@ -78,7 +78,7 @@ struct DFGotoCodeGen
 struct D2FGotoCodeGen
 	: public FGotoCodeGen, public D2CodeGen
 {
-	D2FGotoCodeGen( ostream &out ) : 
+	D2FGotoCodeGen( wostream &out ) : 
 		FsmCodeGen(out), FGotoCodeGen(out), D2CodeGen(out) {}
 };
 

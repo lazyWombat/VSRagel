@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.IO;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
-using System.Reflection;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
+using System.Threading;
+using System.Reflection;
+using System.IO;
 
 namespace RagelVsExtension
 {
@@ -29,6 +30,16 @@ namespace RagelVsExtension
 //
 // </auto-generated>
 ";
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
 
         protected override byte[] GenerateCode(string inputFileName, string inputFileContent)
         {
@@ -40,17 +51,71 @@ namespace RagelVsExtension
         {
             try
             {
-                bool hasErrors;
-                var output = NativeMethods.Process(inputFileName, inputFileContent, out hasErrors);
-                if (hasErrors)
+                var startInfo = new ProcessStartInfo
                 {
-                    return Encoding.UTF8.GetBytes(CreateErrorDirective(output));
+                    CreateNoWindow = true,
+                    Arguments = "-A -c -i " + inputFileName,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    UseShellExecute = false,
+                    FileName = Path.Combine(AssemblyDirectory, "Ragel.exe")
+                };
+
+                var timeout = 10000;
+
+                var hasError = false;
+
+                var output = new StringBuilder();
+                var error = new StringBuilder();
+
+                using (var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true })
+                using (var outputWaitHandle = new AutoResetEvent(false))
+                using (var errorWaitHandle = new AutoResetEvent(false))
+                {
+                    var outputDelegate = GetDataReader(output, outputWaitHandle);
+                    var errorDelegate = GetDataReader(error, errorWaitHandle);
+                    process.OutputDataReceived += outputDelegate;
+                    process.ErrorDataReceived += errorDelegate;
+                    process.Start();
+
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
+                    process.StandardInput.Write(inputFileContent);
+                    process.StandardInput.Flush();
+                    process.StandardInput.Close();
+
+                    if (process.WaitForExit(timeout) &&
+                        outputWaitHandle.WaitOne(timeout) &&
+                        errorWaitHandle.WaitOne(timeout))
+                    {
+                        if (process.ExitCode != 0)
+                        {
+                            hasError = true;
+                        }
+                    }
+                    else
+                    {
+                        hasError = true;
+                        error.AppendLine("Timeout expired");
+                    }
+
+                    process.OutputDataReceived -= outputDelegate;
+                    process.ErrorDataReceived -= errorDelegate;
                 }
 
-                var outputBytes = Encoding.UTF8.GetBytes(output);
+                if (hasError)
+                {
+                    return Encoding.UTF8.GetBytes(CreateErrorDirective(error.ToString()));
+                }
+
+                var outputBytes = Encoding.UTF8.GetBytes(output.ToString());
                 var warningBytes = Encoding.UTF8.GetBytes(string.Format(warning, dateTime.ToString("f")));
 
-                var result = new byte[warningBytes.Length + output.Length];
+                var result = new byte[warningBytes.Length + outputBytes.Length];
                 Array.Copy(warningBytes, result, warningBytes.Length);
                 Array.Copy(outputBytes, 0, result, warningBytes.Length, outputBytes.Length);
 
@@ -60,6 +125,25 @@ namespace RagelVsExtension
             {
                 return Encoding.UTF8.GetBytes(CreateErrorDirective(ex.ToString()));
             }
+        }
+
+        private DataReceivedEventHandler GetDataReader(StringBuilder sb, AutoResetEvent handle)
+        {
+            return (s, e) =>
+            {
+                if (e.Data == null)
+                {
+                    handle.Set();
+                }
+                else
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(Environment.NewLine);
+                    }
+                    sb.Append(e.Data);
+                }
+            };
         }
 
         private static string CreateErrorDirective(string message)
